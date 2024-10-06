@@ -1,9 +1,11 @@
 // src/controllers/userController.js
 const User = require('../models/userModel');
+const connectDB = require('../mongodb');
 
 // Get all users
 const getAllUsers = async (req, res) => {
   try {
+    await connectDB();
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
@@ -14,6 +16,7 @@ const getAllUsers = async (req, res) => {
 // Get a single user by ID
 const getUser = async (req, res) => {
   try {
+    await connectDB();
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -27,6 +30,7 @@ const getUser = async (req, res) => {
 // Create a new user
 const createUser = async (req, res) => {
   try {
+    await connectDB();
     const newUser = new User(req.body);
     await newUser.save();
     res.status(201).json(newUser);
@@ -38,6 +42,7 @@ const createUser = async (req, res) => {
 // Update a user by ID
 const updateUser = async (req, res) => {
   try {
+    await connectDB();
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
@@ -51,6 +56,7 @@ const updateUser = async (req, res) => {
 // Delete a user by ID
 const deleteUser = async (req, res) => {
   try {
+    await connectDB();
     const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (!deletedUser) {
       return res.status(404).json({ message: 'User not found' });
