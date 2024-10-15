@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
+const connectDB = require('./api/mongodb');
 
 require('dotenv').config();
 
@@ -9,6 +10,8 @@ const middlewares = require('./middlewares');
 const api = require('./api');
 
 const app = express();
+
+connectDB();
 
 app.use(morgan('dev'));
 app.use(helmet());
