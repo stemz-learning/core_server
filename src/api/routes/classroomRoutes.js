@@ -1,14 +1,21 @@
 // src/routes/classroomRoutes.js
 
 const express = require('express');
-const { createClassroom, getClassroom, updateClassroom, deleteClassroom, getAllClassrooms } = require('../controllers/classroomController');
-const { Classroom } = require('../models/classroomModel');
+const {
+  createClassroom,
+  getClassroom,
+  updateClassroom,
+  deleteClassroom,
+  getAllClassrooms,
+} = require('../controllers/classroomController');
+
 const router = express.Router();
 
-router.post('/create', createClassroom);
-router.get('/', getAllClassrooms);
-router.get('/read/:id', getClassroom);
-router.put('/update/:id', updateClassroom);
-router.delete('/delete/:id', deleteClassroom);
+// Use RESTful route conventions
+router.post('/', createClassroom); // Create a new classroom
+router.get('/', getAllClassrooms); // Get all classrooms
+router.get('/:id', getClassroom); // Get a single classroom by ID
+router.put('/:id', updateClassroom); // Update a classroom by ID
+router.delete('/:id', deleteClassroom); // Delete a classroom by ID
 
 module.exports = router;
