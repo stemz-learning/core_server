@@ -1,5 +1,5 @@
 const express = require('express');
-const { notFound, errorHandler } = require('./middleware'); // Adjust the path if needed
+const { notFound, errorHandler } = require('./middlewares'); // Adjust the path if needed
 const cors = require('cors');
 
 const app = express();
