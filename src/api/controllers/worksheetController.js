@@ -4,14 +4,12 @@ const Worksheet = require('../models/worksheetModel');
 // Get progress by userEmail and worksheet id
 const getWSProgress = async (req, res) => {
   try {
-    if (!req.params.userEmail || !req.params.worksheetId) {
-
+    if (!req.params.email || !req.params.worksheetId) {
       return res.status(400).json({ message: 'Email and worksheetId are required' });
     }
-    const progress = await Worksheet.findOne({ userEmail: req.params.userEmail, worksheetId: req.params.worksheetId });
+    const progress = await Worksheet.findOne({ userEmail: req.params.email, worksheetId: req.params.worksheetId });
     if (!progress) {
       return res.status(404).json({ message: 'Progress not found' });
-
     }
 
     res.status(200).json(progress);

@@ -12,9 +12,9 @@ const router = express.Router();
 router.post('/create', createWSProgress);
 
 // Route to get a single worksheet progress by email and worksheetId
-router.get('/email/:email/worksheetId/:worksheetId', getWSProgress); 
+router.get('/get/email/:email/worksheetId/:worksheetId', getWSProgress); 
 
 // Route to update a worksheet progress by email and worksheetId
-router.put('/email/:email/worksheetId/:worksheetId', updateWSProgress);
+router.put('/update', updateWSProgress);
 
 module.exports = router;

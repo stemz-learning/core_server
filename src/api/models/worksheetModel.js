@@ -11,7 +11,7 @@ const worksheetSchema = new mongoose.Schema({
 
 
 
-// Create the User model
+// Create the worksheet model
 const Worksheet = mongoose.model('Worksheet', worksheetSchema);
 
 
