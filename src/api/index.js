@@ -3,7 +3,9 @@ const router = express.Router();
 
 const userRoutes = require('./routes/userRoutes');
 const classroomRoutes = require('./routes/classroomRoutes');
+const worksheetRoutes = require('./routes/worksheetRoutes');
 const auth = require('./routes/auth');
+
 
 router.get('/', (req, res) => {
   res.json({ message: 'API - 👋🌎🌍🌏' });
@@ -12,6 +14,7 @@ router.get('/', (req, res) => {
 // Register user and classroom routes
 router.use('/users', userRoutes);
 router.use('/classrooms', classroomRoutes);
+router.use('/worksheets', worksheetRoutes);
 router.use('/auth', auth);
 
 // 404 Not Found middleware
