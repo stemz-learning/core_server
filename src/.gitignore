@@ -1,1 +1,4 @@
 .vercel
+mongodb_backup/
+~/mongodb_backup/
+**/mongodb_backup/
