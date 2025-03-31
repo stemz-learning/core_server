@@ -2,6 +2,10 @@
 mongodb_backup/
 ~/mongodb_backup/
 **/mongodb_backup/
+/mongodb_backup/
 *.bson
 *.metadata.json
 /mongodump/
+**/mongodb_backup/**
+**/mongodb_backup/**
+/STEMz_Teacher_Platform/
