@@ -4,7 +4,7 @@ const Classroom = require('../src/api/models/classroomModel.js');
 async function migrateClassrooms() {
   try {
     // Connect to your MongoDB with your actual connection string
-    await mongoose.connect('mongodb+srv://stemzlearning:stemz123@stemz.ae0vefg.mongodb.net/?retryWrites=true&w=majority&appName=STEMz', {
+    await mongoose.connect('mongodb+srv://XXXX', {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
