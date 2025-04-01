@@ -5,6 +5,8 @@ const userRoutes = require('./routes/userRoutes');
 const classroomRoutes = require('./routes/classroomRoutes');
 const worksheetRoutes = require('./routes/worksheetRoutes');
 const auth = require('./routes/auth');
+const courseRoutes = require('./routes/classroomRoutes');
+const gradeRoutes = require('./routes/gradeRoutes');
 
 
 router.get('/', (req, res) => {
@@ -16,6 +18,8 @@ router.use('/users', userRoutes);
 router.use('/classrooms', classroomRoutes);
 router.use('/worksheets', worksheetRoutes);
 router.use('/auth', auth);
+router.use('/course', courseRoutes);
+router.use('/grade', gradeRoutes);
 
 // 404 Not Found middleware
 router.use((req, res) => {
