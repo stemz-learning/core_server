@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const classroomSchema = new mongoose.Schema({
-    id: { type: Number },
     name: { type: String, required: true, maxLength: 100 },
     description: { type: String, required: true },
     teacher_user_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },

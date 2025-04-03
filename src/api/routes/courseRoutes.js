@@ -9,4 +9,4 @@ router.put("/:id", courseController.updateCourse);
 router.delete("/:id", courseController.deleteCourse);
 router.get("/:id", courseController.getCourse);
 
-modules.exports = router;
+module.exports = router;

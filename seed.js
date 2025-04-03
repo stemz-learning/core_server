@@ -51,10 +51,6 @@ const courses = [
     { name: "Theater & Drama", description: "Acting and performance techniques for stage and screen." }
 ];
 
-const classrooms = [
-
-]
-
 const seedUsers = async () => {
     try {
         for (const user of users) {
@@ -71,7 +67,7 @@ const seedCourses = async () => {
     try {
         for (const course of courses) {
             const response = await axios.post(API_BASE_URL + '/course/', course);
-            console.log(`User created: ${response.data.name} (${response.data.email})`);
+            console.log(`Course created: ${response.data.name} (${response.data.description})`);
         }
         console.log("Seeding completed succesfully!");
     } catch (error) {
@@ -79,6 +75,53 @@ const seedCourses = async () => {
     }
 };
 
+const teachers = ["67eca6af37b4a79782bfc835", "67eca6b193f1f7ee815419f3", "67eca6b3999b2257d3089203"]
+const students = ['67ecad8d0ed44de88a5b1f2d',
+  '67ecad8f1ad58e6cf645de21',
+  '67ecad90b82356602236d358',
+  '67ecad928390f0d5600d4c73',
+  '67ecad9465df1a1c4ff49c82',
+  '67ecad96b446ddf95aff01a3',
+  '67ecad98f7dddaf7496337cf',
+  '67ecad9ae55379affce8e97d',
+  '67ecad9b9a8f15d2eeae15da',
+  '67ecad9dce3cbce2e633e520',
+  '67ecad9fee7a5fbf41dd7874',
+  '67ecada182734f54711734a0',
+  '67ecada37289ed99819eae27',
+  '67ecada4607d585056048254',
+  '67ecada6d746a69e343098f0',
+  '67ecada8d4b29e71314fb458',
+  '67ecadaa4d51f09e56fc40e1',
+  '67ecadac641a11893839597f',
+  '67ecadad02810770666e170c',
+  '67ecadaf634257002fcb4ae9',
+  '67ecadb10a13d7d64dd417d7',
+  '67ecadb3d1dee46ff90832eb',
+  '67ecadb5c89bd121d2003f6f'
+]
+const stem_courses = ['67ee05981b9f19e66d4e2ee3', '67ee059a0f4f9568a8c184a9', '67ee059c9447519dc5872ee1', '67ee059e64d67107fe9e50ba', '67ee05a0f90c16193369f6ed']
+const humanities_courses = ['67ee05a2f1d0313e94c35d83', '67ee05a31b8226cea7de5093', '67ee05a51e00550ae44f7850', '67ee05a7711f337e44192347', '67ee05a9a00c9d8b3e9931c7']
+const art_courses = ['67ee05aba4fbde249b837b4a', '67ee05ac4da2916f3d65050a', '67ee05ae1d4f052f66d25b63', '67ee05b0f5f343c355c09df3', '67ee05b22099c5cb874139f5'] 
+const classrooms = [
+    { name: "STEM", description: "Math and science and stuff", teacher_user_id: teachers[0], student_user_ids: students, course_ids: stem_courses },
+    { name: "Humanities", description: "People doing stuff I guess", teacher_user_id: teachers[1], student_user_ids: students, course_ids: humanities_courses },
+    { name: "Arts", description: "creativity and stuff", teacher_user_id: teachers[2], student_user_ids: students, course_ids: art_courses }
+]
+
+const seedClassrooms = async () => {
+    try {
+        for (const classroom of classrooms) {
+            const response = await axios.post(API_BASE_URL + '/classrooms', classroom);
+            console.log(`Classroom created: ${response.data.name} (${response.data.description})`);
+        }
+        console.log("seeding completed successfully!");
+    } catch (error) {
+        console.error("Error seeding classrooms:", error.response ? error.response.data : error.message);
+    }
+};
+
 // Run the seeding script
 // seedUsers();
-seedCourses();
+// seedCourses();
+seedClassrooms();

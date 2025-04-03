@@ -5,7 +5,7 @@ const userRoutes = require('./routes/userRoutes');
 const classroomRoutes = require('./routes/classroomRoutes');
 const worksheetRoutes = require('./routes/worksheetRoutes');
 const auth = require('./routes/auth');
-const courseRoutes = require('./routes/classroomRoutes');
+const courseRoutes = require('./routes/courseRoutes');
 const gradeRoutes = require('./routes/gradeRoutes');
 
 
