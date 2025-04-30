@@ -1,5 +1,7 @@
 // src/controllers/classroomController.js
 const Classroom = require("../models/classroomModel");
+const User = require("../models/userModel");
+const Course = require("../models/courseModel");
 const connectDB = require("../mongodb");
 const mongoose = require('mongoose');
 
@@ -142,6 +144,81 @@ const unenrollFromClassroom = async (req, res) => {
   }
 };
 
+const getClassroomUsers = async (req, res) => {
+  try {
+    await connectDB();
+    const classroomId = req.params.id;
+    const classroom = await Classroom.findById(classroomId);
+    console.log('Classroom ID:', classroomId);
+    console.log('Classroom:', classroom);
+
+    if (!classroom) {
+      return res.status(404).json({ message: "Classroom not found" });
+    }
+
+    const enrolledUsers = classroom.student_user_ids;
+    const teacherUserId = classroom.teacher_user_id;
+
+    // Create a new array for transformed user objects
+    const students = await Promise.all(
+      enrolledUsers.map(async (userId) => {
+        const user = await User.findById(userId);
+        if (!user) {
+          console.error(`User with ID ${userId} not found`);
+          return null; // Skip if user not found
+        }
+        return {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        };
+      })
+    );
+
+    // Filter out any null values (users not found)
+    const filteredStudents = students.filter((student) => student !== null);
+
+    res.status(200).json({
+      students: filteredStudents,
+      teacher: teacherUserId,
+    });
+  } catch (error) {
+    console.error("Error in getClassroomUsers:", error);
+    res.status(500).json({ message: "Failed to retrieve classroom users", error: error.message });
+  }
+};
+
+const getClassroomCourses = async (req, res) => {
+  try {
+    await connectDB();
+    const classroomId = req.params.id;
+    const classroom = await Classroom.findById(classroomId);
+    if (!classroom) {
+      return res.status(404).json({ message: "Classroom not found" });
+    }
+    const course_ids = classroom.course_ids;
+
+    const courses = await Promise.all(
+      course_ids.map(async (courseId) => {
+        const course = await Course.findById(courseId);
+        if (!course) {
+          console.error(`Course with ID ${courseId} not found`);
+          return null; // Skip if course not found
+        }
+        return {
+          id: course._id,
+          name: course.name,
+          description: course.description,
+        };
+      })
+    );
+
+    res.status(200).json(courses.filter(course => course !== null));
+  } catch (error) {
+    res.status(500).json({ message: "Failed to retrieve classroom courses" });
+  }
+}
+
 
 const getUserClassrooms = async (req, res) => {
   try {
@@ -183,4 +260,6 @@ module.exports = {
   enrollInClassroom,
   unenrollFromClassroom,
   getUserClassrooms,
+  getClassroomUsers,
+  getClassroomCourses
 };
