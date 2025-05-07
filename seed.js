@@ -121,7 +121,20 @@ const seedClassrooms = async () => {
     }
 };
 
+const seedGrades = async () => {
+    try {
+        for (const classroom of classrooms) {
+            const response = await axios.post(API_BASE_URL + '/classrooms', classroom);
+            console.log(`Classroom created: ${response.data.name} (${response.data.description})`);
+        }
+        console.log("seeding completed successfully!");
+    } catch (error) {
+        console.error("Error seeding classrooms:", error.response ? error.response.data : error.message);
+    }
+};
+
 // Run the seeding script
 // seedUsers();
 // seedCourses();
-seedClassrooms();
+// seedClassrooms();
+seedGrades();

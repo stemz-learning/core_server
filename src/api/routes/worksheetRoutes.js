@@ -3,6 +3,8 @@ const {
   createWSProgress, 
   getWSProgress,
   updateWSProgress,
+  getWorksheetsByCourseId,
+  getAllWorksheets
 } = require('../controllers/worksheetController');
 
 
@@ -10,6 +12,10 @@ const router = express.Router();
 
 // Route to create a new worksheet progress
 router.post('/create', createWSProgress);
+
+router.get('/course/:courseId', getWorksheetsByCourseId);
+// Route to get all worksheets
+router.get('/', getAllWorksheets);
 
 // Route to get a single worksheet progress by email and worksheetId
 router.get('/get/email/:email/worksheetId/:worksheetId', getWSProgress); 
