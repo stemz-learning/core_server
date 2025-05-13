@@ -2,3 +2,7 @@
 mongodb_backup/
 ~/mongodb_backup/
 **/mongodb_backup/
+/mongodb_backup/
+*.bson
+*.metadata.json
+/mongodump/

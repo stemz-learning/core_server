@@ -5,6 +5,7 @@ const userRoutes = require('./routes/userRoutes');
 const classroomRoutes = require('./routes/classroomRoutes');
 const worksheetRoutes = require('./routes/worksheetRoutes');
 const auth = require('./routes/auth');
+const userPointRoutes = require('./routes/userPointRoutes');
 
 
 router.get('/', (req, res) => {
@@ -16,6 +17,7 @@ router.use('/users', userRoutes);
 router.use('/classrooms', classroomRoutes);
 router.use('/worksheets', worksheetRoutes);
 router.use('/auth', auth);
+router.use('/points', userPointRoutes);
 
 // 404 Not Found middleware
 router.use((req, res) => {
