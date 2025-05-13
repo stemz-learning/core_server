@@ -123,11 +123,27 @@ const seedClassrooms = async () => {
 
 const seedGrades = async () => {
     try {
-        for (const classroom of classrooms) {
-            const response = await axios.post(API_BASE_URL + '/classrooms', classroom);
-            console.log(`Classroom created: ${response.data.name} (${response.data.description})`);
+        const course_id = "67ee05981b9f19e66d4e2ee3";
+        const classroom_id = "68008b3aba3b0ad0e8ff6d2f";
+        const response_users = await axios.get(API_BASE_URL + '/classrooms/' + classroom_id + '/users');
+        const students = response_users.data.students;
+        const response_worksheets = await axios.get(API_BASE_URL + '/worksheets/course/' + course_id);
+        const worksheets = response_worksheets.data;
+        for (const student of students) {
+            for (const worksheet of worksheets) {
+                const response = await axios.post(API_BASE_URL + '/grade', {
+                    worksheet_id: worksheet._id,
+                    worksheet_name: worksheet.name,
+                    student_user_id: student._id,
+                    course_id: course_id,
+                    classroom_id: classroom_id,
+                    // Random grade between 50 and 100, with a small chance for grades below 50
+                    grade: Math.random() < 0.1 ? Math.floor(Math.random() * 50) : Math.floor(Math.random() * 51) + 50,
+                    time_to_complete: Math.floor(Math.random() * 100) + 1, // Random time to complete between 1 and 100 minutes
+                });
+                console.log(`Grade created for ${student.name} on worksheet ${worksheet.name}: ${response.data.grade}`);
+            }
         }
-        console.log("seeding completed successfully!");
     } catch (error) {
         console.error("Error seeding classrooms:", error.response ? error.response.data : error.message);
     }

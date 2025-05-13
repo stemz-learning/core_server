@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const gradeSchema = new mongoose.Schema({
-    worksheet: { type: mongoose.Schema.Types.ObjectId, ref: 'Worksheet' },
+    worksheet_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Worksheet' },
+    worksheet_name: { type: String },
     student_user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     course_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
     classroom_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' },

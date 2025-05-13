@@ -72,7 +72,7 @@ class GradeController {
         try {
             await connectDB();
             const { classroomId } = req.params;
-            const grades = await Gradebook.find({ classroom_id: classroomId });
+            const grades = await Grade.find({ classroom_id: classroomId });
     
             if (!grades.length) {
                 return res.status(404).json({ message: "No grades found for this classroom" });
@@ -89,7 +89,7 @@ class GradeController {
         try {
             await connectDB();
             const { classroomId, courseId } = req.params;
-            const grades = await Gradebook.find({ classroom_id: classroomId, course_id: courseId });
+            const grades = await Grade.find({ classroom_id: classroomId, course_id: courseId });
     
             if (!grades.length) {
                 return res.status(404).json({ message: "No grades found for this course in the specified classroom" });
