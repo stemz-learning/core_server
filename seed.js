@@ -130,11 +130,12 @@ const seedGrades = async () => {
         const response_worksheets = await axios.get(API_BASE_URL + '/worksheets/course/' + course_id);
         const worksheets = response_worksheets.data;
         for (const student of students) {
+            console.log(student.id);
             for (const worksheet of worksheets) {
                 const response = await axios.post(API_BASE_URL + '/grade', {
                     worksheet_id: worksheet._id,
                     worksheet_name: worksheet.name,
-                    student_user_id: student._id,
+                    student_user_id: student.id,
                     course_id: course_id,
                     classroom_id: classroom_id,
                     // Random grade between 50 and 100, with a small chance for grades below 50

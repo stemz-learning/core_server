@@ -4,7 +4,8 @@ const {
   getWSProgress,
   updateWSProgress,
   getWorksheetsByCourseId,
-  getAllWorksheets
+  getAllWorksheets,
+  getWorksheetsByClassroomId
 } = require('../controllers/worksheetController');
 
 
@@ -22,5 +23,8 @@ router.get('/get/email/:email/worksheetId/:worksheetId', getWSProgress);
 
 // Route to update a worksheet progress by email and worksheetId
 router.put('/update', updateWSProgress);
+
+// Route to get all worksheets by classroomId
+router.get('/classroom/:classroomId', getWorksheetsByClassroomId);
 
 module.exports = router;

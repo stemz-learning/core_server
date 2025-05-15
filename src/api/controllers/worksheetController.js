@@ -1,5 +1,5 @@
 const Worksheet = require('../models/worksheetModel');
-
+const Classroom = require('../models/classroomModel');
 
 // Get progress by userEmail and worksheet id
 const getWSProgress = async (req, res) => {
@@ -43,6 +43,30 @@ const getAllWorksheets = async (req, res) => {
     }
 
     res.status(200).json(worksheets);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to retrieve worksheets', error: error.message });
+  }
+};
+
+const getWorksheetsByClassroomId = async (req, res) => {
+  try {
+    if (!req.params.classroomId) {
+      return res.status(400).json({ message: 'classroomId is required' });
+    }
+    const classroom = await Classroom.findById(req.params.classroomId);
+    const courseIds = classroom.course_ids;
+    if (!courseIds || courseIds.length === 0) {
+      return res.status(404).json({ message: 'No courses found for this classroom' });
+    }
+    console.log(courseIds);
+
+    const worksheets = await Worksheet.find({ course_id: { $in: courseIds } });
+    if (!worksheets || worksheets.length === 0) {
+      return res.status(404).json({ message: 'No worksheets found for the courses in this classroom' });
+    }
+
+    res.status(200).json(worksheets);
+    
   } catch (error) {
     res.status(500).json({ message: 'Failed to retrieve worksheets', error: error.message });
   }
@@ -93,6 +117,7 @@ module.exports = {
   createWSProgress,
   updateWSProgress,
   getWorksheetsByCourseId,
-  getAllWorksheets
+  getAllWorksheets,
+  getWorksheetsByClassroomId
 };
 
