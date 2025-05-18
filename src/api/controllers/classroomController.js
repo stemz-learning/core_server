@@ -5,13 +5,56 @@ const mongoose = require('mongoose');
 
 
 // Get all classrooms
-const getAllClassrooms = async (req, res) => {
+const getAllClassroomsWithIDs = async (req, res) => {
   try {
     await connectDB();
     const classrooms = await Classroom.find();
     res.status(200).json(classrooms);
   } catch (error) {
     res.status(500).json({ message: "Failed to retrieve classrooms" });
+  }
+};
+
+// Updated getAllClassrooms function
+const getAllClassroomsWithNames = async (req, res) => {
+  try {
+    await connectDB();
+    // Use populate to get the student user information
+    const classrooms = await Classroom.find()
+      .populate({
+        path: 'student_user_ids',
+        select: 'name email' // Assuming User model has these fields
+      })
+      .populate({
+        path: 'teacher_user_id',
+        select: 'name email'
+      });
+    
+    // Transform the response to have only the essential information
+    const simplifiedClassrooms = classrooms.map(classroom => {
+      return {
+        name: classroom.name,
+        description: classroom.description,
+        schedule: classroom.schedule,
+        recommendedGradeLevel: classroom.recommendedGradeLevel,
+        students: classroom.student_user_ids.map(student => ({
+          name: student.name,
+          email: student.email
+        })),
+        teacher: classroom.teacher_user_id ? {
+          name: classroom.teacher_user_id.name,
+          email: classroom.teacher_user_id.email
+        } : null
+      };
+    });
+    
+    res.status(200).json(simplifiedClassrooms);
+  } catch (error) {
+    console.error('Error getting classrooms with student details:', error);
+    res.status(500).json({ 
+      message: "Failed to retrieve classrooms with student details",
+      error: error.message 
+    });
   }
 };
 
@@ -175,7 +218,8 @@ const getUserClassrooms = async (req, res) => {
 };
 
 module.exports = {
-  getAllClassrooms,
+  getAllClassroomsWithIDs,
+  getAllClassroomsWithNames,
   getClassroom,
   createClassroom,
   updateClassroom,
