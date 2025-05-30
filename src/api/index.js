@@ -6,7 +6,9 @@ const classroomRoutes = require('./routes/classroomRoutes');
 const worksheetRoutes = require('./routes/worksheetRoutes');
 const auth = require('./routes/auth');
 const userPointRoutes = require('./routes/userPointRoutes');
-
+const notificationRoutes = require('./routes/notificationRoutes');
+const courseRoutes = require('./routes/courseRoutes');
+const studentResponseRoutes = require('./routes/studentResponseRoutes');
 
 router.get('/', (req, res) => {
   res.json({ message: 'API - 👋🌎🌍🌏' });
@@ -18,6 +20,9 @@ router.use('/classrooms', classroomRoutes);
 router.use('/worksheets', worksheetRoutes);
 router.use('/auth', auth);
 router.use('/points', userPointRoutes);
+// router.use('/notifications', notificationRoutes);
+// router.use('/course', courseRoutes)
+// router.use('/api/responses', studentResponseRoutes);
 
 // 404 Not Found middleware
 router.use((req, res) => {

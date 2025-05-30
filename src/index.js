@@ -1,12 +1,13 @@
 const express = require('express');
 const { notFound, errorHandler } = require('./middlewares'); // Adjust the path if needed
 const cors = require('cors');
+const api = require('./api');
 
 const app = express();
 
 // CORS options
 const corsOptions = {
-  origin: 'http://localhost:3000', // Allow requests from your frontend
+  origin: 'http://localhost:3001', // Allow requests from your frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
   credentials: true, // Allow cookies to be sent
 };
@@ -19,6 +20,7 @@ app.use(express.json());
 
 // Define your routes here
 // app.use('/api', yourRoutes); // Make sure to include your API routes
+app.use('/api', api);
 
 // Handle 404 errors
 app.use(notFound);
