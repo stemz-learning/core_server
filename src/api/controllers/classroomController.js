@@ -175,12 +175,24 @@ const getClassroomUsers = async (req, res) => {
       })
     );
 
+    const teacher = await User.findById(teacherUserId);
+    if (!teacher) {
+      console.error(`Teacher with ID ${teacherUserId} not found`);
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+    // Add teacher information to the response
+    const teacherInfo = {
+      id: teacher._id,
+      name: teacher.name,
+      email: teacher.email,
+    };
+
     // Filter out any null values (users not found)
     const filteredStudents = students.filter((student) => student !== null);
 
     res.status(200).json({
       students: filteredStudents,
-      teacher: teacherUserId,
+      teacher: teacherInfo,
     });
   } catch (error) {
     console.error("Error in getClassroomUsers:", error);
