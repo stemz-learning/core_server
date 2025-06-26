@@ -9,7 +9,6 @@ const userPointRoutes = require('./routes/userPointRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const studentResponseRoutes = require('./routes/studentResponseRoutes');
-const courseRoutes = require('./routes/courseRoutes');
 const gradeRoutes = require('./routes/gradeRoutes');
 
 router.get('/', (req, res) => {
