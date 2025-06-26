@@ -9,6 +9,7 @@ const userPointRoutes = require('./routes/userPointRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const studentResponseRoutes = require('./routes/studentResponseRoutes');
+const gradeRoutes = require('./routes/gradeRoutes');
 
 router.get('/', (req, res) => {
   res.json({ message: 'API - 👋🌎🌍🌏' });
@@ -20,6 +21,8 @@ router.use('/classrooms', classroomRoutes);
 router.use('/worksheets', worksheetRoutes);
 router.use('/auth', auth);
 router.use('/points', userPointRoutes);
+router.use('/course', courseRoutes);
+router.use('/grade', gradeRoutes);
 // router.use('/notifications', notificationRoutes);
 // router.use('/course', courseRoutes)
 // router.use('/api/responses', studentResponseRoutes);

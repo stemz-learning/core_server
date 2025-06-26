@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const courseSchema = new mongoose.Schema({
-  course_id: { type: String, required: true, unique: true },
-  course_name: { type: String, required: true, maxLength: 100 },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
   lesson_1: { type: Boolean, default: false },
   lesson_2: { type: Boolean, default: false },
   lesson_3: { type: Boolean, default: false },
