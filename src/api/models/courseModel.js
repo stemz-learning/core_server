@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
 
 const courseSchema = new mongoose.Schema({
-  course_id: { type: String, required: true, unique: true },
-  course_name: { type: String, required: true, maxLength: 100 },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  teacher_user_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+  student_user_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  course_ids: [{type: mongoose.Schema.Types.ObjectId, ref: 'Course'}], //New field
+  schedule: { type: String, required: false }, // New field
+  recommendedGradeLevel: { type: String, required: false }, // New field
   lesson_1: { type: Boolean, default: false },
   lesson_2: { type: Boolean, default: false },
   lesson_3: { type: Boolean, default: false },

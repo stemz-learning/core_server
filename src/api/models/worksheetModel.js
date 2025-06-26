@@ -2,12 +2,10 @@ const mongoose = require('mongoose');
 
 // Define the user schema
 const worksheetSchema = new mongoose.Schema({
-    userEmail: { type: String, required: true },
-    worksheetId: { type: String, required: true },
-    progress: { type: Object, required: true},
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
-});
+    name: {type: String, required: true},
+    course_id: { type: String, required: true },
+    description: { type: String, required: true}
+}, { timestamps: true });
 
 
 
