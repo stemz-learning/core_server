@@ -9,7 +9,7 @@ const router = express.Router();
 // Important: Put specific routes before parameterized routes
 // Get all classrooms routes need to be before /:id route
 // router.get("/", classroomController.getAllClassrooms); // Get all classrooms
-router.get("/", classroomController.getAllClassroomsWithIDs); // Get all classrooms with IDs
+router.get("/allIDs", classroomController.getAllClassroomsWithIDs); // Get all classrooms with IDs
 router.get("/allNames", classroomController.getAllClassroomsWithNames); // Get all classrooms with names
 router.get("/user/getUserClassrooms", authenticateToken, classroomController.getUserClassrooms); // Get all classrooms for a user by ID
 
