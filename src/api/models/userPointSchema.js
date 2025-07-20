@@ -77,13 +77,12 @@ const courseTemplates = {
               title: "Astronomy Quiz",
               type: "quiz",
               completed: false,
-              points: 0, // CHANGED: Dynamic points
-              extraPoints: 0, // REMOVED: No more bonus system
-              questionsCount: 0, // Will be set when quiz loads
+              points: 5,
+              extraPoints: 5,
+              questionsCount: 14,
               correctAnswers: 0,
               percentCorrect: 0,
-              earned: 0,
-              isDynamic: true // FLAG: Indicates dynamic quiz
+              earned: 0
             }
           }
         }
@@ -152,13 +151,12 @@ const courseTemplates = {
               title: "Basics of Coding Quiz",
               type: "quiz",
               completed: false,
-              points: 0, // CHANGED: Dynamic points
-              extraPoints: 0, // REMOVED: No more bonus system
-              questionsCount: 0,
+              points: 5,
+              extraPoints: 5,
+              questionsCount: 14,
               correctAnswers: 0,
               percentCorrect: 0,
-              earned: 0,
-              isDynamic: true
+              earned: 0
             }
           }
         }
@@ -206,13 +204,12 @@ const courseTemplates = {
               title: "Biochemistry Quiz",
               type: "quiz",
               completed: false,
-              points: 0, // CHANGED: Dynamic points
-              extraPoints: 0, // REMOVED: No more bonus system
-              questionsCount: 0,
+              points: 5,
+              extraPoints: 5,
+              questionsCount: 14,
               correctAnswers: 0,
               percentCorrect: 0,
-              earned: 0,
-              isDynamic: true
+              earned: 0
             }
           }
         }
@@ -281,13 +278,12 @@ const courseTemplates = {
               title: "Chemistry Quiz",
               type: "quiz",
               completed: false,
-              points: 0, // CHANGED: Dynamic points
-              extraPoints: 0, // REMOVED: No more bonus system
-              questionsCount: 0,
+              points: 5,
+              extraPoints: 5,
+              questionsCount: 10,
               correctAnswers: 0,
               percentCorrect: 0,
-              earned: 0,
-              isDynamic: true
+              earned: 0
             }
           }
         }
@@ -349,13 +345,12 @@ const courseTemplates = {
               title: "Circuit Quiz",
               type: "quiz",
               completed: false,
-              points: 0, // CHANGED: Dynamic points
-              extraPoints: 0, // REMOVED: No more bonus system
-              questionsCount: 0,
+              points: 5,
+              extraPoints: 5,
+              questionsCount: 11,
               correctAnswers: 0,
               percentCorrect: 0,
-              earned: 0,
-              isDynamic: true
+              earned: 0
             }
           }
         }
@@ -431,13 +426,12 @@ const courseTemplates = {
               title: "Environmental Science Quiz",
               type: "quiz",
               completed: false,
-              points: 0, // CHANGED: Dynamic points
-              extraPoints: 0, // REMOVED: No more bonus system
-              questionsCount: 0,
+              points: 5,
+              extraPoints: 5,
+              questionsCount: 14,
               correctAnswers: 0,
               percentCorrect: 0,
-              earned: 0,
-              isDynamic: true
+              earned: 0
             }
           }
         }
@@ -520,13 +514,12 @@ const courseTemplates = {
               title: "Psychology Quiz",
               type: "quiz",
               completed: false,
-              points: 0, // CHANGED: Dynamic points
-              extraPoints: 0, // REMOVED: No more bonus system
-              questionsCount: 0,
+              points: 5,
+              extraPoints: 5,
+              questionsCount: 14,
               correctAnswers: 0,
               percentCorrect: 0,
-              earned: 0,
-              isDynamic: true
+              earned: 0
             }
           }
         }
@@ -630,13 +623,12 @@ const courseTemplates = {
               title: "Statistics Quiz",
               type: "quiz",
               completed: false,
-              points: 0, // CHANGED: Dynamic points
-              extraPoints: 0, // REMOVED: No more bonus system
-              questionsCount: 0,
+              points: 5,
+              extraPoints: 5,
+              questionsCount: 14,
               correctAnswers: 0,
               percentCorrect: 0,
-              earned: 0,
-              isDynamic: true
+              earned: 0
             }
           }
         }
@@ -740,13 +732,12 @@ const courseTemplates = {
               title: "Zoology Quiz",
               type: "quiz",
               completed: false,
-              points: 0, // CHANGED: Dynamic points
-              extraPoints: 0, // REMOVED: No more bonus system
-              questionsCount: 0,
+              points: 5,
+              extraPoints: 5,
+              questionsCount: 14,
               correctAnswers: 0,
               percentCorrect: 0,
-              earned: 0,
-              isDynamic: true
+              earned: 0
             }
           }
         }
