@@ -8,14 +8,55 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || '12345678'; // Use environm
 
 // Signup Route
 router.post('/signup', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, gradeLevel } = req.body; // CHANGED: grade → gradeLevel
     try {
+        // Validate grade level
+        if (!name || !email || !password) {
+            return res.status(400).json({ 
+                error: "Name, email, and password are required" 
+            });
+        }
+
+        if (gradeLevel && typeof gradeLevel !== 'number') {
+            return res.status(400).json({
+                error: "Grade level must be a number"
+            });
+        }
+        if (gradeLevel && (gradeLevel < 1 || gradeLevel > 6)) {
+            return res.status(400).json({ 
+                error: "Grade level must be between 1 and 6" 
+            });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10); // Hash password
-        const user = new User({ name, email, password: hashedPassword });
+        
+        // Create user with gradeLevel (will use default of 1 if not provided)
+        const user = new User({ 
+            name, 
+            email, 
+            password: hashedPassword, 
+            gradeLevel: gradeLevel || 1 // Default to grade 1 if not provided
+        });
+        
         await user.save();
-        res.status(201).json({ message: "User created successfully!" });
+        
+        res.status(201).json({ 
+            message: "User created successfully!",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                gradeLevel: user.gradeLevel
+            }
+        });
     } catch (err) {
         console.error(err);
+        
+        // Handle duplicate email error
+        if (err.code === 11000) {
+            return res.status(400).json({ error: "Email already exists" });
+        }
+        
         res.status(400).json({ error: "User creation failed" });
     }
 });
