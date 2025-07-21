@@ -21,4 +21,7 @@ router.put('/id/:id', userController.updateUser);
 // Route to delete a user by ID
 router.delete('/id/:id', userController.deleteUser);
 
+// Route to update a user's grade level
+router.put('/:id/grade', userController.updateUserGrade);
+
 module.exports = router;
