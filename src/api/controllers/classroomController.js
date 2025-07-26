@@ -137,8 +137,8 @@ class ClassroomController {
     try {
       await connectDB();
       const { id: classroomId } = req.params;
-      const userId = req.user.id;
-
+      const userId = req.body.id;
+      console.log("User ID:", userId);
       // Validate if the provided ID is a valid MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(classroomId)) {
         return res.status(400).json({ message: "Invalid classroom ID format" });
