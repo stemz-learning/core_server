@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
   res.json({ message: 'API - 👋🌎🌍🌏' });
 });
 
-// Register user and classroom routes
+// Register routes
 router.use('/users', userRoutes);
 router.use('/classrooms', classroomRoutes);
 router.use('/worksheets', worksheetRoutes);
@@ -23,9 +23,7 @@ router.use('/auth', auth);
 router.use('/points', userPointRoutes);
 router.use('/course', courseRoutes);
 router.use('/grade', gradeRoutes);
-// router.use('/notifications', notificationRoutes);
-// router.use('/course', courseRoutes)
-// router.use('/api/responses', studentResponseRoutes);
+router.use('/notifications', notificationRoutes);
 
 // 404 Not Found middleware
 router.use((req, res) => {
