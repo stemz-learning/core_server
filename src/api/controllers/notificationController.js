@@ -13,9 +13,10 @@ class NotificationController {
     }
   }
 
+  // Sends an email to a specified recipient
+  // Requires recipientEmail, subject, and message in the request body
   static async sendEmailNotification(req, res) {
     try {
-      await connectDB();
       const { recipientEmail, subject, message } = req.body;
 
       // Validate required fields
