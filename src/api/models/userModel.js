@@ -13,17 +13,11 @@ const userSchema = new mongoose.Schema({
     required: true
   },
 
-  // New field: 'grade' only required if role is 'student'
-  grade: {
-    type: String,
-    required: function () {
-      return this.role === 'student';
-    }
-  },
-
   gradeLevel: {
     type: Number,
-    required: false,
+    required: function () {
+     return this.role === 'student';
+    },
     min: 1,
     max: 6,
     default: 1
