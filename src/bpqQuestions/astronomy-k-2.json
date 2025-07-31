@@ -1,0 +1,200 @@
+[
+    {
+      "questionText": "What is your favorite planet, and why? Can you share one fun fact about it?",
+      "course_id": "astronomy",
+      "lesson_id": "1",
+      "gradeLevels": ["K", "1", "2"],
+      "timeInVideo": 67
+    },
+    {
+        "questionText": "How is Earth different from the Moon and other planets?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 720
+    },
+    {
+        "questionText": "Why do we see the Sun during the day but the Moon and stars at night?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 172
+    },
+    {
+        "questionText": "If you could travel to space, what would you want to explore, and why?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 870
+    },
+    {
+        "questionText": "Why do you think Earth is the only planet we know of that has people, animals, and plants?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 248
+    },
+    {
+        "questionText": "If scientists discovered life on another planet, what kinds of things would they look for?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 403
+    },
+    {
+        "questionText": "What does studying other planets teach us about our own place in the Solar System?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 785
+    },
+    {
+        "questionText": "Why do we study planets and space? How can learning about space help us on Earth?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 44
+    },
+    {
+        "questionText": "What do you think a black hole looks like? Why can't anything escape from it?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 282
+    },
+    {
+        "questionText": "What do you think is at the center of a black hole? Any guesses?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 433
+    },
+    {
+        "questionText": "What roles do gravity play in galaxies?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 845
+    },
+    {
+        "questionText": "What do you think is at the center of our galaxy?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 196
+    },
+    {
+        "questionText": "Why do stars look tiny even though they are really big?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 741
+    },
+    {
+        "questionText": "What is a galaxy? Can you name one?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 27
+    },
+    {
+        "questionText": "What makes the Milky Way special?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 94
+    },
+    {
+        "questionText": "How does gravity help us stay on the ground?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 70
+    },
+    {
+        "questionText": "If you could name your own galaxy, what would you call it and why?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 570
+    },
+
+    {
+        "questionText": "Why do people want to explore space? What do you think they are looking for?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 170
+    },
+    {
+        "questionText": "What are some benefits of humans exploring space? What are some consequences?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 577
+    },
+    {
+        "questionText": "How do telescopes help us see things that are far away?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 282
+    },
+    {
+        "questionText": "How do astronauts eat, sleep, and live in space?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 221
+    },
+    {
+        "questionText": "What are some things we have learned about space because of technology?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 694
+    },
+    {
+        "questionText": "What constellations have you heard of before?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 307
+    },
+
+    {
+        "questionText": "How do scientists learn about space if they can’t visit most of it?",
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 66
+    },
+    {
+        "questionText": "What do you think happens at the edge of the universe?",
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 24
+    },
+    {
+        "questionText": "Why is it important to study astronomy? What do we gain from exploring space?", 
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 199
+    },
+    {
+        "questionText": "How do we know that dark matter (and dark energy) exist if we can't see them?",
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 139
+    },
+    {
+        "questionText": "If you could ask a scientist one question about space, what would it be?",
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 240
+    }
+  ]

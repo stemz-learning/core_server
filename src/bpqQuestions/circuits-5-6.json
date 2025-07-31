@@ -1,0 +1,135 @@
+[
+      {
+        "questionText": "How do inductors and resistors work, and why are they important in electronic devices?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 349
+      },
+      {
+        "questionText": "Why do circuit boards make it easier to build and organize electrical systems?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 297
+      },
+      {
+        "questionText": "What happens when too much electricity flows through a circuit, and how do we prevent damage?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 225
+      },
+      {
+        "questionText": "Why do we use certain materials, like copper, for wires in a circuit?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 171
+      },
+      {
+        "questionText": "How do fuses and circuit breakers help keep electrical systems safe?", 
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 466
+      },
+      {
+        "questionText": "What are some real-world applications of circuits, and how do engineers design them for different purposes?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 116
+      },
+      {
+        "questionText": "If you could create a new kind of circuit for the future, what would it do and how would it improve technology?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 848
+      },
+    {
+        "questionText": "How do circuits help power and control modern technology?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 59
+    },
+    {
+        "questionText": "What do you think are characteristics of good conductors?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 199
+    },
+    {
+        "questionText": "How do conductors and insulators affect the efficiency of a circuit? Can you think of any examples of either?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 101
+    },
+    {
+        "questionText": "How do electrical circuits help keep us safe, such as in smoke detectors and medical equipment?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 394
+    },
+    {
+        "questionText": "What happens when a circuit is overloaded, and how do circuit breakers prevent damage?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 250
+    },
+    {
+        "questionText": "How do engineers design circuits to be energy efficient?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 587
+    },
+    {
+        "questionText": "What are some emerging technologies that rely on advanced circuits?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 734
+    },
+    {
+        "questionText": "What are some real-world applications of diodes, and how do they improve technology?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 270
+    },
+    {
+        "questionText": "Why are capacitors and insulators important in circuits, and how do they store energy?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 80
+    },
+    {
+        "questionText": "What were the results of the creation of the circuit?", 
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 367
+    },
+    {
+        "questionText": "What would happen to modern electronics if we didn’t have any of these important components??",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 162
+    },
+    {
+        "questionText": "If you were designing an energy-efficient circuit for the future, how would you use conductors, diodes, and capacitors to make it better?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 462
+    }
+]

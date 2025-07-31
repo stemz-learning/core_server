@@ -1,0 +1,183 @@
+[
+    {
+        "questionText": "What are some of the biggest unanswered questions in astronomy today?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 44
+    },
+    {
+        "questionText": "How do space missions, like rovers and satellites, help us learn more about our Solar System?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 81
+    },
+    {
+        "questionText": "What would it take for humans to live on another planet, and which planet do you think would be the best choice?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 318
+    },
+    {
+        "questionText": "How do different planets' atmospheres affect their ability to support life?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 116
+    },
+    {
+        "questionText": "What do scientists look for when searching for life on other planets, and do you think we will ever find it?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 445
+    },
+    {
+        "questionText": "What does studying other planets teach us about our own place in the Solar System?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 785
+    },
+    {
+        "questionText": "How do different technologies, like AI and robotics, help scientists explore space in ways humans can't?",
+        "course_id": "astronomy",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 868
+    },
+    {
+        "questionText": "How do black holes challenge our understanding of physics and space-time?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 280
+    },
+    {
+        "questionText": "How does gravity control the movement of galaxies and stars?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 89
+    },
+    {
+        "questionText": "What do you think would happen to a human approaching a place hole? How about time and space near one?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 394
+    },
+    {
+        "questionText": "How do supermassive black holes influence galaxy formation and evolution?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 226
+    },
+    {
+        "questionText": "What role does dark matter play in the formation and structure of galaxies?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 932
+    },
+    {
+        "questionText": "What roles do gravity play in galaxies?",
+        "course_id": "astronomy",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 845
+    },
+    {
+        "questionText": "How might studying stars help us understand the beginning and fate of the universe?",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 614
+    },
+    {
+        "questionText": "What are the ethical and environmental concerns of space exploration?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 693
+    },
+    {
+        "questionText": "How do different types of telescopes (radio, optical, space-based) help us understand the universe?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 282
+    },
+    {
+        "questionText": "Have you heard of Newton's Laws? If so what are they?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 77
+    },
+    {
+        "questionText": "What are some benefits of humans exploring space? What are some consequences?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 577
+    },
+    {
+        "questionText": "How does zero gravity affect the human body, and how do astronauts prepare for it?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 124
+    },
+    {
+        "questionText": "How have technological advancements improved space exploration over the past 50 years?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 19
+    },
+    {
+        "questionText": "If you were in charge of a space mission, what would you want to explore, and how would you do it?",
+        "course_id": "astronomy",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 221
+    },
+    {
+        "questionText": "Why do scientists believe that most of the universe is made of dark matter and dark energy?",
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 170
+    },
+    {
+        "questionText": "What tools and experiments are scientists using to study the mysteries of space?",
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 25
+    },
+    {
+        "questionText": "What do you think will be the next major discovery in space science?",
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 240
+    },
+    {
+        "questionText": "If we could travel to the edge of the universe, what do you think we would find?",
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 67
+    },
+    {
+        "questionText": "Why is it important to study astronomy? What do we gain from exploring space?",
+        "course_id": "astronomy",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 199
+    }
+]

@@ -1,0 +1,136 @@
+[
+    {
+    "questionText": "What do you think happens when you turn on a light switch?",
+    "course_id": "circuits",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 171
+    },
+    {
+    "questionText": "Can you name some things at home that use circuits",
+    "course_id": "circuits",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 315
+    },
+    {
+    "questionText": "Why do you think some toys need batteries while others do not?",
+    "course_id": "circuits",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 466
+    },
+    {
+    "questionText": "What do you think wires do inside a device like a TV or a computer?",
+    "course_id": "circuits",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 116
+    },
+    {
+    "questionText": "What happens when a flashlight runs out of battery? Why does it stop working?",
+    "course_id": "circuits",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 225
+    },
+    {
+    "questionText": "Why do we need electricity to make some things work, like a refrigerator or a fan?",
+    "course_id": "circuits",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 297
+    },
+    {
+    "questionText": "If you could invent a new gadget that uses electricity, what would it do?",
+    "course_id": "circuits",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 848
+    },
+    {
+        "questionText": "Why do you think we need electricity in our homes?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 59
+    },
+    {
+        "questionText": "How do you think a light switch controls a light bulb?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 394
+    },
+    {
+        "questionText": "What happens when you plug something into the wall?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 250
+    },
+    {
+        "questionText": "Why do we have power buttons on TVs and computers?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 587
+    },
+    {
+        "questionText": "What do you think happens when there is a power outage?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 101
+    },
+    {
+        "questionText": "What do those three examples of conductors have in common? Any ideas?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 199
+    },
+    {
+        "questionText": "How do you stay safe when using things that have electricity?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 734
+    },
+    {
+        "questionText": "Can you name some things in your house that let electricity flow through them?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 80
+    },
+    {
+        "questionText": "What were the results of the creation of the circuit?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 367
+    },
+
+    {
+        "questionText": "How do you think streetlights know when to turn on and off?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 270
+    },
+    {
+        "questionText": "Why do we need wires to carry electricity from one place to another?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 162
+    },
+    {
+        "questionText": "What do you think would happen if all the materials that conduct electricity disappeared?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 462
+    }
+]

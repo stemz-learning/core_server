@@ -1,0 +1,205 @@
+[
+    {
+    "questionText": "How does psychology help us understand human behavior?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 34
+    },
+    {
+    "questionText": "How do psychologists study how the brain affects our thoughts and actions?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 51
+    },
+    {
+    "questionText": "What makes us choose one choice over the other?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 186
+    },
+    {
+    "questionText": "How will behavioral psychology influence how your opponent acts?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 230
+    },
+    {
+    "questionText": "Why do some people take more risks than others?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 313
+    },
+    {
+    "questionText": "How can understanding psychology help people improve their lives?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 574
+    },
+    {
+    "questionText": "If you could ask a psychologist anything about the human mind, what would it be and why?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 470
+    },
+    {
+    "questionText": "How do the different parts of the brain work together to control thoughts, movements, and emotions?",
+    "course_id": "psychology",
+    "lesson_id": "2",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 44
+    },
+    {
+    "questionText": "How does the nervous system help us react quickly to the world around us?",
+    "course_id": "psychology",
+    "lesson_id": "2",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 74
+    },
+    {
+    "questionText": "How do scientists study how the brain works, and what are some challenges they face?",
+    "course_id": "psychology",
+    "lesson_id": "2",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 87
+    },
+    {
+        "questionText": "On which of the 4 rounds did you do the best? Which part of the brain did you use? How did we use each of the three parts of the brain in this experiment?",
+        "course_id": "psychology",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 193
+    },
+    {
+    "questionText": "If you could design a brain-related experiment, what would you want to test or learn about?",
+    "course_id": "psychology",
+    "lesson_id": "2",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 201
+    },
+    {
+    "questionText": "Why do we sometimes forget things, and how does our brain decide what to keep and what to let go?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 26
+    },
+    {
+    "questionText": "Why do some memories fade over time, while others stay clear for years?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 106
+    },
+    {
+    "questionText": "How do stress and emotions impact our ability to remember things?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 69
+    },
+    {
+    "questionText": "What are some strategies used by people with exceptional memory, and can we train ourselves to do the same?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 233
+    },
+    {
+    "questionText": "How do scientists study memory, and what have they learned about how the brain stores information?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 380
+    },
+    {
+    "questionText": "How does our unconscious mind influence the decisions we make, even when we don’t realize it?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 60
+    },
+    {
+    "questionText": "How do optical illusions and mental tricks reveal how our brains process information?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 137
+    },
+    {
+        "questionText": "How has one memory affected your personality or choices today?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 94
+    },
+    {
+    "questionText": "Freud believed that our early experiences shape who we become—do you agree? Why or why not?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 45
+    },
+    {
+    "questionText": "Why do you think people sometimes believe things that aren’t true, even when shown evidence?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 0
+    },
+    {
+    "questionText": "How do defense mechanisms, like denial or repression, help protect the mind?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 0
+    },
+    {
+    "questionText": "Have you ever experienced déjà vu? What do you think causes that feeling?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 0
+    },
+    {
+    "questionText": "How do memories change over time, and why do some details fade while others stay strong?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 0
+    },
+    {
+        "questionText": "What made us fall for these tricks?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 145
+    },
+    {
+    "questionText": "If our brains can play tricks on us, how do we know what is real and what isn’t?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 0
+    },
+    {
+    "questionText": "How does the placebo effect show the power of the mind over the body?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 200
+    },
+    {
+    "questionText": "If you were a psychologist, what would you want to study about the way our minds work?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 0
+    }
+]

@@ -8,10 +8,10 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || '12345678'; // Use environm
 
 // Signup Route
 router.post('/signup', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, role, grade } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10); // Hash password
-        const user = new User({ name, email, password: hashedPassword });
+        const user = new User({ name, email, password: hashedPassword, role, grade });
         await user.save();
         res.status(201).json({ message: "User created successfully!" });
     } catch (err) {

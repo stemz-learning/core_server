@@ -1,0 +1,177 @@
+[
+    {
+      "questionText": "What are the three main states of matter, and can you give an example of each? How does matter change from one state to another, and what happens during that process?",
+      "course_id": "chemistry",
+      "lesson_id": "1",
+      "gradeLevels": ["5", "6"],
+      "timeInVideo": 81
+    },
+    {
+        "questionText": "How do protons, neutrons, and electrons determine the properties of an atom?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 173
+      },
+      {
+        "questionText": "What are electrons, neutrons, and protons made of?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 225
+      },
+      {
+        "questionText": "How does the periodic table help scientists understand different types of matter?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 261
+      },
+      {
+        "questionText": "How do chemical reactions change matter, and what are some examples we see in daily life?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 976
+      },
+      {
+        "questionText": "What do you think happens at the atomic level when you cook food or clean with soap?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 1047
+      },
+    {
+        "questionText": "How do different types of chemical bonds (covalent, ionic, and hydrogen) affect the properties of molecules?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 499
+    },
+    {
+        "questionText": "What happens to molecular bonds when a substance undergoes a chemical reaction?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 368
+    },
+    {
+        "questionText": "How do intermolecular forces affect things like water tension and viscosity?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 683
+    },
+    {
+        "questionText": "How do engineers and scientists design stronger materials by manipulating molecular structures?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 1217
+    },
+    {
+        "questionText": "What happens when bonds between molecules break and reform, like in a chemical explosion?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 146
+    },
+    {
+        "questionText": "Why do some gases dissolve in water, while others escape into the air?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 1035
+    },
+    {
+        "questionText": "What happens at the molecular level during a chemical reaction?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 66
+    },
+    {
+        "questionText": "What is the difference between reactants, reagents, and products in a reaction? Can you give an example?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 682
+    },
+    {
+        "questionText": "What happens when we burn fuel, and why is it considered a chemical reaction?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 120
+    },
+    {
+        "questionText": "What do all of the chemical reactions have in common?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 407
+    },
+    {
+        "questionText": "What is the difference between an exothermic and an endothermic reaction? Based on what you observed in the experiment with vinegar and baking soda inflating the balloon, which type of reaction do you think it was, and why?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 1179
+    },
+    {
+        "questionText": "Why do some reactions create gases, and how can we measure them?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 757
+    },
+    {
+        "questionText": "If you could invent a new reaction to solve a real-world problem, what would it be and how would it work?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 1365
+    },
+      {
+        "questionText": "How do chemical bonds form “invisible links” that hold molecules together?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 61
+      },
+      {
+        "questionText": "Why do some chemical reactions produce effects we can’t see?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 175
+      },
+      {
+        "questionText": "What happens when we break or create chemical bonds, and how does it change a substance?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 377
+      },
+      {
+        "questionText": "What role do chemical indicators play in detecting invisible substances?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 270
+      },
+      {
+        "questionText": "How do chemicals in food, medicine, or the environment impact our health?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 434
+      },
+      {
+        "questionText": "If you were a chemist, what invisible forces or chemical interactions would you want to study?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 485
+      }
+]

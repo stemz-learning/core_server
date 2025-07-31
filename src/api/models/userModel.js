@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String, 
         enum: ["student", "teacher"],
+        default: "student",
         required: true
     }, 
     grade: {
@@ -15,6 +16,7 @@ const userSchema = new mongoose.Schema({
         required: function () {
             return this.role == 'student';
         },
+        default: "K"
     },
 });
 

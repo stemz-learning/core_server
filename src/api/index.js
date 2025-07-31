@@ -1,5 +1,6 @@
 const express = require('express');
-const router = express.Router();
+const mongoose = require('mongoose');
+const connectDB = require('./mongodb');
 
 const userRoutes = require('./routes/userRoutes');
 const classroomRoutes = require('./routes/classroomRoutes');
@@ -10,32 +11,36 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const studentResponseRoutes = require('./routes/studentResponseRoutes');
 const gradeRoutes = require('./routes/gradeRoutes');
+const bpqQuestionRoutes = require('./routes/bpqQuestionRoutes');
+const quizQuestionRoutes = require('./routes/quizQuestionRoutes');
+const teachers = require('./routes/teacherRoutes');
+const app = express();
 
-router.get('/', (req, res) => {
-  res.json({ message: 'API - 👋🌎🌍🌏' });
-});
+app.use(express.json());
 
-// Register user and classroom routes
-router.use('/users', userRoutes);
-router.use('/classrooms', classroomRoutes);
-router.use('/worksheets', worksheetRoutes);
-router.use('/auth', auth);
-router.use('/points', userPointRoutes);
-router.use('/course', courseRoutes);
-router.use('/grade', gradeRoutes);
-// router.use('/notifications', notificationRoutes);
-// router.use('/course', courseRoutes)
-// router.use('/api/responses', studentResponseRoutes);
+connectDB();
+
+app.use('/users', userRoutes);
+app.use('/classrooms', classroomRoutes);
+app.use('/worksheets', worksheetRoutes);
+app.use('/auth', auth);
+app.use('/points', userPointRoutes);
+app.use('/course', courseRoutes);
+app.use('/grade', gradeRoutes);
+app.use('/bpqquestions', bpqQuestionRoutes);
+app.use('/quizquestions', quizQuestionRoutes);
+app.use('/studentresponses', studentResponseRoutes);
+app.use('/teachers', teachers);
 
 // 404 Not Found middleware
-router.use((req, res) => {
+app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
 // Error handling middleware
-router.use((err, req, res, next) => {
+app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Internal server error' });
 });
 
-module.exports = router;
+module.exports = app;

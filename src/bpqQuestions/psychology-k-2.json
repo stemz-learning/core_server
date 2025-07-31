@@ -1,0 +1,198 @@
+[
+    {
+    "questionText": "What do you think makes people feel happy or sad?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 574
+    },
+    {
+    "questionText": "How do you think our brains help us learn new things?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 49
+    },
+    {
+    "questionText": "What makes us choose one choice over the other?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 186
+    },
+    {
+    "questionText": "How will behavioral psychology influence how your opponent acts?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 230
+    },
+    {
+    "questionText": "Can you think of a time when you made a decision? What helped you choose?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 313
+    },
+    {
+    "questionText": "If you could ask a scientist one question about how our minds work, what would it be?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 470
+    },
+    {
+        "questionText": "How do you think your brain helps you learn new things?",
+        "course_id": "psychology",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 87
+    },
+    {
+        "questionText": "On which of the 4 rounds did you do the best? Which part of the brain did you use? How did we use each of the three parts of the brain in this experiment?",
+        "course_id": "psychology",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 193
+    },
+    {
+        "questionText": "What do you think happens in your brain when you feel happy, sad, or excited?",
+        "course_id": "psychology",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 44
+    },
+    {
+        "questionText": "How do you know when you are hungry or tired? How do you think your brain helps with that?",
+        "course_id": "psychology",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 74
+    },
+    {
+        "questionText": "If you could see inside your brain, what do you think it would look like?",
+        "course_id": "psychology",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 201
+    },
+    {
+        "questionText": "How do you think your brain remembers things, like your favorite song or a fun day at the park?",
+        "course_id": "psychology",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 26
+    },
+    {
+        "questionText": "What helps you remember things better—seeing them, hearing them, or doing them?",
+        "course_id": "psychology",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 233
+    },
+    {
+        "questionText": "Why do you think we sometimes forget things?",
+        "course_id": "psychology",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 69
+    },
+    {
+        "questionText": "Can you think of a time when you forgot something important? What helped you remember it later?",
+        "course_id": "psychology",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 106
+    },
+    {
+        "questionText": "Why do you think some people are really good at remembering details, while others forget quickly?",
+        "course_id": "psychology",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 380
+    },
+    {
+        "questionText": "Have you ever had a dream that felt real? Why do you think our minds create dreams?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 0
+    },
+    {
+        "questionText": "Why do you think we sometimes remember things differently than they actually happened?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 0
+    },
+    {
+        "questionText": "Have you ever thought you saw or heard something that wasn’t really there? What do you think happened?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 60
+    },
+    {
+        "questionText": "Why do you think people sometimes believe things that aren’t true?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 0
+    },
+    {
+        "questionText": "Can you think of a time when your brain tricked you into thinking something was different than it really was?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 0
+    },
+    {
+        "questionText": "How do you know when someone is telling the truth or just playing a trick on you?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 137
+    },
+    {
+        "questionText": "What made us fall for these tricks?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 145
+    },
+    {
+        "questionText": "How has one memory affected your personality or choices today?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 94
+    },
+    {
+        "questionText": "Why do you think we sometimes forget things even when we try to remember them?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 0
+    },
+    {
+        "questionText": "How do our feelings change the way we remember things?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 0
+    },
+    {
+        "questionText": "If you could read minds, what would you want to know about how people think?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 0
+    },
+    {
+        "questionText": "What would happen if everyone could see the world differently based on their own thoughts?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 200
+    }
+]

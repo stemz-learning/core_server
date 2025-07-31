@@ -1,0 +1,184 @@
+[
+    {
+      "questionText": "What is matter, and how do we know that everything around us is made of it?",
+      "course_id": "chemistry",
+      "lesson_id": "1",
+      "gradeLevels": ["3", "4"],
+      "timeInVideo": 81
+    },
+    {
+        "questionText": "How do we measure different types of matter, and why is it important to use the right tools?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 261
+      },
+      {
+        "questionText": "What are electrons, neutrons, and protons made of?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 225
+      },
+      {
+        "questionText": "How do solids, liquids, and gases behave differently, and what makes them change?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 1047
+      },
+      {
+        "questionText": "How do everyday chemical reactions, like baking a cake or rust forming on metal, show us how matter changes?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 976
+      },
+      {
+        "questionText": "What happens when we heat or cool different types of matter, and why do some things change more than others?",
+        "course_id": "chemistry",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 307
+      },
+    {
+        "questionText": "What are molecules made of, and how do they stay together?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 20
+    },
+    {
+        "questionText": "How do chemical bonds affect whether something is bendy or breakable?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 499
+    },
+    {
+        "questionText": "How do molecules in a solid behave differently from molecules in a gas?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 1035
+    },
+    {
+        "questionText": "Why do some things melt when heated, but others burn?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 683
+    },
+    {
+        "questionText": "What do you think would happen if we could break apart and rebuild molecules in everyday objects?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 368
+    },
+    {
+        "questionText": "How do the molecules in soap help wash away dirt?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 1217
+    },
+    {
+        "questionText": "How do scientists use molecules to create new medicines and materials?",
+        "course_id": "chemistry",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 146
+    },
+    {
+        "questionText": "What is a chemical reaction, and how is it different from a physical change?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 66
+    },
+    {
+        "questionText": "What do we call the substances that go into a reaction, and what do we call the substances that come out? Can you give an example?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 682
+    },
+    {
+        "questionText": "What do all of the chemical reactions have in common?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 407
+    },
+    {
+        "questionText": "What are some signs that a chemical reaction is happening?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 120
+    },
+    {
+        "questionText": "What happens when you mix baking soda and vinegar? What does the reaction produce?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 757
+    },
+    {
+        "questionText": "Why do you think some reactions happen instantly, while others take days or weeks?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 1179
+    },
+    {
+        "questionText": "If you were a scientist, what kind of experiment would you do to explore chemical reactions?",
+        "course_id": "chemistry",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 1365
+    },
+      {
+        "questionText": "How do invisible forces, like static electricity or chemical bonds, help hold things together?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 175
+      },
+      {
+        "questionText": "Why do some substances react with each other even when we can’t see it happening?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 61
+      },
+      {
+        "questionText": "What are some examples of oxidation happening in nature?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 377
+      },
+      {
+        "questionText": "What are some examples of chemicals we use in daily life that need to be handled safely?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 434
+      },
+      {
+        "questionText": "Why do some chemicals have strong smells, even when we can’t see them?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 270
+      },
+      {
+        "questionText": "If you could invent a new safety tool for working with chemicals, what would it do?",
+        "course_id": "chemistry",
+        "lesson_id": "4",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 485
+      }
+]
