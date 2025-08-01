@@ -195,68 +195,73 @@ const getStudentAnalyticsScores = async (req, res) => {
 
 // Get scores for a specific student across all courses
 const getStudentOverallScores = async (req, res) => {
-    try {
+  try {
       const { studentId } = req.params; // Student ID from params
-      
-      // Find all responses for the student across all courses
-      const studentResponse = await StudentResponse.findOne({ 
-        studentId 
-      }).populate('studentId', 'name email');
-      
+
+      // Find the student's response data across all courses
+      const studentResponse = await StudentResponse.findOne({ studentId }).populate('studentId', 'name email');
+
       if (!studentResponse) {
-        return res.status(404).json({ 
-          message: 'No response data found for this student' 
-        });
+          return res.status(404).json({
+              message: 'No response data found for this student'
+          });
       }
-      
-      const allScores = [];
-      
-      // Loop through all responses and extract BPQ scores
+
+      // Initialize the array to store all responses
+      const allResponses = [];
+
+      // Loop through all responses and collect BPQ scores
       studentResponse.responses.forEach(lessonResponse => {
-        lessonResponse.bpqResponses.forEach(bpq => {
-          if (bpq.scores) {
-            allScores.push(bpq.scores); // Collect all scores
-          }
-        });
+          lessonResponse.bpqResponses.forEach(bpq => {
+              if (bpq.scores) {
+                  allResponses.push({
+                      questionId: bpq.questionId,
+                      lessonId: lessonResponse.lessonId,
+                      scores: bpq.scores,
+                      timestamp: bpq.timestamp,
+                  });
+              }
+          });
       });
-      
+
       // Calculate the average scores across all responses for this student
       const avgScores = {
-        Creativity: 0,
-        "Critical Thinking": 0,
-        Observation: 0,
-        Curiosity: 0,
-        "Problem Solving": 0
+          Creativity: 0,
+          "Critical Thinking": 0,
+          Observation: 0,
+          Curiosity: 0,
+          "Problem Solving": 0
       };
-      
-      if (allScores.length > 0) {
-        const totals = { ...avgScores };
-        
-        allScores.forEach(scoreData => {
-          Object.keys(totals).forEach(skill => {
-            totals[skill] += scoreData[skill] || 0;
+
+      if (allResponses.length > 0) {
+          const totals = { ...avgScores };
+
+          allResponses.forEach(response => {
+              Object.keys(totals).forEach(skill => {
+                  totals[skill] += response.scores[skill] || 0;
+              });
           });
-        });
-        
-        Object.keys(avgScores).forEach(skill => {
-          avgScores[skill] = Math.round(totals[skill] / allScores.length);
-        });
+
+          Object.keys(avgScores).forEach(skill => {
+              avgScores[skill] = Math.round(totals[skill] / allResponses.length);
+          });
       }
-  
+
       return res.status(200).json({
-        success: true,
-        studentId,
-        averageScores: avgScores
+          success: true,
+          studentId,
+          averageScores: avgScores,  // This gives the overall average score
+          allResponses,               // This contains all the detailed responses
       });
-      
-    } catch (error) {
+
+  } catch (error) {
       console.error('Error fetching student overall scores:', error);
-      return res.status(500).json({ 
-        message: 'Failed to fetch student overall scores', 
-        error: error.message 
+      return res.status(500).json({
+          message: 'Failed to fetch student overall scores',
+          error: error.message
       });
-    }
-  };
+  }
+};
 
 // Get scores for a specific student in a specific course
 const getStudentCourseScores = async (req, res) => {

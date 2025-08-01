@@ -14,6 +14,7 @@ const gradeRoutes = require('./routes/gradeRoutes');
 const bpqQuestionRoutes = require('./routes/bpqQuestionRoutes');
 const quizQuestionRoutes = require('./routes/quizQuestionRoutes');
 const teachers = require('./routes/teacherRoutes');
+const portalCourseRoutes = require('./routes/portalCourseRoutes');
 const app = express();
 
 app.use(express.json());
@@ -31,6 +32,7 @@ app.use('/bpqquestions', bpqQuestionRoutes);
 app.use('/quizquestions', quizQuestionRoutes);
 app.use('/studentresponses', studentResponseRoutes);
 app.use('/teachers', teachers);
+app.use('/portalCourses', portalCourseRoutes);
 
 // 404 Not Found middleware
 app.use((req, res) => {
