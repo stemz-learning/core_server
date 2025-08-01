@@ -1,11 +1,9 @@
 const Course = require("../models/courseModel");
-const connectDB = require("../mongodb");
 
 class CourseController {
     // Get all courses
     static async getAllCourses(req, res) {
         try {
-            await connectDB();
             const courses = await Course.find();
             res.status(200).json(courses);
         } catch (error) {
@@ -16,7 +14,6 @@ class CourseController {
     // Get a course by its ID
     static async getCourse(req, res) {
         try {
-            await connectDB();
             const course = await Course.findById(req.params.id);
             if (!course) {
                 return res.status(404).json({ message: "Course not found" });
@@ -30,7 +27,6 @@ class CourseController {
     // Create a new course
     static async createCourse(req, res){
         try{
-            await connectDB();
             const newCourse = new Course(req.body);
             await newCourse.save();
             res.status(201).json(newCourse);
@@ -42,7 +38,6 @@ class CourseController {
     // Update a course by its ID
     static async updateCourse(req, res){
         try {
-            await connectDB();
             const updatedCourse = await Course.findByIdAndUpdate(
                 req.params.id,
                 req.body,
@@ -60,7 +55,6 @@ class CourseController {
     // Delete a course by its ID
     static async deleteCourse(req, res) {
         try {
-            await connectDB();
             const course = await Course.findByIdAndDelete(req.params.id);
             if (!course) {
                 return res.status(404).json({ message: "Course not found" });

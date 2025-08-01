@@ -61,6 +61,54 @@ class UserController {
     }
   }
 
+  // Update user grade level - NEW METHOD
+  static async updateUserGrade(req, res) {
+    try {
+      const { id } = req.params;
+      const { gradeLevel } = req.body;
+      
+      // Validate grade level
+      if (!gradeLevel || gradeLevel < 1 || gradeLevel > 6) {
+        return res.status(400).json({
+          success: false,
+          message: 'Grade level must be between 1 and 6'
+        });
+      }
+      
+      // Update user
+      const updatedUser = await User.findByIdAndUpdate(
+        id,
+        { gradeLevel: parseInt(gradeLevel) },
+        { new: true, runValidators: true }
+      );
+      
+      if (!updatedUser) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: 'Grade level updated successfully',
+        user: {
+          id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          gradeLevel: updatedUser.gradeLevel
+        }
+      });
+      
+    } catch (error) {
+      console.error('Error updating user grade:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error'
+      });
+    }
+  }
+
   // Delete a user by ID
   static async deleteUser(req, res) {
     try {
