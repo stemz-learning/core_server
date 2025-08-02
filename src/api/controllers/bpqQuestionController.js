@@ -2,6 +2,7 @@ const BpqQuestion = require('../models/bpqQuestionSchema');
 
 async function getBpqQuestions(req, res) {
   try {
+    console.log("Query", req.query);
     const { course_id, grade, lesson_id } = req.query;
 
     if (!course_id || !grade || !lesson_id) {

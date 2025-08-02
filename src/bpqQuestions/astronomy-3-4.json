@@ -1,0 +1,226 @@
+[
+    {
+    "questionText": "What are some big mysteries about space that scientists are still trying to figure out?",
+    "course_id": "astronomy",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 44
+},
+{
+    "questionText": "How do the Sun, Moon, and Earth work together to create day, night, and the seasons?",
+    "course_id": "astronomy",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 318
+},
+{
+    "questionText": "What would happen if the Earth were closer or farther from the Sun?",
+    "course_id": "astronomy",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 247
+},
+{
+    "questionText": "What does studying other planets teach us about our own place in the Solar System?",
+    "course_id": "astronomy",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 785
+},
+{
+    "questionText": "How does the Sun’s gravity keep planets in orbit, and how do we see this force on Earth? ",
+    "course_id": "astronomy",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 180
+},
+{
+    "questionText": "What are asteroids and comets, and how do they affect our Solar System?",
+    "course_id": "astronomy",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 81
+},
+{
+    "questionText": "How do telescopes help scientists explore space, and what have they helped us discover?",
+    "course_id": "astronomy",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 868
+},
+{
+    "questionText": "How do black holes form?",
+    "course_id": "astronomy",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 280
+},
+{
+    "questionText": "What do you think would happen to a human approaching a place hole? What do you think would happen if Earth was pulled into a black hole?",
+    "course_id": "astronomy",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 394
+},
+{
+    "questionText": "How does gravity shape galaxies and keep them together?",
+    "course_id": "astronomy",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 89
+},
+{
+    "questionText": "What are the different types of galaxies, and which one is the Milky Way?",
+    "course_id": "astronomy",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 226
+},
+{
+    "questionText": "If you could explore any part of space, where would you go and why?",
+    "course_id": "astronomy",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 932
+},
+{
+    "questionText": "How do stars, planets, and black holes interact in space?",
+    "course_id": "astronomy",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 614
+},
+{
+    "questionText": "What roles do gravity play in galaxies?",
+    "course_id": "astronomy",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 845
+},
+{
+    "questionText": "What happens when two galaxies collide?",
+    "course_id": "astronomy",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 490
+},
+{
+    "questionText": "Why is exploring space important, and what are some things we have learned from it?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+},
+{
+    "questionText": "Have you heard of Newton's Laws? If so what are they?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 77
+},
+{
+    "questionText": "What are some challenges of living and working in space?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 693
+},
+{
+    "questionText": "How do telescopes, satellites, and space probes help scientists study the universe?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 282
+},
+{
+    "questionText": "What would happen if we didn’t have satellites?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+},
+{
+    "questionText": "What are some dangers of space travel, and how do astronauts stay safe?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 171
+},
+{
+    "questionText": "What are some benefits of humans exploring space? What are some consequences?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 577
+},
+{
+    "questionText": "What is the International Space Station, and why is it important?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+},
+{
+    "questionText": "How has space exploration changed over time, and what do you think the future of space travel will look like?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 19
+},
+{
+    "questionText": "What are some ways studying space can help us solve problems on Earth?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 307
+},
+{
+    "questionText": "What kinds of jobs do people have in space exploration besides being astronauts?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+},
+{
+    "questionText": "If humans want to visit another planet, what challenges would they face?",
+    "course_id": "astronomy",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+},
+{
+    "questionText": "What are some things we still don’t understand about the universe?",
+    "course_id": "astronomy",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 25
+},
+{
+    "questionText": "How do scientists know dark matter and dark energy exist if they can’t see them?",
+    "course_id": "astronomy",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 138
+},
+{
+    "questionText": "Why do scientists think the universe is expanding? What do you think might happen in the future?",
+    "course_id": "astronomy",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 67
+},
+{
+    "questionText": "What do you think the biggest discovery in space will be in the next 50 years?",
+    "course_id": "astronomy",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 240
+},
+{
+    "questionText": "Why is it important to study astronomy? What do we gain from exploring space?",
+    "course_id": "astronomy",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 199
+}
+]

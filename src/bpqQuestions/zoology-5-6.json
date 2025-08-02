@@ -1,0 +1,219 @@
+[
+    {
+    "questionText": "How do scientists decide which characteristics are most important when classifying animals?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 50
+    },
+    {
+    "questionText": "Why do some animals that look alike belong to different taxonomic groups?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 68
+    },
+    {
+    "questionText": "What role does DNA play in classifying and understanding animal relationships?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 96
+    },
+    {
+    "questionText": "How does taxonomy help us understand the history and evolution of life on Earth?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 121
+    },
+    {
+    "questionText": "How does taxonomy help scientists understand our world? How can we use taxonomy to better understand animals?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 433
+    },
+    {
+    "questionText": "What do you think would happen if scientists stopped using taxonomy? How would it affect our understanding of animals?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 486
+    },
+    {
+    "questionText": "How does Darwin’s theory explain why some species survive while others go extinct?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 93
+    },
+    {
+    "questionText": "What role does natural selection play in shaping the traits of animals over time?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 283
+    },
+    {
+        "questionText": "The more species diversifies, the less likely it is to go extinct. Why is that?",
+        "course_id": "zoology",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 571
+    },
+    {
+        "questionText": "What concept did this game demonstrate?",
+        "course_id": "zoology",
+        "lesson_id": "2",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 451
+        },
+    {
+    "questionText": "How do mutations contribute to evolution, and are all mutations helpful?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 128
+    },
+    {
+    "questionText": "How do humans impact biodiversity, and what can we do to protect it?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 759
+    },
+    {
+    "questionText": "How do biotic (living) and abiotic (non-living) factors influence where animals are found?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 44
+    },
+    {
+    "questionText": "What role does population density play in an ecosystem’s health and stability?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 76
+    },
+    {
+    "questionText": "How do human activities like deforestation, pollution, and climate change impact species distribution?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 217
+    },
+    {
+        "questionText": "Why are biodiversity and conservation important? Why do distribution patterns vary per region?",
+        "course_id": "zoology",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 240
+    },
+    {
+        "questionText": "Which is which?",
+        "course_id": "zoology",
+        "lesson_id": "3",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 130
+    },
+    {
+    "questionText": "Why do some species thrive in urban environments while others struggle to survive?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 25
+    },
+    {
+    "questionText": "If you were designing a wildlife conservation plan, what steps would you take to protect species and their habitats?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 349
+    },
+    {
+    "questionText": "How does studying animal behavior help us learn about human behavior?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 38
+    },
+    {
+    "questionText": "What role does communication play in animal survival and reproduction?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 455
+    },
+    {
+    "questionText": "How do predator and prey behaviors evolve to help each survive?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 326
+    },
+    {
+    "questionText": "Why do some animals develop complex social structures while others remain solitary?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 235
+    },
+    {
+    "questionText": "How do animals use intelligence and problem-solving to find food or avoid danger?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 826
+    },
+    {
+        "questionText": "How do behaviors of an animal link to its ability to survive? How does this affect other animals?",
+        "course_id": "zoology",
+        "lesson_id": "4",
+        "gradeLevels": ["5", "6"],
+        "timeInVideo": 1118
+    },
+    {
+    "questionText": "How does understanding animal anatomy help scientists learn about evolution and adaptation?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 72
+    },
+    {
+    "questionText": "How do an animal’s internal organs, like the heart and lungs, work together to keep it alive?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 188
+    },
+    {
+    "questionText": "Why do different species have such different life cycles, and how does metamorphosis benefit some animals?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 256
+    },
+    {
+    "questionText": "Why do some animals have unique abilities, like echolocation or venom, and how do these functions help them?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 308
+    },
+    {
+    "questionText": "What is the purpose of studying anatomy and the bodily functions of animals?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 353
+    },
+    {
+    "questionText": "If you could design an animal with the most powerful body features from different species, what would it look like and why?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["5", "6"],
+    "timeInVideo": 440
+    }
+]

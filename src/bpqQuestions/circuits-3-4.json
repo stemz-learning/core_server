@@ -1,0 +1,135 @@
+[
+    {
+        "questionText": "What are the different parts of a circuit, and how do they work together?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 171
+      },
+      {
+        "questionText": "What is a switch? Why do some circuits need them, and how do they control electricity?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 466
+      },
+      {
+        "questionText": "How do batteries help circuits work, and what happens when a battery dies?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 225
+      },
+      {
+        "questionText": "What do you think would happen if a wire in a circuit was broken?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 116
+      },
+      {
+        "questionText": "How do inductors and resistors work, and where might we see them in real life?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 349
+      },
+      {
+        "questionText": "Why do we use circuit boards in computers and phones?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 297 
+      },
+      {
+        "questionText": "If you could design your own circuit for a machine, what would it do and how would it work?",
+        "course_id": "circuits",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 848
+      },
+    {
+        "questionText": "Why are circuits important in our everyday lives?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 59
+    },
+    {
+        "questionText": "What do circuits do inside electronic devices like phones or computers?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 394
+    },
+    {
+        "questionText": "What are conductors and insulators, and why do we need both in a circuit? Can you think of any examples of either?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 101
+    },
+    {
+        "questionText": "What do you think are characteristics of good conductors?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 199
+    },
+    {
+        "questionText": "Why do you think some materials allow electricity to flow while others do not?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 250
+    },
+    {
+        "questionText": "What happens if part of a circuit is broken?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 587
+    },
+    {
+        "questionText": "If you were designing a smart home, how would you use circuits to make it more efficient?",
+        "course_id": "circuits",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 734
+    },
+    {
+        "questionText": "Why do we use both conductors and insulators in circuits?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 80
+    },
+    {
+        "questionText": "How do diodes help control the flow of electricity in a circuit?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 162
+    },
+    {
+        "questionText": "What were the results of the creation of the circuit?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 367
+    },
+    {
+        "questionText": "Why do some materials conduct electricity better than others?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 462
+    },
+    {
+        "questionText": "How do capacitors help cameras, flashlights, and other devices work more efficiently?",
+        "course_id": "circuits",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 270
+    }
+]

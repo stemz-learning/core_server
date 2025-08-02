@@ -1,0 +1,198 @@
+[
+    {
+    "questionText": "Psychology helps us understand how people think, feel, and act. How do you think studying psychology can help us in everyday life? Can you think of a situation where understanding someone's thoughts or feelings might be useful?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 574
+    },
+    {
+    "questionText": "How do our thoughts and feelings affect the choices we make?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 49
+    },
+    {
+    "questionText": "What makes us choose one choice over the other?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 186
+    },
+    {
+    "questionText": "How will behavioral psychology influence how your opponent acts?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 230
+    },
+    {
+    "questionText": "How do you think rewards and punishments influence behavior?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 313
+    },
+    {
+    "questionText": "If you could create an experiment to understand why people do what they do, what would you study?",
+    "course_id": "psychology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 470
+    },
+    {
+    "questionText": "How does the brain help us make decisions, and why do some decisions take longer than others?",
+    "course_id": "psychology",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 44
+    },
+    {
+    "questionText": "How do different parts of the brain control different actions, like moving, thinking, or feeling?",
+    "course_id": "psychology",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 74
+    },
+    {
+    "questionText": "What do you think happens in your brain when you dream?",
+    "course_id": "psychology",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 87
+    },
+    {
+        "questionText": "On which of the 4 rounds did you do the best? Which part of the brain did you use?How did we use each of the three parts of the brain in this experiment?",
+        "course_id": "psychology",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 193
+    },
+    {
+    "questionText": "How do emotions like fear or excitement affect the way our brain makes decisions?",
+    "course_id": "psychology",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 201
+    },
+    {
+    "questionText": "Why do you think we remember some things easily, like our birthday, but forget what we ate for lunch last week?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 26
+    },
+    {
+    "questionText": "How do emotions affect what we remember?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 69
+    },
+    {
+    "questionText": "What techniques have helped you remember something difficult, like a spelling word or math fact?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 233
+    },
+    {
+    "questionText": "How does sleep help our brains organize and store memories?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 106
+    },
+    {
+    "questionText": "What do you think would happen if we couldn’t form new memories? How would that affect our daily lives?",
+    "course_id": "psychology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 380
+    },
+    {
+    "questionText": "Why do you think our brains sometimes make mistakes in remembering things?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+    },
+    {
+    "questionText": "How do emotions affect the way we see and understand the world around us?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+    },
+    {
+    "questionText": "How can psychologists use illusions and tricks to learn more about how the brain works?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+    },
+    {
+    "questionText": "What do you think Freud meant when he said that our unconscious mind affects our decisions?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 60
+    },
+    {
+    "questionText": "Have you ever changed your mind about something without realizing why? What do you think happened?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+    },
+    {
+    "questionText": "Why do you think some people are more easily tricked by illusions than others?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 137
+    },
+    {
+        "questionText": "What made us fall for these tricks?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 145
+    },
+    {
+    "questionText": "How do our past experiences shape the way we react to new situations?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 45
+    },
+    {
+    "questionText": "Why do we sometimes remember things from when we were little, but forget things from last week?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+    },
+    {
+    "questionText": "What do you think happens when two people remember the same event in completely different ways?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 200
+    },
+    {
+        "questionText": "How has one memory affected your personality or choices today?",
+        "course_id": "psychology",
+        "lesson_id": "4",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 94
+    },
+    {
+    "questionText": "If you could do an experiment on how the brain plays tricks on us, what would you test?",
+    "course_id": "psychology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 0
+    }
+]

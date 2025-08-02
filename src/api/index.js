@@ -1,5 +1,6 @@
 const express = require('express');
-const router = express.Router();
+const mongoose = require('mongoose');
+const connectDB = require('./mongodb');
 
 const userRoutes = require('./routes/userRoutes');
 const classroomRoutes = require('./routes/classroomRoutes');
@@ -11,6 +12,10 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const studentResponseRoutes = require('./routes/studentResponseRoutes');
 const gradeRoutes = require('./routes/gradeRoutes');
+const bpqQuestionRoutes = require('./routes/bpqQuestionRoutes');
+const quizQuestionRoutes = require('./routes/quizQuestionRoutes');
+const teachers = require('./routes/teacherRoutes');
+const portalCourseRoutes = require('./routes/portalCourseRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
 
 router.get('/', (req, res) => {
@@ -29,7 +34,13 @@ router.use('/courses', courseRoutes); // Self-paced courses, worksheets, and qui
 router.use('/worksheets', worksheetRoutes);
 router.use('/auth', auth);
 router.use('/points', userPointRoutes);
-router.use('/grades', gradeRoutes);
+router.use('/course', courseRoutes);
+router.use('/grade', gradeRoutes);
+router.use('/bpqquestions', bpqQuestionRoutes);
+router.use('/quizquestions', quizQuestionRoutes);
+router.use('/studentresponses', studentResponseRoutes);
+router.use('/teachers', teachers);
+router.use('/portalCourses', portalCourseRoutes);
 
 // Updated notification and assignment systems
 router.use('/notifications', notificationRoutes);

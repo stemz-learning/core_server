@@ -5,3 +5,5 @@ const { getQuizQuestions } = require('../controllers/quizQuestionController');
 router.get('/', getQuizQuestions);
 
 module.exports = router;
+
+

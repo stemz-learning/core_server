@@ -1,0 +1,219 @@
+[    
+    {
+    "questionText": "What do you think makes animals different from each other?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 50
+    },
+    {
+        "questionText": "How does taxonomy help scientists understand our world? How can we use taxonomy to better understand animals?",
+        "course_id": "zoology",
+        "lesson_id": "1",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 433
+    },
+    {
+    "questionText": "If you could create your own animal group, what animals would be in it and why?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 121
+    },
+    {
+    "questionText": "What do you think is the biggest difference between wild animals and pets?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 96
+    },
+    {
+    "questionText": "How do you think scientists organize animals when they find a new species?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 68
+    },
+    {
+    "questionText": "What do you think zoologists do when studying animals in nature?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 486
+    },
+    {
+    "questionText": "Why do you think some animals look similar but live in different places?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 93
+    },
+    {
+        "questionText": "The more species diversifies, the less likely it is to go extinct. Why is that?",
+        "course_id": "zoology",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 571
+    },
+    {
+    "questionText": "Why do you think some animals have spots, stripes, or bright colors?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 128
+    },
+    {
+        "questionText": "What concept did this game demonstrate?",
+        "course_id": "zoology",
+        "lesson_id": "2",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 451
+        },
+    {
+    "questionText": "If you could create an animal that could live anywhere, what special traits would it have?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 759
+    },
+    {
+    "questionText": "How do you think nature decides which animals will survive and which won’t?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 283
+    },
+    {
+    "questionText": "Why do you think some animals live in one place but not in another?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 25
+    },
+    {
+        "questionText": "Which is which?",
+        "course_id": "zoology",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2 "],
+        "timeInVideo": 130
+    },
+    {
+        "questionText": "Why are biodiversity and conservation important? Why do distribution patterns vary per region?",
+        "course_id": "zoology",
+        "lesson_id": "3",
+        "gradeLevels": ["K", "1", "2"],
+        "timeInVideo": 240
+    },
+    {
+    "questionText": "Can you think of a place where lots of animals live close together? Why do you think they live there?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 76
+    },
+    {
+    "questionText": "What do you think happens when there are too many animals in one area?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 217
+    },
+    {
+    "questionText": "Why do some animals live in cold places and others in warm places?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 60
+    },
+    {
+    "questionText": "If you could pick a place for a new animal to live, what would it need to survive?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 349
+    },
+    {
+    "questionText": "Can you think of a time when you saw an animal doing something interesting? Why do you think it acted that way?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 326
+    },
+    {
+    "questionText": "Why do some animals live in groups while others like to be alone?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 235
+    },
+    {
+    "questionText": "How do animals show they are happy, scared, or angry?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 38
+    },
+    {
+    "questionText": "How do behaviors of an animal link to its ability to survive? How does this affect other animals?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 1118
+    },
+    {
+    "questionText": "How do baby animals learn how to survive in the wild?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 826
+    },
+    {
+    "questionText": "What do you think would happen if animals couldn’t communicate with each other?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 477
+    },
+    {
+    "questionText": "Why do some animals change shape or grow new body parts as they get older?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 256
+    },
+    {
+    "questionText": "How do animals use their different body parts to find food and stay safe?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 71
+    },
+    {
+    "questionText": "Why do some animals have fur, feathers, or scales? How do these help them?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 188
+    },
+    {
+    "questionText": "How do animals use their senses, like sight or hearing, to help them survive?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 308
+    },
+    {
+    "questionText": "What is the purpose of studying anatomy and the bodily functions of animals?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 353
+    },
+    {
+    "questionText": "If you could design a new animal with special abilities, what would it look like?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["K", "1", "2"],
+    "timeInVideo": 440
+    }
+]

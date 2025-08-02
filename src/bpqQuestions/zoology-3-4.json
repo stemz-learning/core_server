@@ -1,0 +1,219 @@
+[
+    {
+    "questionText": "How does taxonomy help scientists organize all the different animals on Earth?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 68
+    },
+    {
+    "questionText": "Why do you think scientists use Latin names instead of regular names for animals?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 121
+    },
+    {
+        "questionText": "How does taxonomy help scientists understand our world? How can we use taxonomy to better understand animals?",
+        "course_id": "zoology",
+        "lesson_id": "1",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 433
+    },
+    {
+    "questionText": "What are some traits that scientists use to classify animals into different groups?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 50
+    },
+    {
+    "questionText": "What happens if a new animal is discovered that doesn’t fit into any known category?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 96
+    },
+    {
+    "questionText": "Why do you think it is important for scientists all over the world to use the same classification system?",
+    "course_id": "zoology",
+    "lesson_id": "1",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 486
+    },
+    {
+    "questionText": "How does Darwin’s theory help us understand why animals look and act the way they do?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 93
+    },
+    {
+    "questionText": "Why do you think animals with special adaptations, like camouflage or long necks, have an advantage?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 128
+    },
+    {
+    "questionText": "How do different species compete for food, and how does that affect their survival?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 283
+    },
+    {
+    "questionText": "What concept did this game demonstrate?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 451
+    },
+    {
+        "questionText": "The more species diversifies, the less likely it is to go extinct. Why is that?",
+        "course_id": "zoology",
+        "lesson_id": "2",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 571
+    },
+    {
+    "questionText": "What do you think is more important for survival: strength, intelligence, or speed? Why?",
+    "course_id": "zoology",
+    "lesson_id": "2",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 759
+    },
+    {
+    "questionText": "What does population density mean and how does it affect the way animals live in different environments?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 76
+    },
+    {
+        "questionText": "Which is which?",
+        "course_id": "zoology",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 130
+    },
+    {
+    "questionText": "Why do some places have more animals than others? What factors influence this?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 25
+    },
+    {
+    "questionText": "How do changes in the environment, like deforestation or pollution, affect animal distribution?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 60
+    },
+    {
+        "questionText": "Why are biodiversity and conservation important? Why do distribution patterns vary per region?",
+        "course_id": "zoology",
+        "lesson_id": "3",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 240
+    },
+    {
+    "questionText": "Why do some animals live in groups while others live alone?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 217
+    },
+    {
+    "questionText": "If you were a zoologist, how would you study where animals live and why?",
+    "course_id": "zoology",
+    "lesson_id": "3",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 349
+    },
+    {
+    "questionText": "How do animals use sounds, body language, and scents to communicate with each other?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 477
+    },
+    {
+    "questionText": "Why do different animals have different behaviors, even if they live in the same place?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 38
+    },
+    {
+    "questionText": "How do animals like wolves, bees, or ants work together as a group?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 235
+    },
+    {
+    "questionText": "How do behaviors of an animal link to its ability to survive? How does this affect other animals?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 1118
+    },
+    {
+    "questionText": "How do animals teach their young important survival skills?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 826
+    },
+    {
+    "questionText": "What do you think would happen if an animal’s behavior changed because of humans or the environment?",
+    "course_id": "zoology",
+    "lesson_id": "4",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 326
+    },
+    {
+    "questionText": "What are some examples of animals, besides butterflies, that go through metamorphosis, and why do they change?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 256
+    },
+    {
+    "questionText": "How do scientists study animal anatomy to understand their behaviors and needs?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 188
+    },
+    {
+    "questionText": "Why do some animals have very strong senses, like eagles with sharp vision or dogs with powerful noses?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 308
+    },
+    {
+    "questionText": "How does an animal’s anatomy affect what it eats and how it hunts?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 72
+    },
+    {
+        "questionText": "What is the purpose of studying anatomy and the bodily functions of animals?",
+        "course_id": "zoology",
+        "lesson_id": "5",
+        "gradeLevels": ["3", "4"],
+        "timeInVideo": 353
+    },
+    {
+    "questionText": "If you could study one animal’s anatomy up close, which one would you choose and why?",
+    "course_id": "zoology",
+    "lesson_id": "5",
+    "gradeLevels": ["3", "4"],
+    "timeInVideo": 440
+    }
+]
