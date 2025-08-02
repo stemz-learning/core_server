@@ -15,34 +15,35 @@ const bpqQuestionRoutes = require('./routes/bpqQuestionRoutes');
 const quizQuestionRoutes = require('./routes/quizQuestionRoutes');
 const teachers = require('./routes/teacherRoutes');
 const portalCourseRoutes = require('./routes/portalCourseRoutes');
-const app = express();
 
-app.use(express.json());
+router.get('/', (req, res) => {
+  res.json({ message: 'API - 👋🌎🌍🌏' });
+});
 
-connectDB();
 
-app.use('/users', userRoutes);
-app.use('/classrooms', classroomRoutes);
-app.use('/worksheets', worksheetRoutes);
-app.use('/auth', auth);
-app.use('/points', userPointRoutes);
-app.use('/course', courseRoutes);
-app.use('/grade', gradeRoutes);
-app.use('/bpqquestions', bpqQuestionRoutes);
-app.use('/quizquestions', quizQuestionRoutes);
-app.use('/studentresponses', studentResponseRoutes);
-app.use('/teachers', teachers);
-app.use('/portalCourses', portalCourseRoutes);
+router.use('/users', userRoutes);
+router.use('/classrooms', classroomRoutes);
+router.use('/worksheets', worksheetRoutes);
+router.use('/auth', auth);
+router.use('/points', userPointRoutes);
+router.use('/course', courseRoutes);
+router.use('/grade', gradeRoutes);
+router.use('/bpqquestions', bpqQuestionRoutes);
+router.use('/quizquestions', quizQuestionRoutes);
+router.use('/studentresponses', studentResponseRoutes);
+router.use('/teachers', teachers);
+router.use('/portalCourses', portalCourseRoutes);
+
 
 // 404 Not Found middleware
-app.use((req, res) => {
+router.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+router.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Internal server error' });
 });
 
-module.exports = app;
+module.exports = router;
