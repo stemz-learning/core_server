@@ -2,6 +2,7 @@ const express = require('express');
 const { notFound, errorHandler } = require('./middlewares'); // Adjust the path if needed
 const cors = require('cors');
 const api = require('./api');
+const connectDB = require('./api/mongodb');
 
 const app = express();
 
@@ -28,7 +29,19 @@ app.use(notFound);
 // Error handler middleware
 app.use(errorHandler);
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Listening: http://localhost:${port}`);
-});
+const port = process.env.PORT || 3000;
+
+// Connect to MongoDB before starting the server
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(port, () => {
+      console.log(`Listening: http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();

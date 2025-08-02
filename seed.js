@@ -1,14 +1,15 @@
 const axios = require('axios');
+const connectDB = require('./src/api/mongodb');
 
 const API_BASE_URL = 'http://localhost:3000/api/'; // Change this if needed
-const seedCoursesLessons = async (req, res) => {
+const seedCoursesLessons = async () => {
   try {
-    await connectDB();
-
+    console.log('Starting to seed courses with lessons...');
+    
     const existingCourses = [
       {
-        course_id: 'C001',
-        course_name: 'Astronomy',
+        name: 'Astronomy',
+        description: 'Explore the wonders of space and celestial objects.',
         lesson_1: true,
         lesson_2: true,
         lesson_3: true,
@@ -22,8 +23,8 @@ const seedCoursesLessons = async (req, res) => {
         quiz: true,
       },
       {
-        course_id: 'C002',
-        course_name: 'Basics of Coding 1',
+        name: 'Basics of Coding 1',
+        description: 'Learn fundamental programming concepts and logic.',
         lesson_1: true,
         lesson_2: true,
         lesson_3: true,
@@ -37,8 +38,8 @@ const seedCoursesLessons = async (req, res) => {
         quiz: true,
       },
       {
-        course_id: 'C003',
-        course_name: 'Biochemistry',
+        name: 'Biochemistry',
+        description: 'Study the chemical processes within living organisms.',
         lesson_1: true,
         lesson_2: true,
         lesson_3: false,
@@ -52,8 +53,8 @@ const seedCoursesLessons = async (req, res) => {
         quiz: true,
       },
       {
-        course_id: 'C004',
-        course_name: 'Chemistry',
+        name: 'Chemistry',
+        description: 'Discover the composition and properties of matter.',
         lesson_1: true,
         lesson_2: true,
         lesson_3: true,
@@ -67,8 +68,8 @@ const seedCoursesLessons = async (req, res) => {
         quiz: true,
       },
       {
-        course_id: 'C005',
-        course_name: 'Circuits',
+        name: 'Circuits',
+        description: 'Learn about electrical circuits and electronic components.',
         lesson_1: true,
         lesson_2: true,
         lesson_3: true,
@@ -82,8 +83,8 @@ const seedCoursesLessons = async (req, res) => {
         quiz: true,
       },
       {
-        course_id: 'C006',
-        course_name: 'Environmental Science',
+        name: 'Environmental Science',
+        description: 'Study the environment and human impact on ecosystems.',
         lesson_1: true,
         lesson_2: true,
         lesson_3: true,
@@ -97,8 +98,8 @@ const seedCoursesLessons = async (req, res) => {
         quiz: true,
       },
       {
-        course_id: 'C007',
-        course_name: 'Psychology',
+        name: 'Psychology',
+        description: 'Explore human behavior and mental processes.',
         lesson_1: true,
         lesson_2: true,
         lesson_3: true,
@@ -112,8 +113,8 @@ const seedCoursesLessons = async (req, res) => {
         quiz: true,
       },
       {
-        course_id: 'C008',
-        course_name: 'Statistics',
+        name: 'Statistics',
+        description: 'Learn data analysis and statistical methods.',
         lesson_1: true,
         lesson_2: true,
         lesson_3: true,
@@ -127,8 +128,8 @@ const seedCoursesLessons = async (req, res) => {
         quiz: true,
       },
       {
-        course_id: 'C009',
-        course_name: 'Zoology',
+        name: 'Zoology',
+        description: 'Study animal life and behavior.',
         lesson_1: true,
         lesson_2: true,
         lesson_3: true,
@@ -145,14 +146,21 @@ const seedCoursesLessons = async (req, res) => {
     ];
 
     // Clear existing courses if you want to avoid duplicates:
-    await Course.deleteMany({});
+    // await Course.deleteMany({});
 
-    // Insert your existing courses
-    await Course.insertMany(existingCourses);
-
-    res.status(200).json({ message: 'Courses seeded successfully!' });
+    // Insert your existing courses using the API
+    for (const course of existingCourses) {
+      try {
+        const response = await axios.post(API_BASE_URL + 'course/', course);
+        console.log(`✅ Created: ${response.data.name} (${course.name})`);
+      } catch (error) {
+        console.error(`❌ Failed to create ${course.name}:`, error.response ? error.response.data : error.message);
+      }
+    }
+    
+    console.log('Course seeding with lessons completed!');
   } catch (error) {
-    res.status(500).json({ message: 'Failed to seed courses', error });
+    console.error('Failed to seed courses:', error.message);
   }
 };
 
@@ -306,6 +314,6 @@ const seedGrades = async () => {
 
 // Run the seeding script
 // seedUsers();
-// seedCourses();
+seedCoursesLessons();
 // seedClassrooms();
-seedGrades();
+// seedGrades();
