@@ -13,6 +13,10 @@ const courseRoutes = require('./routes/courseRoutes');
 const studentResponseRoutes = require('./routes/studentResponseRoutes');
 const gradeRoutes = require('./routes/gradeRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
+const bpqQuestionRoutes = require('./routes/bpqQuestionRoutes');
+const quizQuestionRoutes = require('./routes/quizQuestionRoutes');
+const teachers = require('./routes/teacherRoutes');
+const portalCourseRoutes = require('./routes/portalCourseRoutes');
 
 const router = express.Router();
 
@@ -21,6 +25,7 @@ router.get('/', (req, res) => {
     message: 'API - 👋🌎🌍🌏',
   });
 });
+
 
 // Register all routes
 router.use('/users', userRoutes);
@@ -33,6 +38,13 @@ router.use('/worksheets', worksheetRoutes);
 router.use('/auth', auth);
 router.use('/points', userPointRoutes);
 router.use('/grades', gradeRoutes);
+router.use('/course', courseRoutes);
+router.use('/grade', gradeRoutes);
+router.use('/bpqquestions', bpqQuestionRoutes);
+router.use('/quizquestions', quizQuestionRoutes);
+router.use('/studentresponses', studentResponseRoutes);
+router.use('/teachers', teachers);
+router.use('/portalCourses', portalCourseRoutes);
 
 // Updated notification and assignment systems
 router.use('/notifications', notificationRoutes);
