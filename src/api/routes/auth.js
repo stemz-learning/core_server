@@ -8,55 +8,58 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || '12345678'; // Use environm
 
 // Signup Route
 router.post('/signup', async (req, res) => {
-    const { name, email, password, gradeLevel } = req.body; // CHANGED: grade → gradeLevel
+    const { name, email, password, gradeLevel, role } = req.body;
+
     try {
-        // Validate grade level
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !role) {
             return res.status(400).json({ 
-                error: "Name, email, and password are required" 
+                error: "Name, email, password, and role are required" 
             });
         }
 
-        if (gradeLevel && typeof gradeLevel !== 'number') {
-            return res.status(400).json({
-                error: "Grade level must be a number"
-            });
-        }
-        if (gradeLevel && (gradeLevel < 1 || gradeLevel > 6)) {
+        if (!['student', 'teacher'].includes(role)) {
             return res.status(400).json({ 
-                error: "Grade level must be between 1 and 6" 
+                error: "Role must be either 'student' or 'teacher'" 
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10); // Hash password
-        
-        // Create user with gradeLevel (will use default of 1 if not provided)
-        const user = new User({ 
-            name, 
-            email, 
-            password: hashedPassword, 
-            gradeLevel: gradeLevel || 1 // Default to grade 1 if not provided
+        if (role === 'student') {
+            if (gradeLevel && typeof gradeLevel !== 'number') {
+                return res.status(400).json({ error: "Grade level must be a number" });
+            }
+            if (gradeLevel && (gradeLevel < 1 || gradeLevel > 6)) {
+                return res.status(400).json({ error: "Grade level must be between 1 and 6" });
+            }
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const user = new User({
+            name,
+            email,
+            password: hashedPassword,
+            role,
+            gradeLevel: role === 'student' ? (gradeLevel || 1) : undefined
         });
-        
+
         await user.save();
-        
-        res.status(201).json({ 
+
+        res.status(201).json({
             message: "User created successfully!",
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                gradeLevel: user.gradeLevel
+                role: user.role,
+                gradeLevel: user.gradeLevel,
             }
         });
+
     } catch (err) {
         console.error(err);
-        
-        // Handle duplicate email error
         if (err.code === 11000) {
             return res.status(400).json({ error: "Email already exists" });
         }
-        
         res.status(400).json({ error: "User creation failed" });
     }
 });
@@ -71,7 +74,11 @@ router.post('/login', async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) return res.status(401).json({ error: "Invalid credentials" });
 
-        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign(
+            { id: user._id, email: user.email, role: user.role }, // include role
+            JWT_SECRET_KEY,
+            { expiresIn: '1h' }
+          );
         res.status(200).json({ message: "Login successful", token });
     } catch (err) {
         console.error(err);
