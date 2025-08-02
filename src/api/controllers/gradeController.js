@@ -1,11 +1,9 @@
 const Grade = require("../models/gradeModel");
-const connectDB = require("../mongodb");
 
 class GradeController {
     // Get all grades in all classrooms/courses
     static async getAllGrades(req, res) {
         try {
-            await connectDB();
             const grades = await Grade.find();
             res.status(200).json(grades);
         } catch (error) {
@@ -16,7 +14,6 @@ class GradeController {
     // Get a grade by the grade ID
     static async getGrade(req, res) {
         try {
-            await connectDB();
             const grade = await Grade.findById(req.params.id);
             if (!grade) {
                 return res.status(404).json({ message: "Grade not found" });
@@ -30,7 +27,6 @@ class GradeController {
     // Create a new grade entry
     static async createGrade(req, res) {
         try {
-            await connectDB();
             const newGrade = new Grade(req.body);
             await newGrade.save();
             res.status(201).json(newGrade);
@@ -42,7 +38,6 @@ class GradeController {
     // Update an existing grade entry
     static async updateGrade(req, res) {
         try {
-            await connectDB();
             const updatedGrade = await Grade.findByIdAndUpdate(req.params.id, req.body, { new: true });
             if (!updatedGrade) {
                 return res.status(404).json({ message: "Grade not found" });
@@ -56,7 +51,6 @@ class GradeController {
     // Delete a grade by ID
     static async deleteGrade(req, res) {
         try {
-            await connectDB();
             const deletedGrade = await Grade.findByIdAndDelete(req.params.id);
             if (!deletedGrade) {
                 return res.status(404).json({ message: "Grade not found" });
@@ -70,7 +64,6 @@ class GradeController {
     // Get all grades in a classroom
     static async getGradesByClassroom(req, res) {
         try {
-            await connectDB();
             const { classroomId } = req.params;
             const grades = await Grade.find({ classroom_id: classroomId });
     
@@ -86,8 +79,7 @@ class GradeController {
 
     // Get all grades from a course in a classroom by classroom ID and course ID
     static async getGradesByCourseInClassroom(req, res) {
-        try {
-            await connectDB();
+        try { 
             const { classroomId, courseId } = req.params;
             const grades = await Grade.find({ classroom_id: classroomId, course_id: courseId });
     

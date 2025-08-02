@@ -1,6 +1,5 @@
 // src/controllers/classroomController.js
 const Classroom = require("../models/classroomModel");
-const connectDB = require("../mongodb");
 const mongoose = require('mongoose');
 const User = require("../models/userModel");
 const Course = require("../models/courseModel");
@@ -10,7 +9,6 @@ class ClassroomController {
   // Get all classrooms
   static async getAllClassroomsWithIDs(req, res) {
     try {
-      await connectDB();
       const classrooms = await Classroom.find();
       res.status(200).json(classrooms);
     } catch (error) {
@@ -21,7 +19,6 @@ class ClassroomController {
   // Updated getAllClassrooms function
   static async getAllClassroomsWithNames(req, res) {
     try {
-      await connectDB();
       const classrooms = await Classroom.find()
         .populate({
           path: 'student_user_ids',
@@ -60,7 +57,11 @@ class ClassroomController {
   // Get a single classroom by ID
   static async getClassroom(req, res) {
     try {
-      await connectDB();
+      // Validate if the provided ID is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "Invalid classroom ID format" });
+      }
+      
       const classroom = await Classroom.findById(req.params.id);
       if (!classroom) {
         return res.status(404).json({ message: "Classroom not found" });
@@ -74,7 +75,6 @@ class ClassroomController {
   // Create a new classroom
   static async createClassroom(req, res) {
     try {
-      await connectDB();
       const newClassroom = new Classroom(req.body);
       await newClassroom.save();
       res.status(201).json(newClassroom);
@@ -86,7 +86,11 @@ class ClassroomController {
   // Update a classroom by ID
   static async updateClassroom(req, res) {
     try {
-      await connectDB();
+      // Validate if the provided ID is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "Invalid classroom ID format" });
+      }
+      
       const updatedClassroom = await Classroom.findByIdAndUpdate(
         req.params.id,
         req.body,
@@ -104,7 +108,11 @@ class ClassroomController {
   // Delete a classroom by ID
   static async deleteClassroom(req, res) {
     try {
-      await connectDB();
+      // Validate if the provided ID is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: "Invalid classroom ID format" });
+      }
+      
       const deletedClassroom = await Classroom.findByIdAndDelete(req.params.id);
       if (!deletedClassroom) {
         return res.status(404).json({ message: "Classroom not found" });
@@ -117,9 +125,13 @@ class ClassroomController {
 
   static async enrollInClassroom(req, res) {
     try {
-      await connectDB();
       const { id: classroomId } = req.params;
-      const userId = req.user.id;
+      const userId = req.body.id;
+      console.log("User ID:", userId);
+      // Validate if the provided ID is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(classroomId)) {
+        return res.status(400).json({ message: "Invalid classroom ID format" });
+      }
 
       const classroom = await Classroom.findById(classroomId);
       if (!classroom) {
@@ -148,9 +160,13 @@ class ClassroomController {
   // remove a user from a classroom given a user ID
   static async unenrollFromClassroom(req, res) {
     try {
-      await connectDB();
       const { id: classroomId } = req.params;
       const userId = req.user.id;
+
+      // Validate if the provided ID is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(classroomId)) {
+        return res.status(400).json({ message: "Invalid classroom ID format" });
+      }
 
       const classroom = await Classroom.findById(classroomId);
       if (!classroom) {
@@ -184,11 +200,8 @@ class ClassroomController {
 
   static async getUserClassrooms(req, res) {
     try {
-      await connectDB();
       const userId = req.user.id;
-
       const classrooms = await Classroom.find();
-
       const enrolled = classrooms.filter(classroom =>
         classroom.student_user_ids.includes(userId)
       );
@@ -212,8 +225,13 @@ class ClassroomController {
 
   static async getClassroomUsers(req, res) {
     try {
-      await connectDB();
       const classroomId = req.params.id;
+      
+      // Validate if the provided ID is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(classroomId)) {
+        return res.status(400).json({ message: "Invalid classroom ID format" });
+      }
+      
       const classroom = await Classroom.findById(classroomId);
 
       if (!classroom) {
@@ -263,8 +281,13 @@ class ClassroomController {
 
   static async getClassroomCourses(req, res) {
     try {
-      await connectDB();
       const classroomId = req.params.id;
+      
+      // Validate if the provided ID is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(classroomId)) {
+        return res.status(400).json({ message: "Invalid classroom ID format" });
+      }
+      
       const classroom = await Classroom.findById(classroomId);
       if (!classroom) {
         return res.status(404).json({ message: "Classroom not found" });
