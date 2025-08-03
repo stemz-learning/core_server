@@ -150,6 +150,54 @@ router.get('/debug/post-merge-analysis', async (req, res) => {
   }
 });
 
+// another debug for env vars
+router.get('/debug/vercel-env-check', async (req, res) => {
+  try {
+    const uri = process.env.MONGODB_URI;
+    
+    if (!uri) {
+      return res.json({
+        error: 'MONGODB_URI not found',
+        allEnvVars: Object.keys(process.env).filter(key => key.includes('MONGO'))
+      });
+    }
+    
+    // Parse the URI to show the database name
+    const uriParts = uri.split('/');
+    const databaseFromUri = uriParts[uriParts.length - 1]?.split('?')[0];
+    
+    // Show last 50 characters of URI (for security)
+    const uriEnd = uri.length > 50 ? '...' + uri.slice(-50) : uri;
+    
+    res.json({
+      environment: process.env.NODE_ENV,
+      mongoUriExists: true,
+      mongoUriEnd: uriEnd,
+      extractedDatabaseName: databaseFromUri,
+      uriStructure: {
+        protocol: uriParts[0],
+        hasHost: uriParts.length >= 3,
+        hasDatabaseName: !!databaseFromUri && databaseFromUri.length > 0,
+        databaseName: databaseFromUri
+      },
+      issue: databaseFromUri !== 'STEMz_Teacher_Platform' ? 
+        `Database name is "${databaseFromUri}" but should be "STEMz_Teacher_Platform"` : 
+        'Database name looks correct',
+      deploymentInfo: {
+        vercelUrl: process.env.VERCEL_URL,
+        vercelEnv: process.env.VERCEL_ENV,
+        deploymentId: process.env.VERCEL_DEPLOYMENT_ID
+      }
+    });
+    
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      stack: error.stack
+    });
+  }
+});
+
 // 🔥 ADD DEBUG ENDPOINT HERE 🔥
 router.get('/debug/bpq-status', async (req, res) => {
   try {
