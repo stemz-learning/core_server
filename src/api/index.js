@@ -27,6 +27,129 @@ router.get('/', (req, res) => {
   });
 });
 
+// debugging endpoint
+router.get('/debug/post-merge-analysis', async (req, res) => {
+  try {
+    console.log('🔍 POST-MERGE ANALYSIS');
+    console.log('🔍 Environment:', process.env.NODE_ENV);
+    console.log('🔍 MONGODB_URI exists:', !!process.env.MONGODB_URI);
+    console.log('🔍 DATABASE_NAME env var:', process.env.DATABASE_NAME);
+    
+    // Show the ACTUAL URI being used (masked for security)
+    const uri = process.env.MONGODB_URI;
+    if (uri) {
+      const uriParts = uri.split('/');
+      const databaseFromUri = uriParts[uriParts.length - 1]?.split('?')[0];
+      console.log('🔍 Database name extracted from URI:', databaseFromUri);
+      console.log('🔍 Full URI structure:', {
+        protocol: uriParts[0],
+        host: uriParts[2]?.split('@')[1],
+        database: databaseFromUri
+      });
+    }
+    
+    // Test the actual connection
+    const client = await MongoClient.connect(process.env.MONGODB_URI);
+    
+    // Method 1: Default database from connection
+    const defaultDb = client.db();
+    const actualDbName = defaultDb.databaseName;
+    console.log('🔍 ACTUAL connected database name:', actualDbName);
+    
+    // Method 2: If using DATABASE_NAME env var
+    let envDb = null;
+    let envDbName = null;
+    if (process.env.DATABASE_NAME) {
+      envDb = client.db(process.env.DATABASE_NAME);
+      envDbName = envDb.databaseName;
+      console.log('🔍 DATABASE_NAME env var points to:', envDbName);
+    }
+    
+    // Method 3: Force connect to STEMz_Teacher_Platform
+    const correctDb = client.db('STEMz_Teacher_Platform');
+    const correctDbName = correctDb.databaseName;
+    console.log('🔍 Forced STEMz_Teacher_Platform connection:', correctDbName);
+    
+    // Check BPQ counts in each
+    const actualDbBpqCount = await defaultDb.collection('bpqquestions').countDocuments();
+    const correctDbBpqCount = await correctDb.collection('bpqquestions').countDocuments();
+    
+    let envDbBpqCount = 0;
+    if (envDb) {
+      envDbBpqCount = await envDb.collection('bpqquestions').countDocuments();
+    }
+    
+    console.log('🔍 BPQ Counts:');
+    console.log(`  - Actual connected DB (${actualDbName}): ${actualDbBpqCount}`);
+    console.log(`  - Correct DB (STEMz_Teacher_Platform): ${correctDbBpqCount}`);
+    if (envDb) {
+      console.log(`  - Env var DB (${envDbName}): ${envDbBpqCount}`);
+    }
+    
+    // Check what your current code is actually using
+    const currentlyUsedDb = process.env.DATABASE_NAME ? 
+      client.db(process.env.DATABASE_NAME) : 
+      client.db();
+    
+    const currentlyUsedDbName = currentlyUsedDb.databaseName;
+    const currentlyUsedBpqCount = await currentlyUsedDb.collection('bpqquestions').countDocuments();
+    
+    console.log('🔍 What your code is ACTUALLY using:');
+    console.log(`  - Database: ${currentlyUsedDbName}`);
+    console.log(`  - BPQ Count: ${currentlyUsedBpqCount}`);
+    
+    client.close();
+    
+    res.json({
+      analysis: {
+        environment: process.env.NODE_ENV,
+        mongoUriExists: !!process.env.MONGODB_URI,
+        databaseNameEnvVar: process.env.DATABASE_NAME || null,
+      },
+      connections: {
+        defaultFromUri: {
+          name: actualDbName,
+          bpqCount: actualDbBpqCount
+        },
+        correctDatabase: {
+          name: correctDbName,
+          bpqCount: correctDbBpqCount
+        },
+        envVarDatabase: envDb ? {
+          name: envDbName,
+          bpqCount: envDbBpqCount
+        } : null,
+        currentlyUsedByCode: {
+          name: currentlyUsedDbName,
+          bpqCount: currentlyUsedBpqCount,
+          isCorrect: currentlyUsedDbName === 'STEMz_Teacher_Platform'
+        }
+      },
+      diagnosis: {
+        problem: currentlyUsedBpqCount === 0 ? 'Connected to wrong/empty database' : 'Connection seems correct',
+        expectedBpqCount: 396,
+        actualBpqCount: currentlyUsedBpqCount,
+        recommendation: currentlyUsedDbName !== 'STEMz_Teacher_Platform' ? 
+          `Change database connection from ${currentlyUsedDbName} to STEMz_Teacher_Platform` :
+          'Database connection looks correct, investigate other issues'
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Post-merge analysis error:', error);
+    res.status(500).json({
+      error: error.message,
+      stack: error.stack,
+      possibleCauses: [
+        'MongoDB URI changed during merge',
+        'Environment variables overwritten',
+        'Database connection code modified',
+        'New environment variable added that overrides connection'
+      ]
+    });
+  }
+});
+
 // 🔥 ADD DEBUG ENDPOINT HERE 🔥
 router.get('/debug/bpq-status', async (req, res) => {
   try {
