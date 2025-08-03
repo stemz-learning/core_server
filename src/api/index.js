@@ -18,6 +18,7 @@ const bpqQuestionRoutes = require('./routes/bpqQuestionRoutes');
 const quizQuestionRoutes = require('./routes/quizQuestionRoutes');
 const teachers = require('./routes/teacherRoutes');
 const portalCourseRoutes = require('./routes/portalCourseRoutes');
+const progressRoutes = require('./routes/progressRoutes');
 
 const router = express.Router();
 
@@ -320,6 +321,7 @@ router.use('/portalCourses', portalCourseRoutes);
 // Updated notification and assignment systems
 router.use('/notifications', notificationRoutes);
 router.use('/assignments', assignmentRoutes);
+router.use('/progress', progressRoutes);
 
 router.use('/responses', studentResponseRoutes);
 
