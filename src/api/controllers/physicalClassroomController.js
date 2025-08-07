@@ -84,7 +84,7 @@ class PhysicalClassroomController {
         classroomNumber,
         maxStudents
       } = req.body;
-
+      console.log("Creating physical classroom with data:", req.body);
       // Validate teacher exists
       if (teacherId) {
         const teacher = await User.findById(teacherId);
@@ -269,8 +269,7 @@ class PhysicalClassroomController {
   // Get classrooms for a specific user (teacher or student)
   static async getUserPhysicalClassrooms(req, res) {
     try {
-      
-      const userId = req.user.id;
+      const userId = req.params.userId;
 
       // Find classrooms where user is teacher
       const teachingClassrooms = await PhysicalClassroom.find({
