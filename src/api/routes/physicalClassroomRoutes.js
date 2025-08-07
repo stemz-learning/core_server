@@ -12,7 +12,7 @@ router.get("/", PhysicalClassroomController.getAllPhysicalClassrooms);
 
 
 // User-specific routes
-router.get("/my-classrooms", PhysicalClassroomController.getUserPhysicalClassrooms);
+router.get("/my-classrooms/:userId", PhysicalClassroomController.getUserPhysicalClassrooms);
 
 
 // Classroom management routes
