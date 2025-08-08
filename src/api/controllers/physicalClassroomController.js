@@ -35,7 +35,8 @@ class PhysicalClassroomController {
         gradeLevel: classroom.gradeLevel,
         schoolName: classroom.schoolName,
         teacherName: classroom.teacherId?.name,
-        studentCount: classroom.studentCount
+        studentCount: classroom.studentCount,
+        students: classroom.studentIds
       }));
 
       res.status(200).json(basicInfo);
@@ -82,7 +83,9 @@ class PhysicalClassroomController {
         gradeLevel,
         academicYear,
         classroomNumber,
-        maxStudents
+        maxStudents,
+        // studentIds
+        students
       } = req.body;
       console.log("Creating physical classroom with data:", req.body);
       // Validate teacher exists
@@ -93,6 +96,10 @@ class PhysicalClassroomController {
         }
       }
 
+      const studentIds = (students || []).map(student => {
+        return student.id || student._id;
+      });
+
       const newClassroom = new PhysicalClassroom({
         name,
         description,
@@ -102,8 +109,12 @@ class PhysicalClassroomController {
         academicYear,
         classroomNumber,
         maxStudents: maxStudents || 30,
-        studentIds: []
+        students: studentIds
       });
+
+      // 🔍 PUT THESE HERE
+      console.log("Student IDs received:", studentIds);
+      console.log("Classroom.studentIds before save:", newClassroom.studentIds);
 
       await newClassroom.save();
       
@@ -197,6 +208,8 @@ class PhysicalClassroomController {
         return res.status(400).json({ message: "Invalid ID format" });
       }
 
+      console.log("Looking for student with ID:", studentId);
+
       const classroom = await PhysicalClassroom.findById(classroomId);
       if (!classroom) {
         return res.status(404).json({ message: "Physical classroom not found" });
@@ -205,6 +218,7 @@ class PhysicalClassroomController {
       // Verify student exists
       const student = await User.findById(studentId);
       if (!student) {
+        console.error(`Student with ID ${studentId} not found`);
         return res.status(404).json({ message: "Student not found" });
       }
 
