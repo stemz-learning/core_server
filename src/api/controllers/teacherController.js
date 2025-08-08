@@ -193,75 +193,150 @@ const getStudentAnalyticsScores = async (req, res) => {
   };
   
 
+// // Get scores for a specific student across all courses
+// const getStudentOverallScores = async (req, res) => {
+//   try {
+//       const { studentId } = req.params; // Student ID from params
+
+//       // Find the student's response data across all courses
+//       const studentResponse = await StudentResponse.findOne({ studentId }).populate('studentId', 'name email');
+
+//       if (!studentResponse) {
+//           return res.status(404).json({
+//               message: 'No response data found for this student'
+//           });
+//       }
+
+//       // Initialize the array to store all responses
+//       const allResponses = [];
+
+//       // Loop through all responses and collect BPQ scores
+//       studentResponse.responses.forEach(lessonResponse => {
+//           lessonResponse.bpqResponses.forEach(bpq => {
+//               if (bpq.scores) {
+//                   allResponses.push({
+//                       questionId: bpq.questionId,
+//                       lessonId: lessonResponse.lessonId,
+//                       scores: bpq.scores,
+//                       timestamp: bpq.timestamp,
+//                   });
+//               }
+//           });
+//       });
+
+//       // Calculate the average scores across all responses for this student
+//       const avgScores = {
+//           Creativity: 0,
+//           "Critical Thinking": 0,
+//           Observation: 0,
+//           Curiosity: 0,
+//           "Problem Solving": 0
+//       };
+
+//       if (allResponses.length > 0) {
+//           const totals = { ...avgScores };
+
+//           allResponses.forEach(response => {
+//               Object.keys(totals).forEach(skill => {
+//                   totals[skill] += response.scores[skill] || 0;
+//               });
+//           });
+
+//           Object.keys(avgScores).forEach(skill => {
+//               avgScores[skill] = Math.round(totals[skill] / allResponses.length);
+//           });
+//       }
+
+//       return res.status(200).json({
+//           success: true,
+//           studentId,
+//           averageScores: avgScores,  // This gives the overall average score
+//           allResponses,               // This contains all the detailed responses
+//       });
+
+//   } catch (error) {
+//       console.error('Error fetching student overall scores:', error);
+//       return res.status(500).json({
+//           message: 'Failed to fetch student overall scores',
+//           error: error.message
+//       });
+//   }
+// };
+
 // Get scores for a specific student across all courses
 const getStudentOverallScores = async (req, res) => {
   try {
-      const { studentId } = req.params; // Student ID from params
+    const { studentId } = req.params;
 
-      // Find the student's response data across all courses
-      const studentResponse = await StudentResponse.findOne({ studentId }).populate('studentId', 'name email');
+    // Find all student responses across all courses
+    const studentResponse = await StudentResponse.findOne({ studentId })
+      .populate('studentId', 'name email');
 
-      if (!studentResponse) {
-          return res.status(404).json({
-              message: 'No response data found for this student'
-          });
-      }
-
-      // Initialize the array to store all responses
-      const allResponses = [];
-
-      // Loop through all responses and collect BPQ scores
-      studentResponse.responses.forEach(lessonResponse => {
-          lessonResponse.bpqResponses.forEach(bpq => {
-              if (bpq.scores) {
-                  allResponses.push({
-                      questionId: bpq.questionId,
-                      lessonId: lessonResponse.lessonId,
-                      scores: bpq.scores,
-                      timestamp: bpq.timestamp,
-                  });
-              }
-          });
+    if (!studentResponse) {
+      return res.status(404).json({
+        message: 'No response data found for this student'
       });
+    }
 
-      // Calculate the average scores across all responses for this student
-      const avgScores = {
-          Creativity: 0,
-          "Critical Thinking": 0,
-          Observation: 0,
-          Curiosity: 0,
-          "Problem Solving": 0
-      };
-
-      if (allResponses.length > 0) {
-          const totals = { ...avgScores };
-
-          allResponses.forEach(response => {
-              Object.keys(totals).forEach(skill => {
-                  totals[skill] += response.scores[skill] || 0;
-              });
+    // Collect all BPQ responses into one array
+    const allResponses = [];
+    studentResponse.responses.forEach(lessonResponse => {
+      lessonResponse.bpqResponses.forEach(bpq => {
+        if (bpq.scores) {
+          allResponses.push({
+            questionId: bpq.questionId,
+            lessonId: lessonResponse.lessonId,
+            scores: bpq.scores,
+            timestamp: bpq.timestamp,
           });
-
-          Object.keys(avgScores).forEach(skill => {
-              avgScores[skill] = Math.round(totals[skill] / allResponses.length);
-          });
-      }
-
-      return res.status(200).json({
-          success: true,
-          studentId,
-          averageScores: avgScores,  // This gives the overall average score
-          allResponses,               // This contains all the detailed responses
+        }
       });
+    });
+
+    // Initialize totals
+    const skillKeys = ["Creativity", "CriticalThinking", "Observation", "Curiosity", "ProblemSolving"];
+    const totals = Object.fromEntries(skillKeys.map(k => [k, 0]));
+
+    // Sum up all scores
+    allResponses.forEach(response => {
+      skillKeys.forEach(skill => {
+        totals[skill] += response.scores?.[skill] || 0;
+      });
+    });
+
+    // Calculate averages
+    const avgScores = {};
+    if (allResponses.length > 0) {
+      skillKeys.forEach(skill => {
+        avgScores[skill] = Math.round(totals[skill] / allResponses.length);
+      });
+    }
+
+    // Optional: Map keys to human-friendly labels for frontend
+    const displayScores = {
+      "Creativity": avgScores.Creativity || 0,
+      "Critical Thinking": avgScores.CriticalThinking || 0,
+      "Observation": avgScores.Observation || 0,
+      "Curiosity": avgScores.Curiosity || 0,
+      "Problem Solving": avgScores.ProblemSolving || 0
+    };
+
+    return res.status(200).json({
+      success: true,
+      studentId,
+      averageScores: displayScores,
+      allResponses
+    });
 
   } catch (error) {
-      console.error('Error fetching student overall scores:', error);
-      return res.status(500).json({
-          message: 'Failed to fetch student overall scores',
-          error: error.message
-      });
+    console.error('Error fetching student overall scores:', error);
+    return res.status(500).json({
+      message: 'Failed to fetch student overall scores',
+      error: error.message
+    });
   }
 };
+
 
 // Get scores for a specific student in a specific course
 const getStudentCourseScores = async (req, res) => {
