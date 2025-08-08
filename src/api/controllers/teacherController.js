@@ -263,16 +263,15 @@ const getStudentAnalyticsScores = async (req, res) => {
 //   }
 // };
 
-// Get scores for a specific student across all courses
 const getStudentOverallScores = async (req, res) => {
   try {
     const { studentId } = req.params;
 
     // Find all student responses across all courses
-    const studentResponse = await StudentResponse.findOne({ studentId })
+    const studentResponses = await StudentResponse.find({ studentId }) // changed to find() for all courses
       .populate('studentId', 'name email');
 
-    if (!studentResponse) {
+    if (!studentResponses || studentResponses.length === 0) {
       return res.status(404).json({
         message: 'No response data found for this student'
       });
@@ -280,16 +279,18 @@ const getStudentOverallScores = async (req, res) => {
 
     // Collect all BPQ responses into one array
     const allResponses = [];
-    studentResponse.responses.forEach(lessonResponse => {
-      lessonResponse.bpqResponses.forEach(bpq => {
-        if (bpq.scores) {
-          allResponses.push({
-            questionId: bpq.questionId,
-            lessonId: lessonResponse.lessonId,
-            scores: bpq.scores,
-            timestamp: bpq.timestamp,
-          });
-        }
+    studentResponses.forEach(studentResponse => {
+      studentResponse.responses.forEach(lessonResponse => {
+        lessonResponse.bpqResponses.forEach(bpq => {
+          if (bpq.scores) {
+            allResponses.push({
+              questionId: bpq.questionId,
+              lessonId: lessonResponse.lessonId,
+              scores: bpq.scores,
+              timestamp: bpq.timestamp,
+            });
+          }
+        });
       });
     });
 
@@ -312,19 +313,10 @@ const getStudentOverallScores = async (req, res) => {
       });
     }
 
-    // Optional: Map keys to human-friendly labels for frontend
-    const displayScores = {
-      "Creativity": avgScores.Creativity || 0,
-      "Critical Thinking": avgScores.CriticalThinking || 0,
-      "Observation": avgScores.Observation || 0,
-      "Curiosity": avgScores.Curiosity || 0,
-      "Problem Solving": avgScores.ProblemSolving || 0
-    };
-
     return res.status(200).json({
       success: true,
       studentId,
-      averageScores: displayScores,
+      averageScores: avgScores,
       allResponses
     });
 
@@ -336,7 +328,6 @@ const getStudentOverallScores = async (req, res) => {
     });
   }
 };
-
 
 // Get scores for a specific student in a specific course
 const getStudentCourseScores = async (req, res) => {
