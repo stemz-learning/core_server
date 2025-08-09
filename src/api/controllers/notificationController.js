@@ -426,6 +426,36 @@ class NotificationController {
 
   // Add these methods to your notificationController.js
 
+  // Get ALL teacher notifications (quiz failures + announcements)
+static async getAllTeacherNotifications(req, res) {
+  try {
+    const classrooms = await PhysicalClassroom.find({
+      teacherId: req.user.id,
+      isActive: true,
+    });
+
+    const classroomIds = classrooms.map(c => c._id);
+
+    // Fetch both quiz failures and announcements
+    const notifications = await Notification.find({
+      physicalClassroomId: { $in: classroomIds },
+      isActive: true,
+      // isDismissed: false,
+      type: { $in: ["quiz_failure", "announcement"] }
+    })
+      .populate("senderId", "name")
+      .populate("recipientId", "name email")
+      .populate("physicalClassroomId", "name")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error("Error fetching all teacher notifications:", error);
+    res.status(500).json({ message: "Failed to fetch notifications" });
+  }
+}
+
+
   // Method 1: Get teacher notifications (quiz failures)
   static async getTeacherNotifications(req, res) {
     try {
