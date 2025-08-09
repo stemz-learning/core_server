@@ -317,6 +317,37 @@ class NotificationController {
     }
   }
 
+// Teacher dismisses notification from their classroom
+static async teacherDismissNotification(req, res) {
+  try {
+    const { notificationId } = req.params;
+    const teacherId = req.user.id;
+
+    const notification = await Notification.findById(notificationId);
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    // Verify teacher owns the classroom this notification belongs to
+    const classroom = await PhysicalClassroom.findById(notification.physicalClassroomId);
+    if (!classroom || classroom.teacherId.toString() !== teacherId) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    await notification.dismiss();
+
+    res.status(200).json({
+      message: "Notification dismissed",
+    });
+  } catch (error) {
+    console.error("Error dismissing notification:", error);
+    res.status(500).json({
+      message: "Failed to dismiss notification",
+      error: error.message,
+    });
+  }
+}
+
   // Clear all notifications for a user
   static async clearAllNotifications(req, res) {
     try {

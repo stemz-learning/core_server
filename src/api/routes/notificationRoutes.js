@@ -9,6 +9,7 @@ router.get('/my-notifications', authenticateToken, NotificationController.getUse
 router.get('/summary', authenticateToken, NotificationController.getNotificationSummary);
 router.post('/read/:notificationId', authenticateToken, NotificationController.markAsRead);
 router.post('/dismiss/:notificationId', authenticateToken, NotificationController.dismissNotification);
+router.post('/teacher-dismiss/:notificationId', authenticateToken, NotificationController.teacherDismissNotification); // new specific for teachers dismissing notifs
 router.post('/clear-all', authenticateToken, NotificationController.clearAllNotifications);
 
 
