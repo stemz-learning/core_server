@@ -3,6 +3,8 @@ const Assignment = require("../models/assignmentModel");
 const PhysicalClassroom = require("../models/physicalClassroomModel");
 const User = require("../models/userModel");
 const nodemailer = require("nodemailer");
+const fs = require('fs').promises;
+const path = require('path');
 
 class NotificationController {
   // Get notifications for a user (student perspective)
@@ -695,6 +697,73 @@ static async teacherDismissNotification(req, res) {
           message: "Failed to send email notification",
           error: error.message,
         });
+    }
+  }
+
+  static async sendClassroomInvite(req, res) {
+    try {
+      const { userId, recipientEmail, classroomName, acceptInviteUrl } = req.body;
+
+      // Validate required fields
+      if (!userId || !recipientEmail || !classroomName || !acceptInviteUrl) {
+        return res.status(400).json({
+          message: 'Missing required fields: userId, recipientEmail, classroomName, acceptInviteUrl'
+        });
+      }
+
+      // Render the HTML template
+      const htmlContent = await NotificationController.renderTemplate('invite.html', {
+        classroom_name: classroomName,
+        accept_invite_url: acceptInviteUrl
+      });
+
+      // Create transporter (same as your existing code)
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.GMAIL_USER,
+          pass: process.env.GMAIL_APP_PASSWORD,
+        }
+      });
+
+      const mailOptions = {
+        from: process.env.GMAIL_USER,
+        to: recipientEmail,
+        subject: `You're invited to join ${classroomName}`,
+        html: htmlContent, // Use the rendered HTML template
+        text: `You've been invited to join the classroom: ${classroomName}. Visit ${acceptInviteUrl} to accept.` // Fallback text
+      };
+
+      // Send the email
+      const info = await transporter.sendMail(mailOptions);
+      
+      res.status(200).json({ 
+        message: 'Classroom invitation sent successfully',
+        messageId: info.messageId
+      });
+
+    } catch (error) {
+      console.error('Error sending classroom invite:', error);
+      res.status(500).json({ message: 'Failed to send classroom invitation', error: error.message });
+    }
+  }
+
+  // Helper function to render HTML templates with variables
+  static async renderTemplate(templateName, variables) {
+    try {
+      const templatePath = path.join(__dirname, '..', 'templates', templateName);
+      let html = await fs.readFile(templatePath, 'utf-8');
+      
+      // Replace template variables ({{ variable_name }}) with actual values
+      Object.keys(variables).forEach(key => {
+        const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
+        html = html.replace(regex, variables[key]);
+      });
+      
+      return html;
+    } catch (error) {
+      console.error('Error rendering template:', error);
+      throw error;
     }
   }
 }
