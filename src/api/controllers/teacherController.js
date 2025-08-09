@@ -295,7 +295,7 @@ const getStudentOverallScores = async (req, res) => {
     });
 
     // Initialize totals
-    const skillKeys = ["Creativity", "CriticalThinking", "Observation", "Curiosity", "ProblemSolving"];
+    const skillKeys = ["Creativity", "Critical Thinking", "Observation", "Curiosity", "Problem Solving"];
     const totals = Object.fromEntries(skillKeys.map(k => [k, 0]));
 
     // Sum up all scores

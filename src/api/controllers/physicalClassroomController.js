@@ -10,7 +10,7 @@ class PhysicalClassroomController {
       const classrooms = await PhysicalClassroom.find({ isActive: true })
         .populate('teacherId', 'name email')
         .populate('studentIds', 'name email')
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 });g
       
       res.status(200).json(classrooms);
     } catch (error) {
@@ -36,7 +36,7 @@ class PhysicalClassroomController {
         schoolName: classroom.schoolName,
         teacherName: classroom.teacherId?.name,
         studentCount: classroom.studentCount,
-        students: classroom.studentIds
+        students: classroom.students
       }));
 
       res.status(200).json(basicInfo);
@@ -70,69 +70,146 @@ class PhysicalClassroomController {
     }
   }
 
-  // Create a new physical classroom
-  static async createPhysicalClassroom(req, res) {
-    try {
+  // // Create a new physical classroom
+  // static async createPhysicalClassroom(req, res) {
+  //   try {
       
       
-      const {
-        name,
-        description,
-        teacherId,
-        schoolName,
-        gradeLevel,
-        academicYear,
-        classroomNumber,
-        maxStudents,
-        // studentIds
-        students
-      } = req.body;
-      console.log("Creating physical classroom with data:", req.body);
-      // Validate teacher exists
-      if (teacherId) {
-        const teacher = await User.findById(teacherId);
-        if (!teacher) {
-          return res.status(400).json({ message: "Invalid teacher ID" });
-        }
+  //     const {
+  //       name,
+  //       description,
+  //       teacherId,
+  //       schoolName,
+  //       gradeLevel,
+  //       academicYear,
+  //       classroomNumber,
+  //       maxStudents,
+  //       // studentIds
+  //       students
+  //     } = req.body;
+  //     console.log("Creating physical classroom with data:", req.body);
+  //     // Validate teacher exists
+  //     if (teacherId) {
+  //       const teacher = await User.findById(teacherId);
+  //       if (!teacher) {
+  //         return res.status(400).json({ message: "Invalid teacher ID" });
+  //       }
+  //     }
+
+  //     const studentIds = (students || []).map(student => {
+  //       if (typeof student === 'string') {
+  //         return student;
+  //       }
+  //       return student.id || student._id || student;
+  //     }).filter(id => id);
+
+  //     console.log("Students received:", students);
+  //     console.log("Student IDs extracted:", studentIds);
+
+  //     const newClassroom = new PhysicalClassroom({
+  //       name,
+  //       description,
+  //       teacherId,
+  //       schoolName,
+  //       gradeLevel,
+  //       academicYear,
+  //       classroomNumber,
+  //       maxStudents: maxStudents || 30,
+  //       studentIds
+  //     });
+
+  //     await newClassroom.save();
+      
+  //     // Populate the response
+  //     await newClassroom.populate('teacherId', 'name email');
+  //     await newClassroom.populate('studentIds', 'name email');
+      
+  //     res.status(201).json({
+  //       message: "Physical classroom created successfully",
+  //       classroom: newClassroom
+  //     });
+  //   } catch (error) {
+  //     console.error('Error creating physical classroom:', error);
+  //     res.status(400).json({ 
+  //       message: "Failed to create physical classroom", 
+  //       error: error.message 
+  //     });
+  //   }
+  // }
+
+  // In your physicalClassroomController.js - createPhysicalClassroom method:
+static async createPhysicalClassroom(req, res) {
+  try {
+    console.log("=== CREATE CLASSROOM DEBUG ===");
+    console.log("Full request body:", JSON.stringify(req.body, null, 2));
+    
+    const {
+      name,
+      description,
+      teacherId,
+      schoolName,
+      gradeLevel,
+      academicYear,
+      classroomNumber,
+      maxStudents,
+      students // Frontend sends this
+    } = req.body;
+
+    console.log("Raw students field:", students);
+    console.log("Students array length:", Array.isArray(students) ? students.length : 'not an array');
+
+    // Validate teacher exists
+    if (teacherId) {
+      const teacher = await User.findById(teacherId);
+      if (!teacher) {
+        return res.status(400).json({ message: "Invalid teacher ID" });
       }
-
-      const studentIds = (students || []).map(student => {
-        return student.id || student._id;
-      });
-
-      const newClassroom = new PhysicalClassroom({
-        name,
-        description,
-        teacherId,
-        schoolName,
-        gradeLevel,
-        academicYear,
-        classroomNumber,
-        maxStudents: maxStudents || 30,
-        students: studentIds
-      });
-
-      // 🔍 PUT THESE HERE
-      console.log("Student IDs received:", studentIds);
-      console.log("Classroom.studentIds before save:", newClassroom.studentIds);
-
-      await newClassroom.save();
-      
-      // Populate the response
-      await newClassroom.populate('teacherId', 'name email');
-      
-      res.status(201).json({
-        message: "Physical classroom created successfully",
-        classroom: newClassroom
-      });
-    } catch (error) {
-      console.error('Error creating physical classroom:', error);
-      res.status(400).json({ 
-        message: "Failed to create physical classroom", 
-        error: error.message 
-      });
+      console.log("Teacher validated:", teacher.name);
     }
+
+    // Process students array to get IDs
+    let studentIds = [];
+    if (students && Array.isArray(students)) {
+      studentIds = students.filter(id => id && typeof id === 'string');
+    }
+
+    console.log("Final studentIds for database:", studentIds);
+
+    const newClassroom = new PhysicalClassroom({
+      name,
+      description,
+      teacherId,
+      schoolName,
+      gradeLevel,
+      academicYear,
+      classroomNumber,
+      maxStudents: maxStudents || 30,
+      studentIds: studentIds // EXPLICITLY set studentIds field
+    });
+
+    console.log("Classroom before save - studentIds:", newClassroom.studentIds);
+    
+    await newClassroom.save();
+    console.log("Classroom saved - studentIds:", newClassroom.studentIds);
+    
+    // Populate the response
+    await newClassroom.populate('teacherId', 'name email');
+    await newClassroom.populate('studentIds', 'name email');
+    
+    console.log("Final populated classroom - students:", newClassroom.studentIds.length);
+    
+    res.status(201).json({
+      message: "Physical classroom created successfully",
+      classroom: newClassroom
+    });
+  } catch (error) {
+    console.error('Error creating physical classroom:', error);
+    res.status(400).json({ 
+      message: "Failed to create physical classroom", 
+      error: error.message 
+    });
   }
+}
 
   // Update a physical classroom by ID
   static async updatePhysicalClassroom(req, res) {
