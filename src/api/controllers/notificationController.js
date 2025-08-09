@@ -514,6 +514,7 @@ static async teacherDismissNotification(req, res) {
       const notifications = await Notification.find({
         physicalClassroomId: { $in: classroomIds },
         isActive: true,
+        isDismissed: false,
         type: { $in: ["quiz_failure", "announcement"] }
       })
       .populate("senderId", "name email")
