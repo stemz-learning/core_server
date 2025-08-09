@@ -20,7 +20,7 @@
             Accepting this invitation will add you to the physical classroom roster.
         </p>
         <form action="{{ accept_invite_url }}" method="POST">
-            <input type="hidden" name="userId" value="{{ userId }}">
+            <input type="hidden" name="studentId" value="{{ userId }}">
             <script>
                 document.querySelector('form').addEventListener('submit', function(e) {
                     const formData = new FormData(this);
