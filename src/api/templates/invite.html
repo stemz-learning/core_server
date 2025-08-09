@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Classroom Invitation</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; padding: 0; }
+        .container { max-width: 500px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 32px; }
+        h2 { color: #2c3e50; }
+        .btn { display: inline-block; padding: 12px 24px; background: #3498db; color: #fff; border: none; border-radius: 4px; text-decoration: none; font-size: 16px; cursor: pointer; }
+        .btn:hover { background: #217dbb; }
+        .info { margin: 16px 0 24px 0; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>You're Invited to Join a Classroom!</h2>
+        <p class="info">
+            You have been invited to join the classroom: <strong>{{ classroom_name }}</strong>.<br>
+            Accepting this invitation will add you to the physical classroom roster.
+        </p>
+        <form action="{{ accept_invite_url }}" method="POST">
+            <input type="hidden" name="userId" value="{{ userId }}">
+            <script>
+                document.querySelector('form').addEventListener('submit', function(e) {
+                    const formData = new FormData(this);
+                    const data = {};
+                    formData.forEach((value, key) => { data[key] = value; });
+                    console.log('POST data:', data);
+                });
+            </script>
+            <button type="submit" class="btn">Accept Invitation</button>
+        </form>
+        <p style="margin-top:24px; color:#888; font-size:14px;">
+            If you did not expect this invitation, you can safely ignore this message.
+        </p>
+    </div>
+</body>
+</html>
