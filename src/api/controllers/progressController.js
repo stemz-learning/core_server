@@ -108,8 +108,7 @@ class ProgressController {
             const { user_id, course_name } = req.params;
 
             // Get the course data to determine available assignments
-            // const course = await Course.findOne({ name: course_name });
-            const course = await Course.findOne({ name: new RegExp(`^${course_name}$`, 'i') });
+            const course = await Course.findOne({ name: course_name });
             if (!course) {
                 return res.status(404).json({ message: 'Course not found' });
             }
