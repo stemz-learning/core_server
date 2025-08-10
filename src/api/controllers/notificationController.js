@@ -210,6 +210,11 @@ class NotificationController {
         isActive: true,
       }).populate("teacherId", "name");
 
+      console.log('DEBUG: studentId being searched:', studentId);
+      console.log('DEBUG: studentId type:', typeof studentId);
+      console.log('DEBUG: classrooms found:', studentClassrooms.length);
+      console.log('DEBUG: first classroom studentIds:', studentClassrooms[0]?.studentIds);
+
       // Get student info
       const student = await User.findById(studentId);
       if (!student) {
