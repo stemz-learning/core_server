@@ -517,7 +517,8 @@ static async teacherDismissNotification(req, res) {
       // Fetch notifications for these classrooms
       console.log('Searching for notifications...');
       const notifications = await Notification.find({
-        physicalClassroomId: { $in: classroomIds },
+        // physicalClassroomId: { $in: classroomIds },
+        recipientId: teacherId,
         isActive: true,
         isDismissed: false,
         type: { $in: ["quiz_failure", "announcement"] }
