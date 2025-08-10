@@ -587,6 +587,7 @@ class ProgressController {
 //         res.status(500).json({ message: 'Failed to calculate course completion percentage' });
 //     }
 // }
+
 static async getCourseCompletionPercentage(req, res) {
     try {
         await connectDB();
@@ -606,10 +607,16 @@ static async getCourseCompletionPercentage(req, res) {
         }
 
         console.log('Found course:', course);
-        console.log('Course lessons field:', course?.lessons);
-        console.log('Course lessons type:', typeof course?.lessons);
-        console.log('Course lessons length:', course?.lessons?.length);
-        console.log('Full course object:', JSON.stringify(course, null, 2));
+        
+        if (course) {
+            console.log('Course lessons field:', course.lessons);
+            console.log('Course lessons type:', typeof course.lessons);
+            console.log('Course lessons length:', course.lessons ? course.lessons.length : 'undefined');
+            console.log('Course lessons content:', JSON.stringify(course.lessons, null, 2));
+            
+            // Log all course fields to see what's available
+            console.log('All course fields:', Object.keys(course.toObject ? course.toObject() : course));
+        }
 
         if (!course) {
             const allCourses = await Course.find({}, { courseName: 1, _id: 1 });
@@ -646,14 +653,6 @@ static async getCourseCompletionPercentage(req, res) {
 
         console.log('Found progress records:', userProgress);
 
-        // Get student responses for this user and course
-        const studentResponses = await StudentResponse.findOne({
-            studentId: user_id,
-            courseId: course_name
-        });
-
-        console.log('Found student responses:', studentResponses);
-
         // Determine available assignments from course data
         const availableAssignments = {
             lessons: [],
@@ -662,30 +661,35 @@ static async getCourseCompletionPercentage(req, res) {
         };
 
         // Use the lessons array length to determine available lessons
-        if (course.lessons && Array.isArray(course.lessons)) {
+        if (course.lessons && Array.isArray(course.lessons) && course.lessons.length > 0) {
+            console.log('Processing lessons array with length:', course.lessons.length);
             for (let i = 1; i <= course.lessons.length; i++) {
                 availableAssignments.lessons.push(i.toString());
             }
-        }
-
-        // If you have worksheets array, use it (adjust based on your schema)
-        if (course.worksheets && Array.isArray(course.worksheets)) {
-            for (let i = 1; i <= course.worksheets.length; i++) {
-                availableAssignments.worksheets.push(i.toString());
-            }
         } else {
-            // Fallback: assume each lesson has a worksheet
-            for (let i = 1; i <= (course.lessons?.length || 0); i++) {
+            console.log('No lessons array found or it is empty');
+            // Fallback: try to count lessons differently
+            // Maybe your lessons are stored as lesson_1, lesson_2 properties?
+            for (let i = 1; i <= 10; i++) {
+                if (course[`lesson_${i}`] || course[`lesson${i}`]) {
+                    availableAssignments.lessons.push(i.toString());
+                }
+            }
+        }
+
+        // For worksheets, assume same number as lessons for now
+        if (availableAssignments.lessons.length > 0) {
+            for (let i = 1; i <= availableAssignments.lessons.length; i++) {
                 availableAssignments.worksheets.push(i.toString());
             }
         }
 
-        // Check if quiz is available (adjust field name based on your schema)
+        // Check if quiz is available
         if (course.quiz === true || course.hasQuiz === true) {
             availableAssignments.quiz = true;
         }
 
-        console.log('Available assignments:', availableAssignments);
+        console.log('Final available assignments:', availableAssignments);
 
         // Count completed assignments by type
         const completedAssignments = {
@@ -703,7 +707,7 @@ static async getCourseCompletionPercentage(req, res) {
 
         // Check each progress record
         userProgress.forEach(progress => {
-            console.log('Processing progress:', progress);
+            console.log('Processing progress record:', progress);
             if (progress.progress && progress.progress.completed) {
                 if (progress.assignment_type === 'lesson') {
                     completedAssignments.lessons++;
@@ -715,71 +719,13 @@ static async getCourseCompletionPercentage(req, res) {
             }
         });
 
+        console.log('Completed assignments:', completedAssignments);
+        console.log('Total assignments:', totalAssignments);
+
         // Calculate totals
         const totalCompleted = completedAssignments.lessons + completedAssignments.worksheets + completedAssignments.quiz;
         const totalExpected = totalAssignments.lessons + totalAssignments.worksheets + totalAssignments.quiz;
         const completionPercentage = totalExpected > 0 ? Math.round((totalCompleted / totalExpected) * 100) : 0;
-
-        // Create detailed assignment list with student responses
-        const detailedAssignments = [];
-
-        // Add lessons with responses
-        availableAssignments.lessons.forEach(lessonNum => {
-            const progressRecord = userProgress.find(p => 
-                p.assignment_type === 'lesson' && p.assignment_number === lessonNum
-            );
-            
-            const lessonResponse = studentResponses?.responses?.find(r => 
-                r.lessonId === lessonNum || r.lessonId === `lesson_${lessonNum}`
-            );
-
-            detailedAssignments.push({
-                assignment_type: 'lesson',
-                assignment_number: lessonNum,
-                isCompleted: progressRecord?.progress?.completed || false,
-                progress: progressRecord?.progress || null,
-                studentResponse: lessonResponse || null,
-                score: progressRecord?.progress?.score || null,
-                completed_at: progressRecord?.updatedAt || null
-            });
-        });
-
-        // Add worksheets with responses
-        availableAssignments.worksheets.forEach(worksheetNum => {
-            const progressRecord = userProgress.find(p => 
-                p.assignment_type === 'worksheet' && p.assignment_number === worksheetNum
-            );
-            
-            const worksheetResponse = studentResponses?.responses?.find(r => 
-                r.worksheet?.worksheetId === worksheetNum || r.worksheet?.worksheetId === `worksheet_${worksheetNum}`
-            );
-
-            detailedAssignments.push({
-                assignment_type: 'worksheet',
-                assignment_number: worksheetNum,
-                isCompleted: progressRecord?.progress?.completed || false,
-                progress: progressRecord?.progress || null,
-                studentResponse: worksheetResponse?.worksheet || null,
-                score: progressRecord?.progress?.score || null,
-                completed_at: progressRecord?.updatedAt || null
-            });
-        });
-
-        // Add quiz with responses
-        if (availableAssignments.quiz) {
-            const progressRecord = userProgress.find(p => p.assignment_type === 'quiz');
-            const quizResponses = studentResponses?.responses?.find(r => r.quiz && r.quiz.length > 0);
-
-            detailedAssignments.push({
-                assignment_type: 'quiz',
-                assignment_number: '1',
-                isCompleted: progressRecord?.progress?.completed || false,
-                progress: progressRecord?.progress || null,
-                studentResponse: quizResponses?.quiz || null,
-                score: progressRecord?.progress?.score || null,
-                completed_at: progressRecord?.updatedAt || null
-            });
-        }
 
         const result = {
             course_name,
@@ -788,7 +734,6 @@ static async getCourseCompletionPercentage(req, res) {
             completed_assignments: totalCompleted,
             total_assignments: totalExpected,
             available_assignments: availableAssignments,
-            detailed_assignments: detailedAssignments, // New field with responses
             breakdown: {
                 lessons: {
                     completed: completedAssignments.lessons,
@@ -812,15 +757,21 @@ static async getCourseCompletionPercentage(req, res) {
                     assignment_type: p.assignment_type,
                     assignment_number: p.assignment_number,
                     score: p.progress.score || null,
-                    completed_at: p.updatedAt
+                    completed_at: p.updatedAt,
+                    // Include the full progress data for debugging
+                    full_progress: p.progress
                 }))
         };
 
-        console.log('Final result:', result);
+        console.log('Final result being sent:', result);
         res.status(200).json(result);
     } catch (error) {
         console.error('Error calculating course completion percentage:', error);
-        res.status(500).json({ message: 'Failed to calculate course completion percentage' });
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            message: 'Failed to calculate course completion percentage',
+            error: error.message 
+        });
     }
 }
 
