@@ -206,7 +206,7 @@ class NotificationController {
 
       // Find all physical classrooms this student is in
       const studentClassrooms = await PhysicalClassroom.find({
-        studentIds: studentId,
+        studentIds: studentId.toString(),
         isActive: true,
       }).populate("teacherId", "name");
 
