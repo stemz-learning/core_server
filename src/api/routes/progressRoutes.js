@@ -9,9 +9,6 @@ const router = express.Router();
 // Get all progress records
 router.get('/', ProgressController.getAllProgress);
 
-// Get progress by ID
-router.get('/:id', ProgressController.getProgressById);
-
 // Get progress by user ID
 router.get('/user/:user_id', ProgressController.getProgressByUserId);
 
@@ -33,6 +30,8 @@ router.get('/course/:course_name/assignment/:assignment_number', ProgressControl
 // Get progress statistics for a user
 router.get('/user/:user_id/stats', ProgressController.getUserProgressStats);
 
+// Get progress by ID
+router.get('/:id', ProgressController.getProgressById);
 // ========================================
 // POST ROUTES - Create Progress Data
 // ========================================
