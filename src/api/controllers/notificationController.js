@@ -460,182 +460,96 @@ static async teacherDismissNotification(req, res) {
     }
   }
 
-  // static async getAllTeacherNotifications(req, res) {
-  //   try {
-  //     // Get teacherId from query params instead of req.user
-  //     const { teacherId } = req.query;
-      
-  //     console.log('=== DEBUG START ===');
-  //     console.log('Request query params:', req.query);
-  //     console.log('Teacher ID received:', teacherId);
-      
-  //     if (!teacherId) {
-  //       console.log('No teacherId provided');
-  //       return res.status(400).json({ 
-  //         message: "teacherId is required as query parameter",
-  //         example: "/api/notifications/all-teacher-notifications?teacherId=USER_ID"
-  //       });
-  //     }
-  
-  //     // Test basic database connection first
-  //     console.log('Testing database models...');
-  //     console.log('PhysicalClassroom model exists:', !!PhysicalClassroom);
-  //     console.log('Notification model exists:', !!Notification);
-  
-  //     // Find classrooms where this user is the teacher
-  //     console.log('Searching for classrooms with teacherId:', teacherId);
-  //     const classrooms = await PhysicalClassroom.find({
-  //       teacherId: teacherId,
-  //       isActive: true,
-  //     }).select('_id name').lean();
-  
-  //     console.log('Raw classroom query result:', classrooms);
-  //     console.log('Found classrooms count:', classrooms?.length || 0);
-  
-  //     if (!classrooms || classrooms.length === 0) {
-  //       console.log('No classrooms found for teacher - checking if any classrooms exist at all...');
-  //       const allClassrooms = await PhysicalClassroom.find({}).limit(5).lean();
-  //       console.log('Sample of all classrooms:', allClassrooms);
-        
-  //       return res.status(200).json({
-  //         message: "No classrooms found for this teacher",
-  //         teacherId,
-  //         debug: {
-  //           totalClassroomsInDB: allClassrooms.length,
-  //           sampleClassrooms: allClassrooms
-  //         }
-  //       });
-  //     }
-  
-  //     const classroomIds = classrooms.map(c => c._id);
-  //     console.log('Classroom IDs to search:', classroomIds);
-  
-  //     // Check if any notifications exist at all
-  //     const totalNotifications = await Notification.countDocuments({});
-  //     console.log('Total notifications in database:', totalNotifications);
-  
-  //     // Fetch notifications for these classrooms
-  //     console.log('Searching for notifications...');
-  //     const notifications = await Notification.find({
-  //       physicalClassroomId: { $in: classroomIds },
-  //       isActive: true,
-  //       isDismissed: false,
-  //       type: { $in: ["quiz_failure", "announcement"] }
-  //     })
-  //     .populate("senderId", "name email")
-  //     .populate("recipientId", "name email") 
-  //     .populate("physicalClassroomId", "name")
-  //     .sort({ createdAt: -1 })
-  //     .lean();
-  
-  //     console.log('Found notifications count:', notifications?.length || 0);
-  //     console.log('=== DEBUG END ===');
-  
-  //     res.status(200).json(notifications);
-  
-  //   } catch (error) {
-  //     console.error("=== ERROR DETAILS ===");
-  //     console.error("Error message:", error.message);
-  //     console.error("Error name:", error.name);
-  //     console.error("Error stack:", error.stack);
-  //     console.error("Teacher ID:", req.query?.teacherId);
-  //     console.error("=== END ERROR ===");
-      
-  //     res.status(500).json({ 
-  //       message: "Failed to fetch notifications",
-  //       error: error.message,
-  //       teacherId: req.query?.teacherId,
-  //       errorType: error.name,
-  //       ...(process.env.NODE_ENV === 'development' && { 
-  //         stack: error.stack,
-  //         fullError: error.toString()
-  //       })
-  //     });
-  //   }
-  // }
-
   static async getAllTeacherNotifications(req, res) {
     try {
-      const { teacherId, type, classroomId } = req.query;
+      // Get teacherId from query params instead of req.user
+      const { teacherId } = req.query;
       
       console.log('=== DEBUG START ===');
+      console.log('Request query params:', req.query);
       console.log('Teacher ID received:', teacherId);
-      console.log('Type filter:', type);
-      console.log('Classroom filter:', classroomId);
       
       if (!teacherId) {
+        console.log('No teacherId provided');
         return res.status(400).json({ 
-          message: "teacherId is required as query parameter"
+          message: "teacherId is required as query parameter",
+          example: "/api/notifications/all-teacher-notifications?teacherId=USER_ID"
         });
       }
   
-      let allNotifications = [];
+      // Test basic database connection first
+      console.log('Testing database models...');
+      console.log('PhysicalClassroom model exists:', !!PhysicalClassroom);
+      console.log('Notification model exists:', !!Notification);
   
-      // QUERY 1: Quiz failures where teacher is RECIPIENT (student failed -> teacher notified)
-      if (!type || type === 'quiz_failure' || type === 'quiz_failures') {
-        console.log('Fetching quiz failures where teacher is recipient...');
+      // Find classrooms where this user is the teacher
+      console.log('Searching for classrooms with teacherId:', teacherId);
+      const classrooms = await PhysicalClassroom.find({
+        teacherId: teacherId,
+        isActive: true,
+      }).select('_id name').lean();
+  
+      console.log('Raw classroom query result:', classrooms);
+      console.log('Found classrooms count:', classrooms?.length || 0);
+  
+      if (!classrooms || classrooms.length === 0) {
+        console.log('No classrooms found for teacher - checking if any classrooms exist at all...');
+        const allClassrooms = await PhysicalClassroom.find({}).limit(5).lean();
+        console.log('Sample of all classrooms:', allClassrooms);
         
-        let quizQuery = {
-          recipientId: teacherId,  // Teacher receives quiz failure notifications
-          type: 'quiz_failure',
-          isActive: true,
-          isDismissed: false
-        };
-        
-        if (classroomId && classroomId !== 'all') {
-          quizQuery.physicalClassroomId = classroomId;
-        }
-        
-        const quizFailures = await Notification.find(quizQuery)
-          .populate("senderId", "name email")      // Student who failed
-          .populate("recipientId", "name email")   // Teacher who receives it  
-          .populate("physicalClassroomId", "name") // Classroom context
-          .lean();
-        
-        console.log('Found quiz failures:', quizFailures.length);
-        allNotifications = [...allNotifications, ...quizFailures];
+        return res.status(200).json({
+          message: "No classrooms found for this teacher",
+          teacherId,
+          debug: {
+            totalClassroomsInDB: allClassrooms.length,
+            sampleClassrooms: allClassrooms
+          }
+        });
       }
   
-      // QUERY 2: Announcements where teacher is SENDER (teacher posted -> they can track what they sent)
-      if (!type || type === 'announcement' || type === 'announcements') {
-        console.log('Fetching announcements where teacher is sender...');
-        
-        let announcementQuery = {
-          senderId: teacherId,     // Teacher sent these announcements
-          type: 'announcement',
-          isActive: true,
-          isDismissed: false
-        };
-        
-        if (classroomId && classroomId !== 'all') {
-          announcementQuery.physicalClassroomId = classroomId;
-        }
-        
-        const announcements = await Notification.find(announcementQuery)
-          .populate("senderId", "name email")      // Teacher who sent it
-          .populate("recipientId", "name email")   // Students who received it
-          .populate("physicalClassroomId", "name") // Classroom context
-          .lean();
-        
-        console.log('Found announcements teacher sent:', announcements.length);
-        allNotifications = [...allNotifications, ...announcements];
-      }
+      const classroomIds = classrooms.map(c => c._id);
+      console.log('Classroom IDs to search:', classroomIds);
   
-      // Sort by creation date (newest first)
-      allNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      // Check if any notifications exist at all
+      const totalNotifications = await Notification.countDocuments({});
+      console.log('Total notifications in database:', totalNotifications);
   
-      console.log('Total notifications found:', allNotifications.length);
-      console.log('Quiz failures:', allNotifications.filter(n => n.type === 'quiz_failure').length);
-      console.log('Announcements:', allNotifications.filter(n => n.type === 'announcement').length);
+      // Fetch notifications for these classrooms
+      console.log('Searching for notifications...');
+      const notifications = await Notification.find({
+        physicalClassroomId: { $in: classroomIds },
+        isActive: true,
+        isDismissed: false,
+        type: { $in: ["quiz_failure", "announcement"] }
+      })
+      .populate("senderId", "name email")
+      .populate("recipientId", "name email") 
+      .populate("physicalClassroomId", "name")
+      .sort({ createdAt: -1 })
+      .lean();
+  
+      console.log('Found notifications count:', notifications?.length || 0);
       console.log('=== DEBUG END ===');
   
-      res.status(200).json(allNotifications);
+      res.status(200).json(notifications);
   
     } catch (error) {
-      console.error("Error fetching teacher notifications:", error);
+      console.error("=== ERROR DETAILS ===");
+      console.error("Error message:", error.message);
+      console.error("Error name:", error.name);
+      console.error("Error stack:", error.stack);
+      console.error("Teacher ID:", req.query?.teacherId);
+      console.error("=== END ERROR ===");
+      
       res.status(500).json({ 
         message: "Failed to fetch notifications",
-        error: error.message
+        error: error.message,
+        teacherId: req.query?.teacherId,
+        errorType: error.name,
+        ...(process.env.NODE_ENV === 'development' && { 
+          stack: error.stack,
+          fullError: error.toString()
+        })
       });
     }
   }
