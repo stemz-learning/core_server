@@ -22,8 +22,8 @@ router.get('/all-teacher-notifications', NotificationController.getAllTeacherNot
 
 
 // System routes (for quiz failures, called by system)
-router.post('/quiz-failure', authenticateToken, NotificationController.createQuizFailureNotification);
-// router.post('/quiz-failure', NotificationController.createQuizFailureNotification);
+// router.post('/quiz-failure', authenticateToken, NotificationController.createQuizFailureNotification);
+router.post('/quiz-failure', NotificationController.createQuizFailureNotification);
 router.post('/email', NotificationController.sendEmailNotification);
 router.get('/legacy', NotificationController.getAllNotifications);
 
