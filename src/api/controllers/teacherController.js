@@ -511,29 +511,42 @@ const getStudentCourseScores = async (req, res) => {
       console.log("Calling Gradio API...");
       
       // Step 1: POST request to get EVENT_ID with timeout
-      const postResponse = await Promise.race([
-        fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ data: [scoresString] })
-        }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Request timeout')), 10000)
-        )
-      ]);
+      // const postResponse = await Promise.race([
+      //   fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future`, {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify({ data: [scoresString] })
+      //   }),
+      //   new Promise((_, reject) => 
+      //     setTimeout(() => reject(new Error('Request timeout')), 10000)
+      //   )
+      // ]);
   
-      console.log("Gradio POST response status:", postResponse.status);
+      // console.log("Gradio POST response status:", postResponse.status);
   
-      if (!postResponse.ok) {
-        const errorText = await postResponse.text();
-        console.log("Gradio POST error:", errorText);
-        throw new Error(`Gradio API POST error: ${postResponse.status} - ${errorText}`);
+      // if (!postResponse.ok) {
+      //   const errorText = await postResponse.text();
+      //   console.log("Gradio POST error:", errorText);
+      //   throw new Error(`Gradio API POST error: ${postResponse.status} - ${errorText}`);
+      // }
+  
+      // const postData = await postResponse.json();
+      // console.log("Gradio POST data:", postData);
+
+      const text = await postResponse.text();
+      console.log("Raw POST response text:", text);
+
+      let postData;
+      try {
+        postData = JSON.parse(text);
+        console.log("Parsed JSON:", postData);
+      } catch (err) {
+        console.error("Failed to parse JSON from Gradio POST response:", err);
+        throw new Error("Invalid JSON response from prediction service");
       }
-  
-      const postData = await postResponse.json();
-      console.log("Gradio POST data:", postData);
+
       
       if (!postData.event_id) {
         throw new Error('No event_id received from Gradio API');
