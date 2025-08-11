@@ -482,8 +482,8 @@ const getStudentCourseScores = async (req, res) => {
       });
     }
   };
-  
-// getting quiz predictions using local logic - using stored values
+
+// // getting quiz predictions using local logic - using stored values
 // const getQuizPredictions = async (req, res) => {
 //   res.header('Access-Control-Allow-Origin', '*');
 //   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -508,7 +508,6 @@ const getStudentCourseScores = async (req, res) => {
 //     console.log("Starting DB query...");
 //     const dbStart = Date.now();
     
-//     // Fetch all student responses
 //     const studentResponses = await StudentResponse.find({ studentId })
 //       .populate('studentId', 'name email')
 //       .lean();
@@ -524,7 +523,6 @@ const getStudentCourseScores = async (req, res) => {
 //       });
 //     }
 
-//     // Debug: Log the overall structure
 //     console.log("\n=== DATABASE STRUCTURE DEBUG ===");
 //     studentResponses.forEach((courseResponse, idx) => {
 //       console.log(`Course ${idx + 1} structure:`, {
@@ -537,9 +535,8 @@ const getStudentCourseScores = async (req, res) => {
 //       });
 //     });
 
-//     // Extract all quiz scores with FIXED LOGIC
-//     const allQuizzes = [];
-//     console.log("\n=== PROCESSING QUIZ RESPONSES ===");
+//     console.log("\n=== PROCESSING QUIZ RESPONSES (LATEST PER COURSE) ===");
+//     const latestQuizzesByCourse = {};
 
 //     studentResponses.forEach((courseResponse, index) => {
 //       console.log(`\n=== COURSE ${index + 1} DEBUG ===`);
@@ -551,101 +548,69 @@ const getStudentCourseScores = async (req, res) => {
 //         return;
 //       }
 
-//       const courseQuizzes = courseResponse.responses
-//         .map((response, responseIndex) => {
-//           console.log(`\n  --- Response ${responseIndex + 1} ---`);
-//           console.log(`  LessonId: ${response.lessonId}`);
-//           console.log(`  Response keys: ${Object.keys(response)}`);
-//           console.log(`  Has quiz field: ${!!response.quiz}`);
-//           console.log(`  Quiz is array: ${Array.isArray(response.quiz)}`);
-//           console.log(`  Quiz length: ${response.quiz?.length || 0}`);
-          
-//           // Check if quiz exists and has data
-//           const hasQuiz = response.quiz && Array.isArray(response.quiz) && response.quiz.length > 0;
-          
-//           if (!hasQuiz) {
-//             console.log(`  ❌ No valid quiz data for lesson ${response.lessonId}`);
-//             return null;
-//           }
+//       const courseAttempts = [];
 
-//           try {
-//             // NEW LOGIC: Use the stored score and total from the quiz attempt
-//             // The quiz array contains quiz attempts, each with score/total
-//             const quizAttempts = response.quiz;
-            
-//             console.log(`  📝 Quiz attempts found: ${quizAttempts.length}`);
-            
-//             // Process each quiz attempt
-//             const quizResults = quizAttempts.map((attempt, attemptIdx) => {
-//               console.log(`    Attempt ${attemptIdx + 1}:`, {
+//       courseResponse.responses.forEach((response, responseIndex) => {
+//         console.log(`\n  --- Response ${responseIndex + 1} ---`);
+//         console.log(`  LessonId: ${response.lessonId}`);
+//         console.log(`  Has quiz field: ${!!response.quiz}`);
+//         console.log(`  Quiz length: ${response.quiz?.length || 0}`);
+
+//         if (Array.isArray(response.quiz) && response.quiz.length > 0) {
+//           response.quiz.forEach((attempt, attemptIdx) => {
+//             console.log(`    Attempt ${attemptIdx + 1}:`, {
+//               attemptNumber: attempt.attemptNumber,
+//               score: attempt.score,
+//               total: attempt.total
+//             });
+
+//             if ('score' in attempt && 'total' in attempt && attempt.total > 0) {
+//               const scorePercentage = (attempt.score / attempt.total) * 100;
+//               courseAttempts.push({
+//                 courseId: courseResponse.courseId,
+//                 lessonId: response.lessonId,
 //                 attemptNumber: attempt.attemptNumber,
-//                 score: attempt.score,
-//                 total: attempt.total,
-//                 hasScore: 'score' in attempt,
-//                 hasTotal: 'total' in attempt
+//                 score: Math.round(scorePercentage * 100) / 100,
+//                 correctAnswers: attempt.score,
+//                 totalQuestions: attempt.total,
+//                 completedAt: attempt.submittedAt || response.completedAt || courseResponse.updatedAt || new Date(),
+//                 rawData: {
+//                   storedScore: attempt.score,
+//                   storedTotal: attempt.total
+//                 }
 //               });
+//             } else {
+//               console.log(`    ❌ Invalid attempt data for lesson ${response.lessonId}`);
+//             }
+//           });
+//         }
+//       });
 
-//               // Use the stored score and total directly
-//               if ('score' in attempt && 'total' in attempt && attempt.total > 0) {
-//                 const scorePercentage = (attempt.score / attempt.total) * 100;
-//                 console.log(`    ✅ Valid attempt: ${attempt.score}/${attempt.total} = ${scorePercentage.toFixed(2)}%`);
-                
-//                 return {
-//                   courseId: courseResponse.courseId,
-//                   lessonId: response.lessonId,
-//                   attemptNumber: attempt.attemptNumber,
-//                   score: Math.round(scorePercentage * 100) / 100,
-//                   correctAnswers: attempt.score,
-//                   totalQuestions: attempt.total,
-//                   completedAt: attempt.submittedAt || response.completedAt || courseResponse.updatedAt || new Date(),
-//                   rawData: {
-//                     storedScore: attempt.score,
-//                     storedTotal: attempt.total
-//                   }
-//                 };
-//               } else {
-//                 console.log(`    ❌ Invalid attempt data:`, {
-//                   score: attempt.score,
-//                   total: attempt.total,
-//                   keys: Object.keys(attempt)
-//                 });
-//                 return null;
-//               }
-//             }).filter(result => result !== null);
-
-//             return quizResults;
-//           } catch (error) {
-//             console.log(`  ❌ Error processing quiz for lesson ${response.lessonId}:`, error.message);
-//             return null;
-//           }
-//         })
-//         .filter(quiz => quiz !== null)
-//         .flat(); // Flatten since each response can have multiple attempts
-
-//       console.log(`✅ Course ${index + 1} - Valid quizzes found: ${courseQuizzes.length}`);
-//       if (courseQuizzes.length > 0) {
-//         console.log(`✅ Course ${index + 1} - Quiz scores:`, courseQuizzes.map(q => `${q.lessonId}(${q.attemptNumber}): ${q.score}%`));
+//       if (courseAttempts.length > 0) {
+//         courseAttempts.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+//         latestQuizzesByCourse[courseResponse.courseId] = courseAttempts[0];
+//         console.log(`✅ Latest quiz chosen for course ${courseResponse.courseId}:`, courseAttempts[0]);
 //       }
-      
-//       allQuizzes.push(...courseQuizzes);
 //     });
+
+//     let allQuizzes = Object.values(latestQuizzesByCourse);
+
+//     // Sort by completion date (oldest first for prediction timeline)
+//     allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
+
+//     // Limit to max 5 quizzes
+//     if (allQuizzes.length > 6) {
+//       allQuizzes = allQuizzes.slice(-6);
+//     }
 
 //     console.log("\n=== FINAL QUIZ SUMMARY ===");
 //     console.log("Total quizzes found:", allQuizzes.length);
-//     console.log("All scores:", allQuizzes.map(q => q.score));
-//     console.log("Non-zero scores:", allQuizzes.filter(q => q.score > 0).map(q => q.score));
 //     console.log("Quiz details:", allQuizzes.map(q => ({
+//       courseId: q.courseId,
 //       lesson: q.lessonId,
 //       attempt: q.attemptNumber,
-//       score: q.score,
-//       correct: q.correctAnswers,
-//       total: q.totalQuestions,
-//       rawScore: q.rawData.storedScore,
-//       rawTotal: q.rawData.storedTotal
+//       score: q.score
 //     })));
-
-//     // Sort by completion date
-//     allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
 
 //     if (allQuizzes.length < 2) {
 //       console.log("❌ Not enough quizzes for prediction");
@@ -654,34 +619,22 @@ const getStudentCourseScores = async (req, res) => {
 //         message: 'Student needs to complete at least 2 quizzes across all courses for predictions',
 //         completedQuizzes: allQuizzes.length,
 //         requiredQuizzes: 2,
-//         availableQuizzes: allQuizzes.map(q => ({
-//           lessonId: q.lessonId,
-//           attemptNumber: q.attemptNumber,
-//           score: q.score,
-//           correctAnswers: q.correctAnswers,
-//           totalQuestions: q.totalQuestions,
-//           rawData: q.rawData
-//         })),
-//         debugInfo: "Check server logs for detailed quiz processing information"
+//         availableQuizzes: allQuizzes
 //       });
 //     }
 
-//     // Use all available scores for better prediction
 //     const inputScores = allQuizzes.map(quiz => quiz.score);
 //     console.log("🎯 Input scores for prediction:", inputScores);
 
-//     // Generate LOCAL predictions
 //     console.log("🚀 Generating LOCAL predictions...");
 //     const predictionStart = Date.now();
-    
 //     const predictions = generateLocalPredictions(inputScores);
-    
 //     console.log(`✅ Local prediction took ${Date.now() - predictionStart} ms`);
 //     console.log("Prediction results:", predictions);
 
 //     const studentInfo = studentResponses[0].studentId;
 
-//     const responseData = {
+//     return res.status(200).json({
 //       success: true,
 //       studentId: studentInfo._id,
 //       studentName: studentInfo.name,
@@ -690,39 +643,21 @@ const getStudentCourseScores = async (req, res) => {
 //       completedQuizzes: allQuizzes.length,
 //       totalQuizzesExpected: 5,
 //       chartData: [
-//         // Add completed quizzes
 //         ...allQuizzes.map((quiz, index) => ({
 //           quiz: `Quiz ${index + 1}`,
 //           type: 'Completed',
 //           score: Math.round(quiz.score),
 //         })),
-//         // Add predicted quizzes
 //         ...predictions.predicted_scores.map((score, index) => ({
 //           quiz: `Quiz ${allQuizzes.length + index + 1}`,
 //           type: 'Predicted',
 //           score: Math.round(score),
 //         })),
 //       ],
-//       // Add extra info for debugging and frontend
 //       predictionMethod: 'Local Trend Analysis',
 //       confidence: predictions.confidence,
-//       trendAnalysis: predictions.trend_analysis,
-//       debugInfo: {
-//         totalQuizzesProcessed: allQuizzes.length,
-//         quizDetails: allQuizzes.map(q => ({
-//           lesson: q.lessonId,
-//           attempt: q.attemptNumber,
-//           score: q.score,
-//           correct: q.correctAnswers,
-//           total: q.totalQuestions,
-//           actualStoredScore: q.rawData.storedScore,
-//           actualStoredTotal: q.rawData.storedTotal
-//         }))
-//       }
-//     };
-
-//     console.log("=== LOCAL Quiz Predictions DEBUG End ===");
-//     return res.status(200).json(responseData);
+//       trendAnalysis: predictions.trend_analysis
+//     });
 
 //   } catch (error) {
 //     console.error('=== ERROR in getQuizPredictions ===');
@@ -732,110 +667,48 @@ const getStudentCourseScores = async (req, res) => {
 //     return res.status(500).json({
 //       success: false,
 //       message: 'Failed to get quiz predictions',
-//       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-//       debugInfo: 'Check server logs for detailed error information'
+//       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
 //     });
 //   }
 // };
 
-// getting quiz predictions using local logic - using stored values
 const getQuizPredictions = async (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
   try {
-    console.log("=== LOCAL Quiz Predictions with DEBUG Start ===");
-    const { studentId } = req.params;
-    console.log("StudentId:", studentId);
+    const TOTAL_QUIZZES_EXPECTED = 6;
+    const studentId = req.params.studentId;
 
-    if (!studentId) {
-      return res.status(400).json({
-        success: false,
-        message: 'Student ID is required'
-      });
+    console.log(`Fetching quiz predictions for student: ${studentId}`);
+
+    // Get student info
+    const studentInfo = await Student.findById(studentId);
+    if (!studentInfo) {
+      return res.status(404).json({ success: false, message: 'Student not found' });
     }
 
-    console.log("Starting DB query...");
-    const dbStart = Date.now();
-    
-    const studentResponses = await StudentResponse.find({ studentId })
-      .populate('studentId', 'name email')
-      .lean();
+    // Fetch all course responses for the student
+    const studentResponses = await StudentCourseResponse.find({ studentId }).lean();
+    console.log(`Found ${studentResponses.length} course responses`);
 
-    console.log(`DB query took ${Date.now() - dbStart} ms`);
-    console.log("Found student responses:", studentResponses?.length || 0);
-
-    if (!studentResponses || studentResponses.length === 0) {
-      console.log("❌ No student responses found");
-      return res.status(404).json({
-        success: false,
-        message: 'No response data found for this student'
-      });
-    }
-
-    console.log("\n=== DATABASE STRUCTURE DEBUG ===");
-    studentResponses.forEach((courseResponse, idx) => {
-      console.log(`Course ${idx + 1} structure:`, {
-        courseId: courseResponse.courseId,
-        responsesCount: courseResponse.responses?.length || 0,
-        studentInfo: courseResponse.studentId ? {
-          id: courseResponse.studentId._id,
-          name: courseResponse.studentId.name
-        } : 'No student info'
-      });
-    });
-
-    console.log("\n=== PROCESSING QUIZ RESPONSES (LATEST PER COURSE) ===");
+    // Latest quiz per course
     const latestQuizzesByCourse = {};
 
-    studentResponses.forEach((courseResponse, index) => {
-      console.log(`\n=== COURSE ${index + 1} DEBUG ===`);
-      console.log(`CourseId:`, courseResponse.courseId);
-      console.log(`Responses count:`, courseResponse.responses?.length || 0);
-
-      if (!courseResponse.responses || courseResponse.responses.length === 0) {
-        console.log(`❌ Course ${index + 1} - No responses found`);
-        return;
-      }
+    studentResponses.forEach(courseResponse => {
+      if (!courseResponse.responses || courseResponse.responses.length === 0) return;
 
       const courseAttempts = [];
-
-      courseResponse.responses.forEach((response, responseIndex) => {
-        console.log(`\n  --- Response ${responseIndex + 1} ---`);
-        console.log(`  LessonId: ${response.lessonId}`);
-        console.log(`  Has quiz field: ${!!response.quiz}`);
-        console.log(`  Quiz length: ${response.quiz?.length || 0}`);
-
+      courseResponse.responses.forEach(response => {
         if (Array.isArray(response.quiz) && response.quiz.length > 0) {
-          response.quiz.forEach((attempt, attemptIdx) => {
-            console.log(`    Attempt ${attemptIdx + 1}:`, {
-              attemptNumber: attempt.attemptNumber,
-              score: attempt.score,
-              total: attempt.total
-            });
-
+          response.quiz.forEach(attempt => {
             if ('score' in attempt && 'total' in attempt && attempt.total > 0) {
-              const scorePercentage = (attempt.score / attempt.total) * 100;
               courseAttempts.push({
                 courseId: courseResponse.courseId,
                 lessonId: response.lessonId,
                 attemptNumber: attempt.attemptNumber,
-                score: Math.round(scorePercentage * 100) / 100,
+                score: (attempt.score / attempt.total) * 100,
                 correctAnswers: attempt.score,
                 totalQuestions: attempt.total,
-                completedAt: attempt.submittedAt || response.completedAt || courseResponse.updatedAt || new Date(),
-                rawData: {
-                  storedScore: attempt.score,
-                  storedTotal: attempt.total
-                }
+                completedAt: attempt.submittedAt || response.completedAt || courseResponse.updatedAt || new Date()
               });
-            } else {
-              console.log(`    ❌ Invalid attempt data for lesson ${response.lessonId}`);
             }
           });
         }
@@ -844,88 +717,62 @@ const getQuizPredictions = async (req, res) => {
       if (courseAttempts.length > 0) {
         courseAttempts.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
         latestQuizzesByCourse[courseResponse.courseId] = courseAttempts[0];
-        console.log(`✅ Latest quiz chosen for course ${courseResponse.courseId}:`, courseAttempts[0]);
       }
     });
 
+    // Convert to array
     let allQuizzes = Object.values(latestQuizzesByCourse);
 
-    // Sort by completion date (oldest first for prediction timeline)
+    // Sort by date ASC
     allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
 
-    // Limit to max 5 quizzes
-    if (allQuizzes.length > 6) {
-      allQuizzes = allQuizzes.slice(-6);
+    // Cap completed quizzes at TOTAL_QUIZZES_EXPECTED
+    if (allQuizzes.length > TOTAL_QUIZZES_EXPECTED) {
+      allQuizzes = allQuizzes.slice(-TOTAL_QUIZZES_EXPECTED);
     }
 
-    console.log("\n=== FINAL QUIZ SUMMARY ===");
-    console.log("Total quizzes found:", allQuizzes.length);
-    console.log("Quiz details:", allQuizzes.map(q => ({
-      courseId: q.courseId,
-      lesson: q.lessonId,
-      attempt: q.attemptNumber,
-      score: q.score
-    })));
+    const completedCount = allQuizzes.length;
+    const remainingCount = TOTAL_QUIZZES_EXPECTED - completedCount;
 
-    if (allQuizzes.length < 2) {
-      console.log("❌ Not enough quizzes for prediction");
-      return res.status(400).json({
-        success: false,
-        message: 'Student needs to complete at least 2 quizzes across all courses for predictions',
-        completedQuizzes: allQuizzes.length,
-        requiredQuizzes: 2,
-        availableQuizzes: allQuizzes
-      });
+    console.log(`Completed quizzes: ${completedCount}, Remaining slots for predictions: ${remainingCount}`);
+
+    const inputScores = allQuizzes.map(q => q.score);
+
+    // Generate predictions only if needed
+    let predictedScores = [];
+    if (remainingCount > 0) {
+      const predictionResult = generateLocalPredictions(inputScores);
+      predictedScores = predictionResult.predicted_scores.slice(0, remainingCount);
     }
-
-    const inputScores = allQuizzes.map(quiz => quiz.score);
-    console.log("🎯 Input scores for prediction:", inputScores);
-
-    console.log("🚀 Generating LOCAL predictions...");
-    const predictionStart = Date.now();
-    const predictions = generateLocalPredictions(inputScores);
-    console.log(`✅ Local prediction took ${Date.now() - predictionStart} ms`);
-    console.log("Prediction results:", predictions);
-
-    const studentInfo = studentResponses[0].studentId;
 
     return res.status(200).json({
       success: true,
       studentId: studentInfo._id,
       studentName: studentInfo.name,
       inputScores,
-      predictions: predictions,
-      completedQuizzes: allQuizzes.length,
-      totalQuizzesExpected: 5,
+      predictions: predictedScores,
+      completedQuizzes: completedCount,
+      totalQuizzesExpected: TOTAL_QUIZZES_EXPECTED,
       chartData: [
         ...allQuizzes.map((quiz, index) => ({
           quiz: `Quiz ${index + 1}`,
           type: 'Completed',
           score: Math.round(quiz.score),
         })),
-        ...predictions.predicted_scores.map((score, index) => ({
-          quiz: `Quiz ${allQuizzes.length + index + 1}`,
+        ...predictedScores.map((score, index) => ({
+          quiz: `Quiz ${completedCount + index + 1}`,
           type: 'Predicted',
           score: Math.round(score),
         })),
-      ],
-      predictionMethod: 'Local Trend Analysis',
-      confidence: predictions.confidence,
-      trendAnalysis: predictions.trend_analysis
+      ]
     });
 
   } catch (error) {
-    console.error('=== ERROR in getQuizPredictions ===');
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
-
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to get quiz predictions',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-    });
+    console.error('Error generating quiz predictions:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
 
 
 module.exports = {
