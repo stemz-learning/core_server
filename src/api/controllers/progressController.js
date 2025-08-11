@@ -282,17 +282,24 @@ class ProgressController {
         };
 
         // Check which lessons are available (lesson_1, lesson_2, etc.)
-        for (let i = 1; i <= 5; i++) {
-            if (foundCourse[`lesson_${i}`] === true) {
-                availableAssignments.lessons.push(i.toString());
-            }
+        // for (let i = 1; i <= 5; i++) {
+        //     if (foundCourse[`lesson_${i}`] === true) {
+        //         availableAssignments.lessons.push(i.toString());
+        //     }
+        // }
+
+        if (Array.isArray(foundCourse.lessons)) {
+            availableAssignments.lessons = foundCourse.lessons.map(l => l.lessonId.toString());
         }
 
         // Check which worksheets are available (ws_1, ws_2, etc.)
-        for (let i = 1; i <= 5; i++) {
-            if (foundCourse[`ws_${i}`] === true) {
-                availableAssignments.worksheets.push(i.toString());
-            }
+        // for (let i = 1; i <= 5; i++) {
+        //     if (foundCourse[`ws_${i}`] === true) {
+        //         availableAssignments.worksheets.push(i.toString());
+        //     }
+        // }
+        if (Array.isArray(foundCourse.worksheets)) {
+            availableAssignments.worksheets = foundCourse.worksheets.map(w => w.worksheetId.toString());
         }
 
         // Check if quiz is available
