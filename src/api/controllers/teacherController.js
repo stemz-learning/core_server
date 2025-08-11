@@ -564,63 +564,133 @@ const getStudentCourseScores = async (req, res) => {
       let attempts = 0;
       const maxAttempts = 5;
       
+      // while (attempts < maxAttempts) {
+      //   await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second between attempts
+        
+      //   getResponse = await Promise.race([
+      //     fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future/${eventId}`),
+      //     new Promise((_, reject) => 
+      //       setTimeout(() => reject(new Error('GET request timeout')), 10000)
+      //     )
+      //   ]);
+        
+      //   console.log(`Gradio GET attempt ${attempts + 1}, response status:`, getResponse.status);
+        
+      //   if (getResponse.ok) {
+      //     // const resultData = await getResponse.json();
+      //     // console.log("Gradio result data:", resultData);
+      //     const rawText = await getResponse.text();
+      //     console.log("Raw GET response text:", rawText);
+          
+      //     if (resultData.data && resultData.data[0]) {
+      //       const predictionData = resultData.data[0];
+            
+      //       // Validate prediction data structure
+      //       if (!predictionData.predicted_scores || !Array.isArray(predictionData.predicted_scores)) {
+      //         throw new Error('Invalid prediction data structure received');
+      //       }
+            
+      //       // Get student info from first response
+      //       const studentInfo = studentResponses[0].studentId;
+            
+      //       console.log("Prediction successful, formatting response...");
+            
+      //       // Format response with generic quiz labels
+      //       const responseData = {
+      //         success: true,
+      //         studentId: studentInfo._id,
+      //         studentName: studentInfo.name,
+      //         inputScores,
+      //         predictions: predictionData,
+      //         completedQuizzes: allQuizzes.length,
+      //         totalQuizzesExpected: 5,
+      //         chartData: [
+      //           { quiz: 'Quiz 1', type: 'Completed', score: Math.round(inputScores[0]) },
+      //           { quiz: 'Quiz 2', type: 'Completed', score: Math.round(inputScores[1]) },
+      //           ...predictionData.predicted_scores.map((score, index) => ({
+      //             quiz: `Quiz ${index + 3}`,
+      //             type: 'Predicted',
+      //             score: Math.round(score)
+      //           }))
+      //         ]
+      //       };
+            
+      //       console.log("=== Quiz Predictions Debug End ===");
+      //       return res.status(200).json(responseData);
+      //     }
+      //   }
+        
+      //   attempts++;
+      //   console.log(`Attempt ${attempts} failed, retrying...`);
+      // }
+
       while (attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second between attempts
-        
+      
         getResponse = await Promise.race([
           fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future/${eventId}`),
           new Promise((_, reject) => 
             setTimeout(() => reject(new Error('GET request timeout')), 10000)
           )
         ]);
-        
+      
         console.log(`Gradio GET attempt ${attempts + 1}, response status:`, getResponse.status);
-        
+      
         if (getResponse.ok) {
-          const resultData = await getResponse.json();
-          console.log("Gradio result data:", resultData);
-          
-          if (resultData.data && resultData.data[0]) {
-            const predictionData = resultData.data[0];
-            
-            // Validate prediction data structure
-            if (!predictionData.predicted_scores || !Array.isArray(predictionData.predicted_scores)) {
-              throw new Error('Invalid prediction data structure received');
+          const rawText = await getResponse.text();
+          console.log("Raw GET response text:", rawText);
+      
+          const dataLines = rawText.split('\n').filter(line => line.startsWith('data: '));
+          if (dataLines.length === 0) {
+            console.log("No data lines found in SSE response");
+          } else {
+            const lastDataLine = dataLines[dataLines.length - 1];
+            const jsonStr = lastDataLine.replace(/^data: /, '').trim();
+            try {
+              const resultData = JSON.parse(jsonStr);
+              console.log("Parsed prediction data:", resultData);
+      
+              if (resultData.data && resultData.data[0]) {
+                const predictionData = resultData.data[0];
+      
+                if (!predictionData.predicted_scores || !Array.isArray(predictionData.predicted_scores)) {
+                  throw new Error('Invalid prediction data structure received');
+                }
+      
+                const studentInfo = studentResponses[0].studentId;
+      
+                const responseData = {
+                  success: true,
+                  studentId: studentInfo._id,
+                  studentName: studentInfo.name,
+                  inputScores,
+                  predictions: predictionData,
+                  completedQuizzes: allQuizzes.length,
+                  totalQuizzesExpected: 5,
+                  chartData: [
+                    { quiz: 'Quiz 1', type: 'Completed', score: Math.round(inputScores[0]) },
+                    { quiz: 'Quiz 2', type: 'Completed', score: Math.round(inputScores[1]) },
+                    ...predictionData.predicted_scores.map((score, index) => ({
+                      quiz: `Quiz ${index + 3}`,
+                      type: 'Predicted',
+                      score: Math.round(score)
+                    }))
+                  ]
+                };
+      
+                console.log("=== Quiz Predictions Debug End ===");
+                return res.status(200).json(responseData);
+              }
+            } catch (err) {
+              console.error("Failed to parse prediction JSON from SSE:", err);
             }
-            
-            // Get student info from first response
-            const studentInfo = studentResponses[0].studentId;
-            
-            console.log("Prediction successful, formatting response...");
-            
-            // Format response with generic quiz labels
-            const responseData = {
-              success: true,
-              studentId: studentInfo._id,
-              studentName: studentInfo.name,
-              inputScores,
-              predictions: predictionData,
-              completedQuizzes: allQuizzes.length,
-              totalQuizzesExpected: 5,
-              chartData: [
-                { quiz: 'Quiz 1', type: 'Completed', score: Math.round(inputScores[0]) },
-                { quiz: 'Quiz 2', type: 'Completed', score: Math.round(inputScores[1]) },
-                ...predictionData.predicted_scores.map((score, index) => ({
-                  quiz: `Quiz ${index + 3}`,
-                  type: 'Predicted',
-                  score: Math.round(score)
-                }))
-              ]
-            };
-            
-            console.log("=== Quiz Predictions Debug End ===");
-            return res.status(200).json(responseData);
           }
         }
-        
+      
         attempts++;
         console.log(`Attempt ${attempts} failed, retrying...`);
       }
+      
       
       throw new Error('Failed to get results after maximum attempts');
   
