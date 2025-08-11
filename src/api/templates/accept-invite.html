@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accept Classroom Invitation</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; padding: 0; }
+        .container { max-width: 500px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 32px; }
+        h2 { color: #2c3e50; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 12px 24px; background: #3498db; color: #fff; border: none; border-radius: 4px; text-decoration: none; font-size: 16px; cursor: pointer; transition: background 0.3s; }
+        .btn:hover { background: #217dbb; }
+        .btn:disabled { background: #bdc3c7; cursor: not-allowed; }
+        .info { margin: 16px 0 24px 0; color: #555; line-height: 1.5; }
+        .success { color: #27ae60; background: #d5f4e6; padding: 12px; border-radius: 4px; margin: 16px 0; }
+        .error { color: #e74c3c; background: #fdf2f2; padding: 12px; border-radius: 4px; margin: 16px 0; }
+        .loading { color: #f39c12; }
+        .classroom-info { background: #ecf0f1; padding: 16px; border-radius: 4px; margin: 16px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Join Classroom Invitation</h2>
+        
+        <div class="classroom-info">
+            <strong>Classroom:</strong> <span id="classroomName">Loading...</span><br>
+            <strong>Classroom ID:</strong> <span id="classroomId">Loading...</span><br>
+            <strong>Student ID:</strong> <span id="userId">Loading...</span>
+        </div>
+        
+        <p class="info">
+            Click the button below to accept the invitation and join this classroom.
+        </p>
+        
+        <form id="acceptForm">
+            <button type="submit" class="btn" id="acceptBtn">Accept Invitation</button>
+        </form>
+        
+        <div id="message"></div>
+        
+        <p style="margin-top:24px; color:#888; font-size:14px;">
+            If you did not expect this invitation, you can safely close this page.
+        </p>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('userId');
+        const classroomName = urlParams.get('classroomName');
+        const classroomId = urlParams.get('classroomId');
+        const apiEndpoint = classroomId ? `/api/physical-classroom/${classroomId}/add-student` : '/api/notifications/accept-invite';
+
+        // Display the information
+        document.getElementById('userId').textContent = userId || 'Not provided';
+        document.getElementById('classroomName').textContent = decodeURIComponent(classroomName || 'Not provided');
+        document.getElementById('classroomId').textContent = classroomId || 'Not provided';
+
+        // Handle form submission
+        document.getElementById('acceptForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const button = document.getElementById('acceptBtn');
+            const messageDiv = document.getElementById('message');
+            const originalText = button.textContent;
+            
+            // Validate required data
+            if (!userId || !classroomName || !classroomId) {
+                messageDiv.innerHTML = '<div class="error">Missing required invitation data. Please use the link from your email.</div>';
+                return;
+            }
+            
+            // Show loading state
+            button.textContent = 'Processing...';
+            button.disabled = true;
+            messageDiv.innerHTML = '<div class="loading">Processing your invitation...</div>';
+            
+            try {
+                const response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        studentId: userId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    button.textContent = 'Invitation Accepted!';
+                    button.style.background = '#27ae60';
+                    messageDiv.innerHTML = `
+                        <div class="success">
+                            <strong>Success!</strong> You have successfully joined the classroom "${decodeURIComponent(classroomName)}".
+                            <br><br>
+                            You can now close this page and check your account for the new classroom.
+                        </div>
+                    `;
+                } else {
+                    throw new Error(result.message || 'Failed to accept invitation');
+                }
+            } catch (error) {
+                console.error('Error accepting invitation:', error);
+                button.textContent = 'Try Again';
+                button.style.background = '#e74c3c';
+                button.disabled = false;
+                
+                messageDiv.innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> ${error.message || 'Failed to accept invitation. Please try again.'}
+                    </div>
+                `;
+                
+                // Reset button after 3 seconds
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#3498db';
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

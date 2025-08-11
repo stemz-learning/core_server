@@ -17,20 +17,18 @@
         <h2>You're Invited to Join a Classroom!</h2>
         <p class="info">
             You have been invited to join the classroom: <strong>{{ classroom_name }}</strong>.<br>
-            Accepting this invitation will add you to the physical classroom roster.
+            Click the button below to accept this invitation and join the classroom.
         </p>
-        <form action="{{ accept_invite_url }}" method="POST">
-            <input type="hidden" name="studentId" value="{{ userId }}">
-            <script>
-                document.querySelector('form').addEventListener('submit', function(e) {
-                    const formData = new FormData(this);
-                    const data = {};
-                    formData.forEach((value, key) => { data[key] = value; });
-                    console.log('POST data:', data);
-                });
-            </script>
-            <button type="submit" class="btn">Accept Invitation</button>
-        </form>
+        
+        <div style="text-align: center; margin: 32px 0;">
+            <a href="{{ accept_invite_url }}?userId={{ userId }}&classroomName={{ classroom_name }}" class="btn" style="text-decoration: none; color: #fff;">
+                Accept Invitation
+            </a>
+        </div>
+        
+        <p style="color: #666; font-size: 14px; margin-top: 24px;">
+            <strong>Note:</strong> This link will take you to the STEMz platform where you can complete your classroom enrollment.
+        </p>
         <p style="margin-top:24px; color:#888; font-size:14px;">
             If you did not expect this invitation, you can safely ignore this message.
         </p>

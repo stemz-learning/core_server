@@ -613,6 +613,7 @@ static async teacherDismissNotification(req, res) {
 
   static async sendEmailNotification(req, res) {
     try {
+      console.log('req.body:', req.body);
       const { recipientEmail, subject, message } = req.body;
 
       // Validate required fields
@@ -702,19 +703,22 @@ static async teacherDismissNotification(req, res) {
 
   static async sendClassroomInvite(req, res) {
     try {
-      const { userId, recipientEmail, classroomName, acceptInviteUrl } = req.body;
-
+      console.log('req.body:', req.body);
+      // Extract required fields from request body
+      const { userId, recipientEmail, classroomName, classroomId, acceptInviteUrl } = req.body;
+      console.log('Extracted fields:', { userId, recipientEmail, classroomName, classroomId, acceptInviteUrl });
       // Validate required fields
-      if (!userId || !recipientEmail || !classroomName || !acceptInviteUrl) {
+      if (!userId || !recipientEmail || !classroomName || !classroomId || !acceptInviteUrl) {
         return res.status(400).json({
-          message: 'Missing required fields: userId, recipientEmail, classroomName, acceptInviteUrl'
+          message: 'Missing required fields: userId, recipientEmail, classroomName, classroomId, acceptInviteUrl'
         });
       }
 
       // Render the HTML template
       const htmlContent = await NotificationController.renderTemplate('invite.html', {
         classroom_name: classroomName,
-        accept_invite_url: acceptInviteUrl
+        accept_invite_url: `${acceptInviteUrl}?userId=${userId}&classroomName=${encodeURIComponent(classroomName)}&classroomId=${classroomId}`,
+        userId: userId
       });
 
       // Create transporter (same as your existing code)
@@ -764,6 +768,78 @@ static async teacherDismissNotification(req, res) {
     } catch (error) {
       console.error('Error rendering template:', error);
       throw error;
+    }
+  }
+
+  // Serve the invitation acceptance page
+  static async serveAcceptInvitePage(req, res) {
+    try {
+      const html = await fs.readFile(
+        path.join(__dirname, '..', 'templates', 'accept-invite.html'), 
+        'utf-8'
+      );
+      res.setHeader('Content-Type', 'text/html');
+      res.send(html);
+    } catch (error) {
+      console.error('Error serving accept invite page:', error);
+      res.status(500).json({ message: 'Failed to load invitation page' });
+    }
+  }
+
+  // Handle the actual invitation acceptance
+  static async acceptClassroomInvite(req, res) {
+    try {
+      const { userId, classroomName } = req.body;
+
+      if (!userId || !classroomName) {
+        return res.status(400).json({
+          message: 'Missing required fields: userId and classroomName'
+        });
+      }
+
+      // Find the user
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Find the classroom by name (you might want to use a more specific identifier)
+      const classroom = await PhysicalClassroom.findOne({ 
+        name: classroomName, 
+        isActive: true 
+      });
+      
+      if (!classroom) {
+        return res.status(404).json({ message: 'Classroom not found' });
+      }
+
+      // Check if user is already in the classroom
+      if (classroom.studentIds.includes(userId)) {
+        return res.status(200).json({ 
+          message: 'You are already a member of this classroom',
+          classroom: { name: classroom.name, id: classroom._id }
+        });
+      }
+
+      // Add user to classroom
+      classroom.studentIds.push(userId);
+      await classroom.save();
+
+      res.status(200).json({
+        message: 'Successfully joined the classroom',
+        classroom: { 
+          name: classroom.name, 
+          id: classroom._id,
+          teacherName: classroom.teacherId.name || 'Unknown Teacher'
+        }
+      });
+
+    } catch (error) {
+      console.error('Error accepting classroom invite:', error);
+      res.status(500).json({ 
+        message: 'Failed to accept invitation', 
+        error: error.message 
+      });
     }
   }
 }

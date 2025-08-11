@@ -19,7 +19,11 @@ router.post('/announcement', authenticateToken, NotificationController.createAnn
 router.post('/assignment', authenticateToken, NotificationController.createAssignmentNotification);// ADD this line if it doesn't exist:
 router.get('/teacher-notifications', authenticateToken, NotificationController.getTeacherNotifications);
 router.get('/all-teacher-notifications', NotificationController.getAllTeacherNotifications);
-router.post('/email/send-invite', NotificationController.sendClassroomInvite);
+router.post('/email/invite', NotificationController.sendClassroomInvite);
+
+// Invitation acceptance routes
+router.get('/accept-invite', NotificationController.serveAcceptInvitePage);
+router.post('/accept-invite', NotificationController.acceptClassroomInvite);
 
 
 // System routes (for quiz failures, called by system)
