@@ -854,8 +854,8 @@ const getQuizPredictions = async (req, res) => {
     allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
 
     // Limit to max 5 quizzes
-    if (allQuizzes.length > 5) {
-      allQuizzes = allQuizzes.slice(-5);
+    if (allQuizzes.length > 6) {
+      allQuizzes = allQuizzes.slice(-6);
     }
 
     console.log("\n=== FINAL QUIZ SUMMARY ===");
