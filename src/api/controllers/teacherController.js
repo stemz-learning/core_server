@@ -396,7 +396,6 @@ const getStudentCourseScores = async (req, res) => {
   };
 
   // get the quiz predictions
-  const fetch = require('node-fetch'); // or your environment's fetch
 
 const getQuizPredictions = async (req, res) => {
   try {
@@ -411,10 +410,38 @@ const getQuizPredictions = async (req, res) => {
       });
     }
 
+    const TEST_DUMMY_RESPONSE = true;  // << Set true to skip heavy logic & return dummy immediately
+
+    if (TEST_DUMMY_RESPONSE) {
+      console.log("Sending dummy response for quick testing...");
+      return res.status(200).json({
+        success: true,
+        studentId,
+        studentName: "Dummy Student",
+        inputScores: [85, 90],
+        predictions: {
+          predicted_scores: [92, 95, 98]
+        },
+        completedQuizzes: 2,
+        totalQuizzesExpected: 5,
+        chartData: [
+          { quiz: 'Quiz 1', type: 'Completed', score: 85 },
+          { quiz: 'Quiz 2', type: 'Completed', score: 90 },
+          { quiz: 'Quiz 3', type: 'Predicted', score: 92 },
+          { quiz: 'Quiz 4', type: 'Predicted', score: 95 },
+          { quiz: 'Quiz 5', type: 'Predicted', score: 98 },
+        ],
+      });
+    }
+
+    console.log("Starting DB query...");
+    const dbStart = Date.now();
     // Fetch all student responses
     const studentResponses = await StudentResponse.find({ studentId })
       .populate('studentId', 'name email')
       .lean();
+
+    console.log(`DB query took ${Date.now() - dbStart} ms`);
 
     console.log("Found student responses:", studentResponses?.length || 0);
 
