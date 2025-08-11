@@ -22,7 +22,11 @@ const portalCourseSchema = new mongoose.Schema({
   ws_4: { type: Boolean, default: false },
   ws_5: { type: Boolean, default: false },
 
-  quiz: { type: Boolean, default: false },
+  quiz_1: { type: Boolean, default: false },
+  quiz_2: { type: Boolean, default: false },
+  quiz_3: { type: Boolean, default: false },
+  quiz_4: { type: Boolean, default: false },
+  quiz_5: { type: Boolean, default: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model("portalCourse", portalCourseSchema, "courses");
