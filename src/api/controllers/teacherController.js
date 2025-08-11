@@ -193,76 +193,7 @@ const getStudentAnalyticsScores = async (req, res) => {
   };
   
 
-// // Get scores for a specific student across all courses
-// const getStudentOverallScores = async (req, res) => {
-//   try {
-//       const { studentId } = req.params; // Student ID from params
-
-//       // Find the student's response data across all courses
-//       const studentResponse = await StudentResponse.findOne({ studentId }).populate('studentId', 'name email');
-
-//       if (!studentResponse) {
-//           return res.status(404).json({
-//               message: 'No response data found for this student'
-//           });
-//       }
-
-//       // Initialize the array to store all responses
-//       const allResponses = [];
-
-//       // Loop through all responses and collect BPQ scores
-//       studentResponse.responses.forEach(lessonResponse => {
-//           lessonResponse.bpqResponses.forEach(bpq => {
-//               if (bpq.scores) {
-//                   allResponses.push({
-//                       questionId: bpq.questionId,
-//                       lessonId: lessonResponse.lessonId,
-//                       scores: bpq.scores,
-//                       timestamp: bpq.timestamp,
-//                   });
-//               }
-//           });
-//       });
-
-//       // Calculate the average scores across all responses for this student
-//       const avgScores = {
-//           Creativity: 0,
-//           "Critical Thinking": 0,
-//           Observation: 0,
-//           Curiosity: 0,
-//           "Problem Solving": 0
-//       };
-
-//       if (allResponses.length > 0) {
-//           const totals = { ...avgScores };
-
-//           allResponses.forEach(response => {
-//               Object.keys(totals).forEach(skill => {
-//                   totals[skill] += response.scores[skill] || 0;
-//               });
-//           });
-
-//           Object.keys(avgScores).forEach(skill => {
-//               avgScores[skill] = Math.round(totals[skill] / allResponses.length);
-//           });
-//       }
-
-//       return res.status(200).json({
-//           success: true,
-//           studentId,
-//           averageScores: avgScores,  // This gives the overall average score
-//           allResponses,               // This contains all the detailed responses
-//       });
-
-//   } catch (error) {
-//       console.error('Error fetching student overall scores:', error);
-//       return res.status(500).json({
-//           message: 'Failed to fetch student overall scores',
-//           error: error.message
-//       });
-//   }
-// };
-
+// Get scores for a specific student across all courses
 const getStudentOverallScores = async (req, res) => {
   try {
     const { studentId } = req.params;
@@ -407,6 +338,169 @@ const getStudentCourseScores = async (req, res) => {
       });
     }
   };
+
+  // get quiz scores for predictive analysis
+  const getStudentQuizScores = async (req, res) => {
+    try {
+      const { courseId, studentId } = req.params;
+      
+      const studentResponse = await StudentResponse.findOne({ 
+        studentId, 
+        courseId 
+      }).populate('studentId', 'name email');
+      
+      if (!studentResponse) {
+        return res.status(404).json({ 
+          message: 'No response data found for this student in the specified course' 
+        });
+      }
+      
+      // Extract quiz data from responses
+      const quizData = studentResponse.responses
+        .filter(response => response.quiz && response.quiz.length > 0)
+        .map(response => {
+          // Calculate quiz score as percentage
+          const correctAnswers = response.quiz.filter(answer => 
+            answer.isCorrect || answer.correct // Handle different field names
+          ).length;
+          const totalQuestions = response.quiz.length;
+          const score = (correctAnswers / totalQuestions) * 100;
+          
+          return {
+            lessonId: response.lessonId,
+            score: Math.round(score),
+            totalQuestions,
+            correctAnswers,
+            completedAt: response.completedAt || studentResponse.updatedAt
+          };
+        })
+        .sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
+      
+      return res.status(200).json({
+        success: true,
+        studentId: studentResponse.studentId._id,
+        studentName: studentResponse.studentId.name,
+        courseId,
+        quizScores: quizData,
+        canPredict: quizData.length >= 2,
+        completedQuizzes: quizData.length
+      });
+      
+    } catch (error) {
+      console.error('Error fetching student quiz scores:', error);
+      return res.status(500).json({ 
+        message: 'Failed to fetch student quiz scores', 
+        error: error.message 
+      });
+    }
+  };
+
+  // get the quiz predictions
+  const getQuizPredictions = async (req, res) => {
+    try {
+      const { courseId, studentId } = req.params;
+      
+      // First, get the student's quiz scores
+      const studentResponse = await StudentResponse.findOne({ 
+        studentId, 
+        courseId 
+      }).populate('studentId', 'name email');
+      
+      if (!studentResponse) {
+        return res.status(404).json({ 
+          message: 'No response data found for this student' 
+        });
+      }
+      
+      // Extract quiz scores
+      const completedQuizzes = studentResponse.responses
+        .filter(response => response.quiz && response.quiz.length > 0)
+        .map(response => {
+          const correctAnswers = response.quiz.filter(answer => 
+            answer.isCorrect || answer.correct
+          ).length;
+          return (correctAnswers / response.quiz.length) * 100;
+        });
+      
+      if (completedQuizzes.length < 2) {
+        return res.status(400).json({
+          message: 'Student needs to complete at least 2 quizzes for predictions',
+          completedQuizzes: completedQuizzes.length,
+          requiredQuizzes: 2
+        });
+      }
+      
+      // Take first 2 quiz scores for prediction
+      const inputScores = completedQuizzes.slice(0, 2);
+      const scoresString = inputScores.join(',');
+      
+      // Call Gradio API (2-step process)
+      const GRADIO_API_URL = 'https://sri-chandrasekaran-flask-nlp-api.hf.space';
+      
+      // Step 1: POST request to get EVENT_ID
+      const postResponse = await fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: [scoresString]
+        })
+      });
+      
+      if (!postResponse.ok) {
+        throw new Error(`Gradio API error: ${postResponse.status}`);
+      }
+      
+      const postData = await postResponse.json();
+      const eventId = postData.event_id;
+      
+      // Step 2: GET request to retrieve results
+      const getResponse = await fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future/${eventId}`);
+      
+      if (!getResponse.ok) {
+        throw new Error(`Gradio API error: ${getResponse.status}`);
+      }
+      
+      const resultData = await getResponse.json();
+      const predictionData = resultData.data[0]; // Gradio returns data in array format
+      
+      // Format response with student info
+      return res.status(200).json({
+        success: true,
+        studentId: studentResponse.studentId._id,
+        studentName: studentResponse.studentId.name,
+        courseId,
+        inputScores,
+        predictions: predictionData,
+        chartData: [
+          { quiz: 'Quiz 1', type: 'Completed', score: Math.round(inputScores[0]) },
+          { quiz: 'Quiz 2', type: 'Completed', score: Math.round(inputScores[1]) },
+          ...predictionData.predicted_scores.map((score, index) => ({
+            quiz: `Quiz ${index + 3}`,
+            type: 'Predicted',
+            score: Math.round(score)
+          }))
+        ]
+      });
+      
+    } catch (error) {
+      console.error('Error getting quiz predictions:', error);
+      
+      // Handle Gradio API connection errors gracefully
+      if (error.message.includes('Gradio API') || error.code === 'ECONNREFUSED') {
+        return res.status(503).json({
+          message: 'Prediction service temporarily unavailable',
+          error: 'Please ensure the Gradio service is running'
+        });
+      }
+      
+      return res.status(500).json({ 
+        message: 'Failed to get quiz predictions', 
+        error: error.message 
+      });
+    }
+  };
   
 
 module.exports = {
@@ -414,5 +508,7 @@ module.exports = {
   getIndividualStudentResponses,
   getStudentAnalyticsScores,
   getStudentOverallScores,
-  getStudentCourseScores
+  getStudentCourseScores,
+  getStudentQuizScores,
+  getQuizPredictions
 };

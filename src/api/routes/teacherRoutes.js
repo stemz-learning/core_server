@@ -5,7 +5,9 @@ const {
   getIndividualStudentResponses,
   getStudentAnalyticsScores,
   getStudentOverallScores,
-  getStudentCourseScores
+  getStudentCourseScores,
+  getStudentQuizScores,
+  getQuizPredictions
 } = require("../controllers/teacherController");
 
 // const { authenticateToken } = require("../controllers/authController");
@@ -24,5 +26,11 @@ router.get("/student-overall-scores/:studentId", getStudentOverallScores);
 
 // GET /api/teacher/student-course-scores/:courseId/student/:studentId
 router.get("/student-course-scores/:courseId/student/:studentId", getStudentCourseScores);
+
+// GET /api/teacher/quiz-scores/:courseId/student/:studentId
+router.get("/quiz-scores/:courseId/student/:studentId", getStudentQuizScores);
+
+// GET /api/teacher/quiz-predictions/:courseId/student/:studentId
+router.get("/quiz-predictions/:courseId/student/:studentId", getQuizPredictions);
 
 module.exports = router;
