@@ -6,26 +6,11 @@ const connectDB = require('./api/mongodb');
 
 const app = express();
 
-const allowedOrigins = ['http://localhost:3001', 'https://teachers.stemzlearning.org'];
-
 // CORS options
-// const corsOptions = {
-//   origin: 'http://localhost:3001', // Allow requests from your frontend
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
-//   credentials: true, // Allow cookies to be sent
-// };
-
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // Allow non-browser clients (curl, Postman)
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
+  origin: 'http://localhost:3001', // Allow requests from your frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
+  credentials: true, // Allow cookies to be sent
 };
 
 // Use CORS middleware
