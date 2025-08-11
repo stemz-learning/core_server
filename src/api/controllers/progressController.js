@@ -168,7 +168,7 @@ class ProgressController {
             // }
             for (let i = 1; i <= 5; i++) {
                 if (foundCourse[`quiz_${i}`] === true) {
-                    availableAssignments.worksheets.push(i.toString());
+                    availableAssignments.quizzes.push(i.toString());
                 }
             }
     
@@ -183,7 +183,7 @@ class ProgressController {
             const totalAssignments = {
                 lessons: availableAssignments.lessons.length,
                 worksheets: availableAssignments.worksheets.length,
-                quiz: availableAssignments.quizzes ? 1 : 0
+                quizzes: availableAssignments.quizzes
             };
     
             // Check each progress record
@@ -200,8 +200,8 @@ class ProgressController {
             });
     
             // Calculate totals
-            const totalCompleted = completedAssignments.lessons + completedAssignments.worksheets + completedAssignments.quiz;
-            const totalExpected = totalAssignments.lessons + totalAssignments.worksheets + totalAssignments.quiz;
+            const totalCompleted = completedAssignments.lessons + completedAssignments.worksheets + completedAssignments.quizzes;
+            const totalExpected = totalAssignments.lessons + totalAssignments.worksheets + totalAssignments.quizzes;
             const completionPercentage = totalExpected > 0 ? Math.round((totalCompleted / totalExpected) * 100) : 0;
     
             const result = {
@@ -222,10 +222,10 @@ class ProgressController {
                         total: totalAssignments.worksheets,
                         available: availableAssignments.worksheets
                     },
-                    quiz: {
-                        completed: completedAssignments.quiz,
-                        total: totalAssignments.quiz,
-                        available: availableAssignments.quiz
+                    quizzes: {
+                        completed: completedAssignments.quizzes,
+                        total: totalAssignments.quizzes,
+                        available: availableAssignments.quizzes
                     }
                 },
                 completed_assignments_list: userProgress
