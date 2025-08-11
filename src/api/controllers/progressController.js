@@ -133,8 +133,8 @@ class ProgressController {
                 });
             }
     
-            // const foundCourse = course || courseByCourseName;
-            const foundCourse = await Course.findOne({ courseName: course_name });
+            const foundCourse = course || courseByCourseName;
+            // const foundCourse = await Course.findOne({ courseName: course_name });
             console.log('Found course:', foundCourse);
     
             // Get all progress records for this user and course
