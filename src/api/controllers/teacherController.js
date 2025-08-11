@@ -699,9 +699,9 @@ const getQuizPredictions = async (req, res) => {
           message: 'Request timeout - processing took too long'
         });
       }
-    }, 25000); // 25 seconds total timeout
+    }, 100000); // 25 seconds total timeout
 
-    const TEST_DUMMY_RESPONSE = false;
+    const TEST_DUMMY_RESPONSE = true;
 
     if (TEST_DUMMY_RESPONSE) {
       clearTimeout(functionTimeout);
