@@ -398,43 +398,57 @@ const getStudentCourseScores = async (req, res) => {
   // get the quiz predictions
   const getQuizPredictions = async (req, res) => {
     try {
-      const { courseId, studentId } = req.params;
-      
-      // First, get the student's quiz scores
-      const studentResponse = await StudentResponse.findOne({ 
-        studentId, 
-        courseId 
-      }).populate('studentId', 'name email');
-      
-      if (!studentResponse) {
+      const { studentId } = req.params; // No courseId needed anymore
+  
+      // Get ALL student responses across ALL courses
+      const studentResponses = await StudentResponse.find({ studentId })
+        .populate('studentId', 'name email');
+  
+      if (!studentResponses || studentResponses.length === 0) {
         return res.status(404).json({ 
           message: 'No response data found for this student' 
         });
       }
+  
+      // Extract ALL quiz scores across ALL courses, sorted chronologically
+      const allQuizzes = [];
       
-      // Extract quiz scores
-      const completedQuizzes = studentResponse.responses
-        .filter(response => response.quiz && response.quiz.length > 0)
-        .map(response => {
-          const correctAnswers = response.quiz.filter(answer => 
-            answer.isCorrect || answer.correct
-          ).length;
-          return (correctAnswers / response.quiz.length) * 100;
-        });
-      
-      if (completedQuizzes.length < 2) {
+      studentResponses.forEach(courseResponse => {
+        const courseQuizzes = courseResponse.responses
+          .filter(response => response.quiz && response.quiz.length > 0)
+          .map(response => {
+            const correctAnswers = response.quiz.filter(answer => 
+              answer.isCorrect || answer.correct
+            ).length;
+            const score = (correctAnswers / response.quiz.length) * 100;
+            
+            return {
+              courseId: courseResponse.courseId,
+              lessonId: response.lessonId,
+              score: score,
+              completedAt: response.completedAt || courseResponse.updatedAt
+            };
+          });
+        
+        allQuizzes.push(...courseQuizzes);
+      });
+  
+      // Sort all quizzes chronologically
+      allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
+  
+      if (allQuizzes.length < 2) {
         return res.status(400).json({
-          message: 'Student needs to complete at least 2 quizzes for predictions',
-          completedQuizzes: completedQuizzes.length,
+          message: 'Student needs to complete at least 2 quizzes across all courses for predictions',
+          completedQuizzes: allQuizzes.length,
           requiredQuizzes: 2
         });
       }
-      
+  
       // Take first 2 quiz scores for prediction
-      const inputScores = completedQuizzes.slice(0, 2);
+      const inputScores = allQuizzes.slice(0, 2).map(quiz => quiz.score);
       const scoresString = inputScores.join(',');
-      
-      // Call Gradio API (2-step process)
+  
+      // Call Gradio API (same as before)
       const GRADIO_API_URL = 'https://sri-chandrasekaran-flask-nlp-api.hf.space';
       
       // Step 1: POST request to get EVENT_ID
@@ -443,36 +457,38 @@ const getStudentCourseScores = async (req, res) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          data: [scoresString]
-        })
+        body: JSON.stringify({ data: [scoresString] })
       });
-      
+  
       if (!postResponse.ok) {
         throw new Error(`Gradio API error: ${postResponse.status}`);
       }
-      
+  
       const postData = await postResponse.json();
       const eventId = postData.event_id;
-      
+  
       // Step 2: GET request to retrieve results
       const getResponse = await fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future/${eventId}`);
       
       if (!getResponse.ok) {
         throw new Error(`Gradio API error: ${getResponse.status}`);
       }
-      
+  
       const resultData = await getResponse.json();
-      const predictionData = resultData.data[0]; // Gradio returns data in array format
-      
-      // Format response with student info
+      const predictionData = resultData.data[0];
+  
+      // Get student info from first response
+      const studentInfo = studentResponses[0].studentId;
+  
+      // Format response with generic quiz labels
       return res.status(200).json({
         success: true,
-        studentId: studentResponse.studentId._id,
-        studentName: studentResponse.studentId.name,
-        courseId,
+        studentId: studentInfo._id,
+        studentName: studentInfo.name,
         inputScores,
         predictions: predictionData,
+        completedQuizzes: allQuizzes.length,
+        totalQuizzesExpected: 5,
         chartData: [
           { quiz: 'Quiz 1', type: 'Completed', score: Math.round(inputScores[0]) },
           { quiz: 'Quiz 2', type: 'Completed', score: Math.round(inputScores[1]) },
@@ -483,7 +499,7 @@ const getStudentCourseScores = async (req, res) => {
           }))
         ]
       });
-      
+  
     } catch (error) {
       console.error('Error getting quiz predictions:', error);
       
@@ -494,10 +510,10 @@ const getStudentCourseScores = async (req, res) => {
           error: 'Please ensure the Gradio service is running'
         });
       }
-      
-      return res.status(500).json({ 
-        message: 'Failed to get quiz predictions', 
-        error: error.message 
+  
+      return res.status(500).json({
+        message: 'Failed to get quiz predictions',
+        error: error.message
       });
     }
   };

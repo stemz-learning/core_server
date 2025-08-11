@@ -31,6 +31,6 @@ router.get("/student-course-scores/:courseId/student/:studentId", getStudentCour
 router.get("/quiz-scores/:courseId/student/:studentId", getStudentQuizScores);
 
 // GET /api/teacher/quiz-predictions/:courseId/student/:studentId
-router.get("/quiz-predictions/:courseId/student/:studentId", getQuizPredictions);
+router.get("/quiz-predictions/student/:studentId", getQuizPredictions);
 
 module.exports = router;
