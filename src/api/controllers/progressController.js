@@ -1,6 +1,7 @@
 const Progress = require('../models/progressModel');
 const Course = require('../models/courseModel');
 const connectDB = require('../mongodb');
+const StudentResponses = require('../models/studentResponseModel');
 
 class ProgressController {
     // Get all progress records
