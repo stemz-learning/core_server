@@ -240,166 +240,350 @@ class ProgressController {
     //     }
     // }
 
+    // take 2
     // Get course completion percentage for a user
+//     static async getCourseCompletionPercentage(req, res) {
+//     try {
+//         await connectDB();
+//         const { user_id, course_name } = req.params;
+
+//         console.log('=== DEBUG INFO ===');
+//         console.log('user_id:', user_id);
+//         console.log('course_name:', course_name);
+
+//         // Get the course data to determine available assignments
+//         console.log('Searching for course with name:', course_name);
+//         const course = await Course.findOne({ name: course_name });
+//         console.log('Found course with name field:', course);
+
+//         // Try with courseName field instead
+//         const courseByCourseName = await Course.findOne({ courseName: course_name });
+//         console.log('Found course with courseName field:', courseByCourseName);
+
+//         // List all courses to see what's available
+//         const allCourses = await Course.find({}, { _id: 1, name: 1, courseName: 1 });
+//         console.log('All available courses:', allCourses);
+
+//         if (!course && !courseByCourseName) {
+//             return res.status(404).json({ 
+//                 message: 'Course not found',
+//                 searchedFor: course_name,
+//                 availableCourses: allCourses
+//             });
+//         }
+
+//         const foundCourse = course || courseByCourseName;
+
+//         // Determine available assignments from course data
+//         const availableAssignments = {
+//             lessons: [],
+//             worksheets: [],
+//             quiz: false
+//         };
+
+//         // Check which lessons are available (lesson_1, lesson_2, etc.)
+//         for (let i = 1; i <= 5; i++) {
+//             if (foundCourse[`lesson_${i}`] === true) {
+//                 availableAssignments.lessons.push(i.toString());
+//             }
+//         }
+
+//         // Check which worksheets are available (ws_1, ws_2, etc.)
+//         for (let i = 1; i <= 5; i++) {
+//             if (foundCourse[`ws_${i}`] === true) {
+//                 availableAssignments.worksheets.push(i.toString());
+//             }
+//         }
+
+//         // Check if quiz is available
+//         if (foundCourse.quiz === true) {
+//             availableAssignments.quiz = true;
+//         }
+
+//         // Get student responses from StudentResponses instead of Progress
+//         const studentResponses = await StudentResponses.findOne({
+//             studentId: user_id,
+//             courseId: course_name
+//         });
+
+//         // Count completed assignments by type
+//         const completedAssignments = {
+//             lessons: 0,
+//             worksheets: 0,
+//             quiz: 0
+//         };
+
+//         const completedAssignmentsList = [];
+
+//         if (studentResponses && studentResponses.responses) {
+//             studentResponses.responses.forEach(resp => {
+//                 const lessonNum = resp.lessonId.replace(/^lesson/, '');
+
+//                 // Lesson completion
+//                 if (availableAssignments.lessons.includes(lessonNum) && (resp.bpqResponses?.length > 0)) {
+//                     completedAssignments.lessons++;
+//                     completedAssignmentsList.push({
+//                         assignment_type: 'lesson',
+//                         assignment_number: lessonNum,
+//                         score: null,
+//                         completed_at: studentResponses.updatedAt
+//                     });
+//                 }
+
+//                 // Worksheet completion
+//                 if (availableAssignments.worksheets.includes(lessonNum) && resp.worksheet && Object.keys(resp.worksheet).length > 0) {
+//                     completedAssignments.worksheets++;
+//                     completedAssignmentsList.push({
+//                         assignment_type: 'worksheet',
+//                         assignment_number: lessonNum,
+//                         score: null,
+//                         completed_at: studentResponses.updatedAt
+//                     });
+//                 }
+
+//                 // Quiz completion
+//                 if (availableAssignments.quiz && resp.quiz && resp.quiz.length > 0) {
+//                     completedAssignments.quiz++;
+//                     completedAssignmentsList.push({
+//                         assignment_type: 'quiz',
+//                         assignment_number: lessonNum,
+//                         score: null,
+//                         completed_at: studentResponses.updatedAt
+//                     });
+//                 }
+//             });
+//         }
+
+//         // Count total expected assignments
+//         const totalAssignments = {
+//             lessons: availableAssignments.lessons.length,
+//             worksheets: availableAssignments.worksheets.length,
+//             quiz: availableAssignments.quiz ? 1 : 0
+//         };
+
+//         // Calculate totals
+//         const totalCompleted = completedAssignments.lessons + completedAssignments.worksheets + completedAssignments.quiz;
+//         const totalExpected = totalAssignments.lessons + totalAssignments.worksheets + totalAssignments.quiz;
+//         const completionPercentage = totalExpected > 0 ? Math.round((totalCompleted / totalExpected) * 100) : 0;
+
+//         const result = {
+//             course_name,
+//             user_id,
+//             completion_percentage: completionPercentage,
+//             completed_assignments: totalCompleted,
+//             total_assignments: totalExpected,
+//             available_assignments: availableAssignments,
+//             breakdown: {
+//                 lessons: {
+//                     completed: completedAssignments.lessons,
+//                     total: totalAssignments.lessons,
+//                     available: availableAssignments.lessons
+//                 },
+//                 worksheets: {
+//                     completed: completedAssignments.worksheets,
+//                     total: totalAssignments.worksheets,
+//                     available: availableAssignments.worksheets
+//                 },
+//                 quiz: {
+//                     completed: completedAssignments.quiz,
+//                     total: totalAssignments.quiz,
+//                     available: availableAssignments.quiz
+//                 }
+//             },
+//             completed_assignments_list: completedAssignmentsList
+//         };
+
+//         res.status(200).json(result);
+//     } catch (error) {
+//         console.error('Error calculating course completion percentage:', error);
+//         res.status(500).json({ message: 'Failed to calculate course completion percentage' });
+//     }
+// }
+
+// Get course completion percentage for a user
 static async getCourseCompletionPercentage(req, res) {
     try {
-        await connectDB();
-        const { user_id, course_name } = req.params;
-
-        console.log('=== DEBUG INFO ===');
-        console.log('user_id:', user_id);
-        console.log('course_name:', course_name);
-
-        // Get the course data to determine available assignments
-        console.log('Searching for course with name:', course_name);
-        const course = await Course.findOne({ name: course_name });
-        console.log('Found course with name field:', course);
-
-        // Try with courseName field instead
-        const courseByCourseName = await Course.findOne({ courseName: course_name });
-        console.log('Found course with courseName field:', courseByCourseName);
-
-        // List all courses to see what's available
-        const allCourses = await Course.find({}, { _id: 1, name: 1, courseName: 1 });
-        console.log('All available courses:', allCourses);
-
-        if (!course && !courseByCourseName) {
-            return res.status(404).json({ 
-                message: 'Course not found',
-                searchedFor: course_name,
-                availableCourses: allCourses
-            });
-        }
-
-        const foundCourse = course || courseByCourseName;
-
-        // Determine available assignments from course data
-        const availableAssignments = {
-            lessons: [],
-            worksheets: [],
-            quiz: false
-        };
-
-        // Check which lessons are available (lesson_1, lesson_2, etc.)
-        for (let i = 1; i <= 5; i++) {
-            if (foundCourse[`lesson_${i}`] === true) {
-                availableAssignments.lessons.push(i.toString());
-            }
-        }
-
-        // Check which worksheets are available (ws_1, ws_2, etc.)
-        for (let i = 1; i <= 5; i++) {
-            if (foundCourse[`ws_${i}`] === true) {
-                availableAssignments.worksheets.push(i.toString());
-            }
-        }
-
-        // Check if quiz is available
-        if (foundCourse.quiz === true) {
-            availableAssignments.quiz = true;
-        }
-
-        // Get student responses from StudentResponses instead of Progress
-        const studentResponses = await StudentResponses.findOne({
-            studentId: user_id,
-            courseId: course_name
+      await connectDB();
+      const { user_id, course_name } = req.params;
+  
+      console.log('=== DEBUG INFO ===');
+      console.log('user_id:', user_id);
+      console.log('course_name:', course_name);
+  
+      // 1) Find course: try by id, then by name/courseName
+      let foundCourse = await Course.findById(course_name);
+      if (!foundCourse) {
+        foundCourse = await Course.findOne({ name: course_name }) || await Course.findOne({ courseName: course_name });
+      }
+  
+      const allCourses = await Course.find({}, { _id: 1, name: 1, courseName: 1 });
+      console.log('All available courses (for debug):', allCourses);
+  
+      if (!foundCourse) {
+        return res.status(404).json({
+          message: 'Course not found',
+          searchedFor: course_name,
+          availableCourses: allCourses
         });
-
-        // Count completed assignments by type
-        const completedAssignments = {
-            lessons: 0,
-            worksheets: 0,
-            quiz: 0
-        };
-
-        const completedAssignmentsList = [];
-
-        if (studentResponses && studentResponses.responses) {
-            studentResponses.responses.forEach(resp => {
-                const lessonNum = resp.lessonId.replace(/^lesson/, '');
-
-                // Lesson completion
-                if (availableAssignments.lessons.includes(lessonNum) && (resp.bpqResponses?.length > 0)) {
-                    completedAssignments.lessons++;
-                    completedAssignmentsList.push({
-                        assignment_type: 'lesson',
-                        assignment_number: lessonNum,
-                        score: null,
-                        completed_at: studentResponses.updatedAt
-                    });
-                }
-
-                // Worksheet completion
-                if (availableAssignments.worksheets.includes(lessonNum) && resp.worksheet && Object.keys(resp.worksheet).length > 0) {
-                    completedAssignments.worksheets++;
-                    completedAssignmentsList.push({
-                        assignment_type: 'worksheet',
-                        assignment_number: lessonNum,
-                        score: null,
-                        completed_at: studentResponses.updatedAt
-                    });
-                }
-
-                // Quiz completion
-                if (availableAssignments.quiz && resp.quiz && resp.quiz.length > 0) {
-                    completedAssignments.quiz++;
-                    completedAssignmentsList.push({
-                        assignment_type: 'quiz',
-                        assignment_number: lessonNum,
-                        score: null,
-                        completed_at: studentResponses.updatedAt
-                    });
-                }
-            });
+      }
+  
+      // Helper: extract numeric lesson id (handles "lesson1", "lessonlesson3", etc)
+      const extractLessonNum = (lessonId) => {
+        if (!lessonId) return null;
+        const m = lessonId.match(/\d+/); // grabs the digits
+        return m ? m[0] : lessonId;
+      };
+  
+      // 2) Build availableAssignments from course (support two shapes)
+      const availableAssignments = { lessons: [], worksheets: [], quiz: false };
+  
+      if (Array.isArray(foundCourse.lessons) && foundCourse.lessons.length > 0) {
+        // Course uses lessons array of objects: { lessonId, lessonName }
+        foundCourse.lessons.forEach(l => {
+          if (l && (l.lessonId !== undefined)) availableAssignments.lessons.push(String(l.lessonId));
+        });
+      } else {
+        // Course uses boolean flags like lesson_1, lesson_2...
+        for (let i = 1; i <= 20; i++) {
+          if (foundCourse[`lesson_${i}`] === true) availableAssignments.lessons.push(String(i));
         }
-
-        // Count total expected assignments
-        const totalAssignments = {
-            lessons: availableAssignments.lessons.length,
-            worksheets: availableAssignments.worksheets.length,
-            quiz: availableAssignments.quiz ? 1 : 0
-        };
-
-        // Calculate totals
-        const totalCompleted = completedAssignments.lessons + completedAssignments.worksheets + completedAssignments.quiz;
-        const totalExpected = totalAssignments.lessons + totalAssignments.worksheets + totalAssignments.quiz;
-        const completionPercentage = totalExpected > 0 ? Math.round((totalCompleted / totalExpected) * 100) : 0;
-
-        const result = {
-            course_name,
-            user_id,
-            completion_percentage: completionPercentage,
-            completed_assignments: totalCompleted,
-            total_assignments: totalExpected,
-            available_assignments: availableAssignments,
-            breakdown: {
-                lessons: {
-                    completed: completedAssignments.lessons,
-                    total: totalAssignments.lessons,
-                    available: availableAssignments.lessons
-                },
-                worksheets: {
-                    completed: completedAssignments.worksheets,
-                    total: totalAssignments.worksheets,
-                    available: availableAssignments.worksheets
-                },
-                quiz: {
-                    completed: completedAssignments.quiz,
-                    total: totalAssignments.quiz,
-                    available: availableAssignments.quiz
-                }
-            },
-            completed_assignments_list: completedAssignmentsList
-        };
-
-        res.status(200).json(result);
+      }
+  
+      // Worksheets: array form or ws_# flags
+      if (Array.isArray(foundCourse.worksheets) && foundCourse.worksheets.length > 0) {
+        foundCourse.worksheets.forEach(w => {
+          if (w && (w.lessonId !== undefined)) availableAssignments.worksheets.push(String(w.lessonId));
+        });
+      } else {
+        for (let i = 1; i <= 20; i++) {
+          if (foundCourse[`ws_${i}`] === true) availableAssignments.worksheets.push(String(i));
+        }
+      }
+  
+      // Quiz flag
+      availableAssignments.quiz = !!foundCourse.quiz;
+  
+      // 3) Query StudentResponses collection (may be multiple docs)
+      // Use foundCourse._id if available, otherwise fallback to course_name param
+      const courseIdToQuery = foundCourse._id ? String(foundCourse._id) : course_name;
+      const studentDocs = await StudentResponses.find({
+        studentId: user_id,
+        courseId: courseIdToQuery
+      });
+  
+      // 4) Aggregate completed assignments from all student response docs
+      const completedLessonsSet = new Set();
+      const completedWorksheetsSet = new Set();
+      let quizCompleted = false;
+      const completedAssignmentsList = [];
+  
+      (studentDocs || []).forEach(doc => {
+        const updatedAt = doc.updatedAt || new Date();
+        if (!Array.isArray(doc.responses)) return;
+  
+        doc.responses.forEach(resp => {
+          const lessonNum = extractLessonNum(resp.lessonId);
+  
+          // Lesson: treat bpqResponses non-empty as completion
+          if (lessonNum && availableAssignments.lessons.includes(lessonNum)) {
+            if (resp.bpqResponses && resp.bpqResponses.length > 0) {
+              if (!completedLessonsSet.has(lessonNum)) {
+                completedLessonsSet.add(lessonNum);
+                completedAssignmentsList.push({
+                  assignment_type: 'lesson',
+                  assignment_number: lessonNum,
+                  score: null,
+                  completed_at: updatedAt
+                });
+              }
+            }
+          }
+  
+          // Worksheet: non-empty worksheet object
+          if (lessonNum && availableAssignments.worksheets.includes(lessonNum)) {
+            if (resp.worksheet && Object.keys(resp.worksheet).length > 0) {
+              if (!completedWorksheetsSet.has(lessonNum)) {
+                completedWorksheetsSet.add(lessonNum);
+                completedAssignmentsList.push({
+                  assignment_type: 'worksheet',
+                  assignment_number: lessonNum,
+                  score: null,
+                  completed_at: updatedAt
+                });
+              }
+            }
+          }
+  
+          // Quiz: if any response.quiz entries exist mark quiz completed (once)
+          if (availableAssignments.quiz && resp.quiz && Array.isArray(resp.quiz) && resp.quiz.length > 0) {
+            quizCompleted = true;
+          }
+        });
+      });
+  
+      if (availableAssignments.quiz && quizCompleted) {
+        // add single quiz completion entry
+        completedAssignmentsList.push({
+          assignment_type: 'quiz',
+          assignment_number: '1',
+          score: null,
+          completed_at: (studentDocs[0] && studentDocs[0].updatedAt) || new Date()
+        });
+      }
+  
+      // 5) Totals (keeps your original shape)
+      const completedAssignments = {
+        lessons: completedLessonsSet.size,
+        worksheets: completedWorksheetsSet.size,
+        quiz: availableAssignments.quiz && quizCompleted ? 1 : 0
+      };
+  
+      const totalAssignments = {
+        lessons: availableAssignments.lessons.length,
+        worksheets: availableAssignments.worksheets.length,
+        quiz: availableAssignments.quiz ? 1 : 0
+      };
+  
+      const totalCompleted = completedAssignments.lessons + completedAssignments.worksheets + completedAssignments.quiz;
+      const totalExpected = totalAssignments.lessons + totalAssignments.worksheets + totalAssignments.quiz;
+      const completionPercentage = totalExpected > 0 ? Math.round((totalCompleted / totalExpected) * 100) : 0;
+  
+      const result = {
+        course_name,
+        user_id,
+        completion_percentage: completionPercentage,
+        completed_assignments: totalCompleted,
+        total_assignments: totalExpected,
+        available_assignments: availableAssignments,
+        breakdown: {
+          lessons: {
+            completed: completedAssignments.lessons,
+            total: totalAssignments.lessons,
+            available: availableAssignments.lessons
+          },
+          worksheets: {
+            completed: completedAssignments.worksheets,
+            total: totalAssignments.worksheets,
+            available: availableAssignments.worksheets
+          },
+          quiz: {
+            completed: completedAssignments.quiz,
+            total: totalAssignments.quiz,
+            available: availableAssignments.quiz
+          }
+        },
+        completed_assignments_list: completedAssignmentsList
+      };
+  
+      return res.status(200).json(result);
     } catch (error) {
-        console.error('Error calculating course completion percentage:', error);
-        res.status(500).json({ message: 'Failed to calculate course completion percentage' });
+      console.error('Error calculating course completion percentage - stack:', error);
+      // send the error message back to help debugging (remove in prod)
+      return res.status(500).json({ message: 'Failed to calculate course completion percentage', error: error.message });
     }
-}
+  }
 
-
+  
     // Create new progress record
     static async createProgress(req, res) {
         try {
