@@ -674,7 +674,7 @@ const getStudentCourseScores = async (req, res) => {
 
 const getQuizPredictions = async (req, res) => {
   try {
-    const TOTAL_QUIZZES_EXPECTED = 6;
+    const TOTAL_QUIZZES_EXPECTED = 5;
     const studentId = req.params.studentId;
 
     console.log(`Fetching quiz predictions for student: ${studentId}`);
@@ -768,7 +768,7 @@ const getQuizPredictions = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error generating quiz predictions:', error);
+    console.error('Error generating quiz predictions:', error.stack || error);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
