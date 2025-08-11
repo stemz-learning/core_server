@@ -145,7 +145,7 @@ class ProgressController {
             const availableAssignments = {
                 lessons: [],
                 worksheets: [],
-                quiz: false
+                quiz: []
             };
     
             // Check which lessons are available (lesson_1, lesson_2, etc.)
@@ -163,22 +163,27 @@ class ProgressController {
             }
     
             // Check if quiz is available
-            if (foundCourse.quiz === true) {
-                availableAssignments.quiz = true;
+            // if (foundCourse.quiz === true) {
+            //     availableAssignments.quiz = true;
+            // }
+            for (let i = 1; i <= 5; i++) {
+                if (foundCourse[`quiz_${i}`] === true) {
+                    availableAssignments.worksheets.push(i.toString());
+                }
             }
     
             // Count completed assignments by type
             const completedAssignments = {
                 lessons: 0,
                 worksheets: 0,
-                quiz: 0
+                quizzes: 0
             };
     
             // Count total expected assignments
             const totalAssignments = {
                 lessons: availableAssignments.lessons.length,
                 worksheets: availableAssignments.worksheets.length,
-                quiz: availableAssignments.quiz ? 1 : 0
+                quiz: availableAssignments.quizzes ? 1 : 0
             };
     
             // Check each progress record
@@ -189,7 +194,7 @@ class ProgressController {
                     } else if (progress.assignment_type === 'worksheet') {
                         completedAssignments.worksheets++;
                     } else if (progress.assignment_type === 'quiz') {
-                        completedAssignments.quiz++;
+                        completedAssignments.quizzes++;
                     }
                 }
             });
