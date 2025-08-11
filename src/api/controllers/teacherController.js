@@ -483,7 +483,7 @@ const getStudentCourseScores = async (req, res) => {
     }
   };
   
-// // getting quiz predictions using local logic
+// getting quiz predictions using local logic - using stored values
 // const getQuizPredictions = async (req, res) => {
 //   res.header('Access-Control-Allow-Origin', '*');
 //   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -537,7 +537,7 @@ const getStudentCourseScores = async (req, res) => {
 //       });
 //     });
 
-//     // Extract all quiz scores with ENHANCED DEBUGGING
+//     // Extract all quiz scores with FIXED LOGIC
 //     const allQuizzes = [];
 //     console.log("\n=== PROCESSING QUIZ RESPONSES ===");
 
@@ -545,18 +545,6 @@ const getStudentCourseScores = async (req, res) => {
 //       console.log(`\n=== COURSE ${index + 1} DEBUG ===`);
 //       console.log(`CourseId:`, courseResponse.courseId);
 //       console.log(`Responses count:`, courseResponse.responses?.length || 0);
-      
-//       // Debug: Log the structure of the first response
-//       if (courseResponse.responses && courseResponse.responses.length > 0) {
-//         console.log(`First response structure:`, {
-//           lessonId: courseResponse.responses[0].lessonId,
-//           hasQuiz: !!courseResponse.responses[0].quiz,
-//           quizIsArray: Array.isArray(courseResponse.responses[0].quiz),
-//           quizLength: courseResponse.responses[0].quiz?.length,
-//           responseKeys: Object.keys(courseResponse.responses[0]),
-//           quizSample: courseResponse.responses[0].quiz?.slice(0, 2) // First 2 quiz questions
-//         });
-//       }
 
 //       if (!courseResponse.responses || courseResponse.responses.length === 0) {
 //         console.log(`❌ Course ${index + 1} - No responses found`);
@@ -577,118 +565,66 @@ const getStudentCourseScores = async (req, res) => {
           
 //           if (!hasQuiz) {
 //             console.log(`  ❌ No valid quiz data for lesson ${response.lessonId}`);
-            
-//             // Debug: Check what fields ARE available
-//             console.log(`  Available response fields:`, Object.keys(response));
-            
-//             // Check if quiz data might be in a different field
-//             const possibleQuizFields = Object.keys(response).filter(key => 
-//               key.toLowerCase().includes('quiz') || 
-//               key.toLowerCase().includes('question') ||
-//               key.toLowerCase().includes('answer')
-//             );
-//             console.log(`  Possible quiz fields:`, possibleQuizFields);
-            
 //             return null;
 //           }
 
-//           // Debug: Look at quiz question structure in detail
-//           console.log(`  📝 Quiz questions analysis:`);
-//           response.quiz.slice(0, 3).forEach((question, qIdx) => {
-//             console.log(`    Question ${qIdx + 1}:`, {
-//               keys: Object.keys(question),
-//               hasIsCorrect: 'isCorrect' in question,
-//               hasCorrect: 'correct' in question,
-//               isCorrectValue: question.isCorrect,
-//               correctValue: question.correct,
-//               // Log full question structure for first question only
-//               ...(qIdx === 0 && { fullStructure: question })
-//             });
-//           });
-
 //           try {
-//             // Try multiple methods to count correct answers
-//             const correctAnswersMethod1 = response.quiz.filter(answer =>
-//               answer.isCorrect === true
-//             ).length;
+//             // NEW LOGIC: Use the stored score and total from the quiz attempt
+//             // The quiz array contains quiz attempts, each with score/total
+//             const quizAttempts = response.quiz;
             
-//             const correctAnswersMethod2 = response.quiz.filter(answer =>
-//               answer.correct === true
-//             ).length;
-
-//             const correctAnswersMethod3 = response.quiz.filter(answer =>
-//               answer.isCorrect === true || answer.correct === true
-//             ).length;
-
-//             // Try boolean string values too
-//             const correctAnswersMethod4 = response.quiz.filter(answer =>
-//               answer.isCorrect === 'true' || answer.correct === 'true'
-//             ).length;
-
-//             // Try looking for other possible fields
-//             const correctAnswersMethod5 = response.quiz.filter(answer =>
-//               answer.selected === answer.correctAnswer ||
-//               answer.userAnswer === answer.correctAnswer ||
-//               answer.isRight === true ||
-//               answer.right === true
-//             ).length;
-
-//             console.log(`  📊 Correct answer counts:`);
-//             console.log(`    Method 1 (isCorrect===true): ${correctAnswersMethod1}`);
-//             console.log(`    Method 2 (correct===true): ${correctAnswersMethod2}`);
-//             console.log(`    Method 3 (either boolean true): ${correctAnswersMethod3}`);
-//             console.log(`    Method 4 (string 'true'): ${correctAnswersMethod4}`);
-//             console.log(`    Method 5 (other fields): ${correctAnswersMethod5}`);
-
-//             const totalQuestions = response.quiz.length;
+//             console.log(`  📝 Quiz attempts found: ${quizAttempts.length}`);
             
-//             // Use the method that gives the highest reasonable result
-//             const correctAnswers = Math.max(
-//               correctAnswersMethod1, 
-//               correctAnswersMethod2, 
-//               correctAnswersMethod3, 
-//               correctAnswersMethod4, 
-//               correctAnswersMethod5
-//             );
-            
-//             const score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
-
-//             console.log(`  🎯 Final calculation: ${correctAnswers}/${totalQuestions} = ${score.toFixed(2)}%`);
-
-//             // If we still get zero score, do deep debugging
-//             if (score === 0 && totalQuestions > 0) {
-//               console.log(`  🔍 ZERO SCORE DEEP DEBUG:`);
-//               console.log(`  Full quiz data for lesson ${response.lessonId}:`);
-//               response.quiz.forEach((q, idx) => {
-//                 if (idx < 3) { // Only log first 3 to avoid spam
-//                   console.log(`    Question ${idx + 1} FULL DATA:`, JSON.stringify(q, null, 2));
-//                 }
+//             // Process each quiz attempt
+//             const quizResults = quizAttempts.map((attempt, attemptIdx) => {
+//               console.log(`    Attempt ${attemptIdx + 1}:`, {
+//                 attemptNumber: attempt.attemptNumber,
+//                 score: attempt.score,
+//                 total: attempt.total,
+//                 hasScore: 'score' in attempt,
+//                 hasTotal: 'total' in attempt
 //               });
-//             }
 
-//             return {
-//               courseId: courseResponse.courseId,
-//               lessonId: response.lessonId,
-//               score: Math.round(score * 100) / 100,
-//               completedAt: response.completedAt || courseResponse.updatedAt || new Date(),
-//               totalQuestions,
-//               correctAnswers,
-//               debugInfo: {
-//                 methods: [correctAnswersMethod1, correctAnswersMethod2, correctAnswersMethod3, correctAnswersMethod4, correctAnswersMethod5],
-//                 rawQuizLength: response.quiz.length
+//               // Use the stored score and total directly
+//               if ('score' in attempt && 'total' in attempt && attempt.total > 0) {
+//                 const scorePercentage = (attempt.score / attempt.total) * 100;
+//                 console.log(`    ✅ Valid attempt: ${attempt.score}/${attempt.total} = ${scorePercentage.toFixed(2)}%`);
+                
+//                 return {
+//                   courseId: courseResponse.courseId,
+//                   lessonId: response.lessonId,
+//                   attemptNumber: attempt.attemptNumber,
+//                   score: Math.round(scorePercentage * 100) / 100,
+//                   correctAnswers: attempt.score,
+//                   totalQuestions: attempt.total,
+//                   completedAt: attempt.submittedAt || response.completedAt || courseResponse.updatedAt || new Date(),
+//                   rawData: {
+//                     storedScore: attempt.score,
+//                     storedTotal: attempt.total
+//                   }
+//                 };
+//               } else {
+//                 console.log(`    ❌ Invalid attempt data:`, {
+//                   score: attempt.score,
+//                   total: attempt.total,
+//                   keys: Object.keys(attempt)
+//                 });
+//                 return null;
 //               }
-//             };
+//             }).filter(result => result !== null);
+
+//             return quizResults;
 //           } catch (error) {
 //             console.log(`  ❌ Error processing quiz for lesson ${response.lessonId}:`, error.message);
-//             console.log(`  Error stack:`, error.stack);
 //             return null;
 //           }
 //         })
-//         .filter(quiz => quiz !== null);
+//         .filter(quiz => quiz !== null)
+//         .flat(); // Flatten since each response can have multiple attempts
 
 //       console.log(`✅ Course ${index + 1} - Valid quizzes found: ${courseQuizzes.length}`);
 //       if (courseQuizzes.length > 0) {
-//         console.log(`✅ Course ${index + 1} - Quiz scores:`, courseQuizzes.map(q => `${q.lessonId}: ${q.score}%`));
+//         console.log(`✅ Course ${index + 1} - Quiz scores:`, courseQuizzes.map(q => `${q.lessonId}(${q.attemptNumber}): ${q.score}%`));
 //       }
       
 //       allQuizzes.push(...courseQuizzes);
@@ -700,9 +636,12 @@ const getStudentCourseScores = async (req, res) => {
 //     console.log("Non-zero scores:", allQuizzes.filter(q => q.score > 0).map(q => q.score));
 //     console.log("Quiz details:", allQuizzes.map(q => ({
 //       lesson: q.lessonId,
+//       attempt: q.attemptNumber,
 //       score: q.score,
 //       correct: q.correctAnswers,
-//       total: q.totalQuestions
+//       total: q.totalQuestions,
+//       rawScore: q.rawData.storedScore,
+//       rawTotal: q.rawData.storedTotal
 //     })));
 
 //     // Sort by completion date
@@ -717,9 +656,11 @@ const getStudentCourseScores = async (req, res) => {
 //         requiredQuizzes: 2,
 //         availableQuizzes: allQuizzes.map(q => ({
 //           lessonId: q.lessonId,
+//           attemptNumber: q.attemptNumber,
 //           score: q.score,
 //           correctAnswers: q.correctAnswers,
-//           totalQuestions: q.totalQuestions
+//           totalQuestions: q.totalQuestions,
+//           rawData: q.rawData
 //         })),
 //         debugInfo: "Check server logs for detailed quiz processing information"
 //       });
@@ -770,9 +711,12 @@ const getStudentCourseScores = async (req, res) => {
 //         totalQuizzesProcessed: allQuizzes.length,
 //         quizDetails: allQuizzes.map(q => ({
 //           lesson: q.lessonId,
+//           attempt: q.attemptNumber,
 //           score: q.score,
 //           correct: q.correctAnswers,
-//           total: q.totalQuestions
+//           total: q.totalQuestions,
+//           actualStoredScore: q.rawData.storedScore,
+//           actualStoredTotal: q.rawData.storedTotal
 //         }))
 //       }
 //     };
@@ -794,7 +738,7 @@ const getStudentCourseScores = async (req, res) => {
 //   }
 // };
 
-// Fixed version - getting quiz predictions using actual stored scores
+// getting quiz predictions using local logic - using stored values
 const getQuizPredictions = async (req, res) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -819,7 +763,6 @@ const getQuizPredictions = async (req, res) => {
     console.log("Starting DB query...");
     const dbStart = Date.now();
     
-    // Fetch all student responses
     const studentResponses = await StudentResponse.find({ studentId })
       .populate('studentId', 'name email')
       .lean();
@@ -835,7 +778,6 @@ const getQuizPredictions = async (req, res) => {
       });
     }
 
-    // Debug: Log the overall structure
     console.log("\n=== DATABASE STRUCTURE DEBUG ===");
     studentResponses.forEach((courseResponse, idx) => {
       console.log(`Course ${idx + 1} structure:`, {
@@ -848,9 +790,8 @@ const getQuizPredictions = async (req, res) => {
       });
     });
 
-    // Extract all quiz scores with FIXED LOGIC
-    const allQuizzes = [];
-    console.log("\n=== PROCESSING QUIZ RESPONSES ===");
+    console.log("\n=== PROCESSING QUIZ RESPONSES (LATEST PER COURSE) ===");
+    const latestQuizzesByCourse = {};
 
     studentResponses.forEach((courseResponse, index) => {
       console.log(`\n=== COURSE ${index + 1} DEBUG ===`);
@@ -862,101 +803,69 @@ const getQuizPredictions = async (req, res) => {
         return;
       }
 
-      const courseQuizzes = courseResponse.responses
-        .map((response, responseIndex) => {
-          console.log(`\n  --- Response ${responseIndex + 1} ---`);
-          console.log(`  LessonId: ${response.lessonId}`);
-          console.log(`  Response keys: ${Object.keys(response)}`);
-          console.log(`  Has quiz field: ${!!response.quiz}`);
-          console.log(`  Quiz is array: ${Array.isArray(response.quiz)}`);
-          console.log(`  Quiz length: ${response.quiz?.length || 0}`);
-          
-          // Check if quiz exists and has data
-          const hasQuiz = response.quiz && Array.isArray(response.quiz) && response.quiz.length > 0;
-          
-          if (!hasQuiz) {
-            console.log(`  ❌ No valid quiz data for lesson ${response.lessonId}`);
-            return null;
-          }
+      const courseAttempts = [];
 
-          try {
-            // NEW LOGIC: Use the stored score and total from the quiz attempt
-            // The quiz array contains quiz attempts, each with score/total
-            const quizAttempts = response.quiz;
-            
-            console.log(`  📝 Quiz attempts found: ${quizAttempts.length}`);
-            
-            // Process each quiz attempt
-            const quizResults = quizAttempts.map((attempt, attemptIdx) => {
-              console.log(`    Attempt ${attemptIdx + 1}:`, {
+      courseResponse.responses.forEach((response, responseIndex) => {
+        console.log(`\n  --- Response ${responseIndex + 1} ---`);
+        console.log(`  LessonId: ${response.lessonId}`);
+        console.log(`  Has quiz field: ${!!response.quiz}`);
+        console.log(`  Quiz length: ${response.quiz?.length || 0}`);
+
+        if (Array.isArray(response.quiz) && response.quiz.length > 0) {
+          response.quiz.forEach((attempt, attemptIdx) => {
+            console.log(`    Attempt ${attemptIdx + 1}:`, {
+              attemptNumber: attempt.attemptNumber,
+              score: attempt.score,
+              total: attempt.total
+            });
+
+            if ('score' in attempt && 'total' in attempt && attempt.total > 0) {
+              const scorePercentage = (attempt.score / attempt.total) * 100;
+              courseAttempts.push({
+                courseId: courseResponse.courseId,
+                lessonId: response.lessonId,
                 attemptNumber: attempt.attemptNumber,
-                score: attempt.score,
-                total: attempt.total,
-                hasScore: 'score' in attempt,
-                hasTotal: 'total' in attempt
+                score: Math.round(scorePercentage * 100) / 100,
+                correctAnswers: attempt.score,
+                totalQuestions: attempt.total,
+                completedAt: attempt.submittedAt || response.completedAt || courseResponse.updatedAt || new Date(),
+                rawData: {
+                  storedScore: attempt.score,
+                  storedTotal: attempt.total
+                }
               });
+            } else {
+              console.log(`    ❌ Invalid attempt data for lesson ${response.lessonId}`);
+            }
+          });
+        }
+      });
 
-              // Use the stored score and total directly
-              if ('score' in attempt && 'total' in attempt && attempt.total > 0) {
-                const scorePercentage = (attempt.score / attempt.total) * 100;
-                console.log(`    ✅ Valid attempt: ${attempt.score}/${attempt.total} = ${scorePercentage.toFixed(2)}%`);
-                
-                return {
-                  courseId: courseResponse.courseId,
-                  lessonId: response.lessonId,
-                  attemptNumber: attempt.attemptNumber,
-                  score: Math.round(scorePercentage * 100) / 100,
-                  correctAnswers: attempt.score,
-                  totalQuestions: attempt.total,
-                  completedAt: attempt.submittedAt || response.completedAt || courseResponse.updatedAt || new Date(),
-                  rawData: {
-                    storedScore: attempt.score,
-                    storedTotal: attempt.total
-                  }
-                };
-              } else {
-                console.log(`    ❌ Invalid attempt data:`, {
-                  score: attempt.score,
-                  total: attempt.total,
-                  keys: Object.keys(attempt)
-                });
-                return null;
-              }
-            }).filter(result => result !== null);
-
-            return quizResults;
-          } catch (error) {
-            console.log(`  ❌ Error processing quiz for lesson ${response.lessonId}:`, error.message);
-            return null;
-          }
-        })
-        .filter(quiz => quiz !== null)
-        .flat(); // Flatten since each response can have multiple attempts
-
-      console.log(`✅ Course ${index + 1} - Valid quizzes found: ${courseQuizzes.length}`);
-      if (courseQuizzes.length > 0) {
-        console.log(`✅ Course ${index + 1} - Quiz scores:`, courseQuizzes.map(q => `${q.lessonId}(${q.attemptNumber}): ${q.score}%`));
+      if (courseAttempts.length > 0) {
+        courseAttempts.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+        latestQuizzesByCourse[courseResponse.courseId] = courseAttempts[0];
+        console.log(`✅ Latest quiz chosen for course ${courseResponse.courseId}:`, courseAttempts[0]);
       }
-      
-      allQuizzes.push(...courseQuizzes);
     });
+
+    let allQuizzes = Object.values(latestQuizzesByCourse);
+
+    // Sort by completion date (oldest first for prediction timeline)
+    allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
+
+    // Limit to max 5 quizzes
+    if (allQuizzes.length > 5) {
+      allQuizzes = allQuizzes.slice(-5);
+    }
 
     console.log("\n=== FINAL QUIZ SUMMARY ===");
     console.log("Total quizzes found:", allQuizzes.length);
-    console.log("All scores:", allQuizzes.map(q => q.score));
-    console.log("Non-zero scores:", allQuizzes.filter(q => q.score > 0).map(q => q.score));
     console.log("Quiz details:", allQuizzes.map(q => ({
+      courseId: q.courseId,
       lesson: q.lessonId,
       attempt: q.attemptNumber,
-      score: q.score,
-      correct: q.correctAnswers,
-      total: q.totalQuestions,
-      rawScore: q.rawData.storedScore,
-      rawTotal: q.rawData.storedTotal
+      score: q.score
     })));
-
-    // Sort by completion date
-    allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
 
     if (allQuizzes.length < 2) {
       console.log("❌ Not enough quizzes for prediction");
@@ -965,34 +874,22 @@ const getQuizPredictions = async (req, res) => {
         message: 'Student needs to complete at least 2 quizzes across all courses for predictions',
         completedQuizzes: allQuizzes.length,
         requiredQuizzes: 2,
-        availableQuizzes: allQuizzes.map(q => ({
-          lessonId: q.lessonId,
-          attemptNumber: q.attemptNumber,
-          score: q.score,
-          correctAnswers: q.correctAnswers,
-          totalQuestions: q.totalQuestions,
-          rawData: q.rawData
-        })),
-        debugInfo: "Check server logs for detailed quiz processing information"
+        availableQuizzes: allQuizzes
       });
     }
 
-    // Use all available scores for better prediction
     const inputScores = allQuizzes.map(quiz => quiz.score);
     console.log("🎯 Input scores for prediction:", inputScores);
 
-    // Generate LOCAL predictions
     console.log("🚀 Generating LOCAL predictions...");
     const predictionStart = Date.now();
-    
     const predictions = generateLocalPredictions(inputScores);
-    
     console.log(`✅ Local prediction took ${Date.now() - predictionStart} ms`);
     console.log("Prediction results:", predictions);
 
     const studentInfo = studentResponses[0].studentId;
 
-    const responseData = {
+    return res.status(200).json({
       success: true,
       studentId: studentInfo._id,
       studentName: studentInfo.name,
@@ -1001,39 +898,21 @@ const getQuizPredictions = async (req, res) => {
       completedQuizzes: allQuizzes.length,
       totalQuizzesExpected: 5,
       chartData: [
-        // Add completed quizzes
         ...allQuizzes.map((quiz, index) => ({
           quiz: `Quiz ${index + 1}`,
           type: 'Completed',
           score: Math.round(quiz.score),
         })),
-        // Add predicted quizzes
         ...predictions.predicted_scores.map((score, index) => ({
           quiz: `Quiz ${allQuizzes.length + index + 1}`,
           type: 'Predicted',
           score: Math.round(score),
         })),
       ],
-      // Add extra info for debugging and frontend
       predictionMethod: 'Local Trend Analysis',
       confidence: predictions.confidence,
-      trendAnalysis: predictions.trend_analysis,
-      debugInfo: {
-        totalQuizzesProcessed: allQuizzes.length,
-        quizDetails: allQuizzes.map(q => ({
-          lesson: q.lessonId,
-          attempt: q.attemptNumber,
-          score: q.score,
-          correct: q.correctAnswers,
-          total: q.totalQuestions,
-          actualStoredScore: q.rawData.storedScore,
-          actualStoredTotal: q.rawData.storedTotal
-        }))
-      }
-    };
-
-    console.log("=== LOCAL Quiz Predictions DEBUG End ===");
-    return res.status(200).json(responseData);
+      trendAnalysis: predictions.trend_analysis
+    });
 
   } catch (error) {
     console.error('=== ERROR in getQuizPredictions ===');
@@ -1043,11 +922,11 @@ const getQuizPredictions = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Failed to get quiz predictions',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-      debugInfo: 'Check server logs for detailed error information'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 };
+
 
 module.exports = {
   getStudentBPQResponses,
