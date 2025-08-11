@@ -398,13 +398,18 @@ const getStudentCourseScores = async (req, res) => {
   // get the quiz predictions
   const getQuizPredictions = async (req, res) => {
     try {
-      const { studentId } = req.params; // No courseId needed anymore
+      console.log("=== Quiz Predictions Debug Start ===");
+      const { studentId } = req.params;
+      console.log("StudentId:", studentId);
   
       // Get ALL student responses across ALL courses
       const studentResponses = await StudentResponse.find({ studentId })
         .populate('studentId', 'name email');
   
+      console.log("Found student responses:", studentResponses?.length || 0);
+  
       if (!studentResponses || studentResponses.length === 0) {
+        console.log("No student responses found");
         return res.status(404).json({ 
           message: 'No response data found for this student' 
         });
@@ -413,14 +418,24 @@ const getStudentCourseScores = async (req, res) => {
       // Extract ALL quiz scores across ALL courses, sorted chronologically
       const allQuizzes = [];
       
-      studentResponses.forEach(courseResponse => {
+      console.log("Processing responses...");
+      studentResponses.forEach((courseResponse, index) => {
+        console.log(`Course ${index + 1} - CourseId:`, courseResponse.courseId);
+        console.log(`Course ${index + 1} - Responses:`, courseResponse.responses?.length || 0);
+        
         const courseQuizzes = courseResponse.responses
-          .filter(response => response.quiz && response.quiz.length > 0)
+          .filter(response => {
+            const hasQuiz = response.quiz && response.quiz.length > 0;
+            console.log(`  Response has quiz: ${hasQuiz}, quiz length: ${response.quiz?.length || 0}`);
+            return hasQuiz;
+          })
           .map(response => {
             const correctAnswers = response.quiz.filter(answer => 
               answer.isCorrect || answer.correct
             ).length;
             const score = (correctAnswers / response.quiz.length) * 100;
+            
+            console.log(`  Quiz: ${correctAnswers}/${response.quiz.length} = ${score}%`);
             
             return {
               courseId: courseResponse.courseId,
@@ -430,13 +445,17 @@ const getStudentCourseScores = async (req, res) => {
             };
           });
         
+        console.log(`Course ${index + 1} - Valid quizzes found:`, courseQuizzes.length);
         allQuizzes.push(...courseQuizzes);
       });
+  
+      console.log("Total quizzes found:", allQuizzes.length);
   
       // Sort all quizzes chronologically
       allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
   
       if (allQuizzes.length < 2) {
+        console.log("Not enough quizzes for prediction");
         return res.status(400).json({
           message: 'Student needs to complete at least 2 quizzes across all courses for predictions',
           completedQuizzes: allQuizzes.length,
@@ -446,10 +465,14 @@ const getStudentCourseScores = async (req, res) => {
   
       // Take first 2 quiz scores for prediction
       const inputScores = allQuizzes.slice(0, 2).map(quiz => quiz.score);
+      console.log("Input scores for prediction:", inputScores);
+      
       const scoresString = inputScores.join(',');
+      console.log("Scores string:", scoresString);
   
       // Call Gradio API (same as before)
       const GRADIO_API_URL = 'https://sri-chandrasekaran-flask-nlp-api.hf.space';
+      console.log("Calling Gradio API...");
       
       // Step 1: POST request to get EVENT_ID
       const postResponse = await fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future`, {
@@ -460,28 +483,41 @@ const getStudentCourseScores = async (req, res) => {
         body: JSON.stringify({ data: [scoresString] })
       });
   
+      console.log("Gradio POST response status:", postResponse.status);
+  
       if (!postResponse.ok) {
-        throw new Error(`Gradio API error: ${postResponse.status}`);
+        const errorText = await postResponse.text();
+        console.log("Gradio POST error:", errorText);
+        throw new Error(`Gradio API error: ${postResponse.status} - ${errorText}`);
       }
   
       const postData = await postResponse.json();
+      console.log("Gradio POST data:", postData);
       const eventId = postData.event_id;
   
       // Step 2: GET request to retrieve results
+      console.log("Getting results with event ID:", eventId);
       const getResponse = await fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future/${eventId}`);
       
+      console.log("Gradio GET response status:", getResponse.status);
+  
       if (!getResponse.ok) {
-        throw new Error(`Gradio API error: ${getResponse.status}`);
+        const errorText = await getResponse.text();
+        console.log("Gradio GET error:", errorText);
+        throw new Error(`Gradio API error: ${getResponse.status} - ${errorText}`);
       }
   
       const resultData = await getResponse.json();
+      console.log("Gradio result data:", resultData);
       const predictionData = resultData.data[0];
   
       // Get student info from first response
       const studentInfo = studentResponses[0].studentId;
   
+      console.log("Prediction successful, formatting response...");
+  
       // Format response with generic quiz labels
-      return res.status(200).json({
+      const responseData = {
         success: true,
         studentId: studentInfo._id,
         studentName: studentInfo.name,
@@ -498,10 +534,15 @@ const getStudentCourseScores = async (req, res) => {
             score: Math.round(score)
           }))
         ]
-      });
+      };
+  
+      console.log("=== Quiz Predictions Debug End ===");
+      return res.status(200).json(responseData);
   
     } catch (error) {
-      console.error('Error getting quiz predictions:', error);
+      console.error('=== ERROR in getQuizPredictions ===');
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       
       // Handle Gradio API connection errors gracefully
       if (error.message.includes('Gradio API') || error.code === 'ECONNREFUSED') {
