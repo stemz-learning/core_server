@@ -701,7 +701,7 @@ const getQuizPredictions = async (req, res) => {
       }
     }, 100000); // 25 seconds total timeout
 
-    const TEST_DUMMY_RESPONSE = true;
+    const TEST_DUMMY_RESPONSE = false;
 
     if (TEST_DUMMY_RESPONSE) {
       clearTimeout(functionTimeout);
