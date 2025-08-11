@@ -395,8 +395,7 @@ const getStudentCourseScores = async (req, res) => {
     }
   };
 
-  // get the quiz predictions
-
+// // get the quiz predictions
 const getQuizPredictions = async (req, res) => {
   try {
     console.log("=== Quiz Predictions Debug Start ===");
@@ -678,6 +677,271 @@ const getQuizPredictions = async (req, res) => {
     });
   }
 };
+
+// const getQuizPredictions = async (req, res) => {
+//   try {
+//     console.log("=== Quiz Predictions Debug Start ===");
+//     const { studentId } = req.params;
+//     console.log("StudentId:", studentId);
+
+//     if (!studentId) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'Student ID is required'
+//       });
+//     }
+
+//     // Set a reasonable timeout for the entire function
+//     const functionTimeout = setTimeout(() => {
+//       if (!res.headersSent) {
+//         return res.status(408).json({
+//           success: false,
+//           message: 'Request timeout - processing took too long'
+//         });
+//       }
+//     }, 25000); // 25 seconds total timeout
+
+//     const TEST_DUMMY_RESPONSE = false;
+
+//     if (TEST_DUMMY_RESPONSE) {
+//       clearTimeout(functionTimeout);
+//       return res.status(200).json({
+//         success: true,
+//         studentId,
+//         studentName: "Dummy Student",
+//         inputScores: [85, 90],
+//         predictions: { predicted_scores: [92, 95, 98] },
+//         completedQuizzes: 2,
+//         totalQuizzesExpected: 5,
+//         chartData: [
+//           { quiz: 'Quiz 1', type: 'Completed', score: 85 },
+//           { quiz: 'Quiz 2', type: 'Completed', score: 90 },
+//           { quiz: 'Quiz 3', type: 'Predicted', score: 92 },
+//           { quiz: 'Quiz 4', type: 'Predicted', score: 95 },
+//           { quiz: 'Quiz 5', type: 'Predicted', score: 98 },
+//         ],
+//       });
+//     }
+
+//     // Optimize DB query with specific fields and timeout
+//     console.log("Starting optimized DB query...");
+//     const dbStart = Date.now();
+    
+//     const studentResponses = await Promise.race([
+//       StudentResponse.find({ studentId })
+//         .populate('studentId', 'name email')
+//         .select('courseId responses studentId updatedAt') // Only select needed fields
+//         .lean(),
+//       new Promise((_, reject) => 
+//         setTimeout(() => reject(new Error('Database query timeout')), 5000)
+//       )
+//     ]);
+
+//     console.log(`DB query took ${Date.now() - dbStart} ms`);
+//     console.log("Found student responses:", studentResponses?.length || 0);
+
+//     if (!studentResponses || studentResponses.length === 0) {
+//       clearTimeout(functionTimeout);
+//       return res.status(404).json({
+//         success: false,
+//         message: 'No response data found for this student'
+//       });
+//     }
+
+//     // Process quiz data (keeping your existing logic)
+//     const allQuizzes = [];
+//     console.log("Processing responses...");
+    
+//     studentResponses.forEach((courseResponse, index) => {
+//       console.log(`Course ${index + 1} - CourseId:`, courseResponse.courseId);
+      
+//       if (!courseResponse.responses || courseResponse.responses.length === 0) {
+//         return;
+//       }
+
+//       const courseQuizzes = courseResponse.responses
+//         .filter(response => response.quiz && Array.isArray(response.quiz) && response.quiz.length > 0)
+//         .map(response => {
+//           try {
+//             const correctAnswers = response.quiz.filter(answer =>
+//               answer.isCorrect === true || answer.correct === true
+//             ).length;
+//             const totalQuestions = response.quiz.length;
+//             const score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+
+//             return {
+//               courseId: courseResponse.courseId,
+//               lessonId: response.lessonId,
+//               score: Math.round(score * 100) / 100,
+//               completedAt: response.completedAt || courseResponse.updatedAt || new Date(),
+//               totalQuestions,
+//               correctAnswers
+//             };
+//           } catch (error) {
+//             console.log(`Error processing quiz for lesson ${response.lessonId}:`, error.message);
+//             return null;
+//           }
+//         })
+//         .filter(quiz => quiz !== null);
+
+//       allQuizzes.push(...courseQuizzes);
+//     });
+
+//     console.log("Total quizzes found:", allQuizzes.length);
+//     allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
+
+//     if (allQuizzes.length < 2) {
+//       clearTimeout(functionTimeout);
+//       return res.status(400).json({
+//         success: false,
+//         message: 'Student needs to complete at least 2 quizzes for predictions',
+//         completedQuizzes: allQuizzes.length
+//       });
+//     }
+
+//     const inputScores = allQuizzes.slice(0, 2).map(quiz => quiz.score);
+//     console.log("Input scores for prediction:", inputScores);
+
+//     // Improved Gradio API call with better error handling
+//     const predictions = await callGradioAPI(inputScores);
+    
+//     clearTimeout(functionTimeout);
+    
+//     const studentInfo = studentResponses[0].studentId;
+//     const responseData = {
+//       success: true,
+//       studentId: studentInfo._id,
+//       studentName: studentInfo.name,
+//       inputScores,
+//       predictions,
+//       completedQuizzes: allQuizzes.length,
+//       totalQuizzesExpected: 5,
+//       chartData: [
+//         { quiz: 'Quiz 1', type: 'Completed', score: Math.round(inputScores[0]) },
+//         { quiz: 'Quiz 2', type: 'Completed', score: Math.round(inputScores[1]) },
+//         ...predictions.predicted_scores.map((score, index) => ({
+//           quiz: `Quiz ${index + 3}`,
+//           type: 'Predicted',
+//           score: Math.round(score),
+//         })),
+//       ],
+//     };
+
+//     console.log("=== Quiz Predictions Debug End ===");
+//     return res.status(200).json(responseData);
+
+//   } catch (error) {
+//     console.error('=== ERROR in getQuizPredictions ===');
+//     console.error('Error:', error.message);
+
+//     // Clear timeout if still active
+//     if (functionTimeout) clearTimeout(functionTimeout);
+
+//     // Don't send response if headers already sent
+//     if (res.headersSent) return;
+
+//     if (error.message.includes('timeout') || error.message.includes('ECONNRESET')) {
+//       return res.status(408).json({
+//         success: false,
+//         message: 'Request timeout',
+//         error: 'Service temporarily unavailable'
+//       });
+//     }
+
+//     return res.status(500).json({
+//       success: false,
+//       message: 'Failed to get quiz predictions',
+//       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+//     });
+//   }
+// };
+
+// // Separate function for Gradio API calls
+// async function callGradioAPI(inputScores) {
+//   const GRADIO_API_URL = 'https://sri-chandrasekaran-flask-nlp-api.hf.space';
+//   const scoresString = inputScores.join(',');
+  
+//   try {
+//     console.log("Calling Gradio API with improved timeout handling...");
+
+//     // Step 1: POST request with shorter timeout
+//     const postResponse = await Promise.race([
+//       fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future`, {
+//         method: 'POST',
+//         headers: { 
+//           'Content-Type': 'application/json',
+//           'User-Agent': 'Mozilla/5.0 (compatible; Quiz-Predictor/1.0)'
+//         },
+//         body: JSON.stringify({ data: [scoresString] }),
+//       }),
+//       new Promise((_, reject) => 
+//         setTimeout(() => reject(new Error('POST request timeout')), 8000)
+//       )
+//     ]);
+
+//     if (!postResponse.ok) {
+//       throw new Error(`Gradio API POST failed: ${postResponse.status}`);
+//     }
+
+//     const postData = await postResponse.json();
+//     if (!postData.event_id) {
+//       throw new Error('No event_id received from Gradio API');
+//     }
+
+//     // Step 2: GET request with retry logic but shorter overall timeout
+//     const eventId = postData.event_id;
+//     let attempts = 0;
+//     const maxAttempts = 3; // Reduced attempts
+
+//     while (attempts < maxAttempts) {
+//       await new Promise(resolve => setTimeout(resolve, 1500)); // Wait 1.5 seconds
+
+//       const getResponse = await Promise.race([
+//         fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future/${eventId}`),
+//         new Promise((_, reject) => 
+//           setTimeout(() => reject(new Error('GET timeout')), 6000)
+//         )
+//       ]);
+
+//       if (getResponse.ok) {
+//         const rawText = await getResponse.text();
+//         const dataLines = rawText.split('\n').filter(line => line.startsWith('data: '));
+        
+//         if (dataLines.length > 0) {
+//           const lastDataLine = dataLines[dataLines.length - 1];
+//           const jsonStr = lastDataLine.replace(/^data: /, '').trim();
+          
+//           try {
+//             const resultData = JSON.parse(jsonStr);
+//             if (resultData.data && resultData.data[0] && resultData.data[0].predicted_scores) {
+//               return resultData.data[0];
+//             }
+//           } catch (parseError) {
+//             console.error("JSON parse error:", parseError);
+//           }
+//         }
+//       }
+
+//       attempts++;
+//       console.log(`Gradio attempt ${attempts} failed, retrying...`);
+//     }
+
+//     throw new Error('Failed to get predictions after maximum attempts');
+
+//   } catch (error) {
+//     console.error('Gradio API Error:', error.message);
+    
+//     // Return fallback predictions in case of API failure
+//     console.log("Returning fallback predictions due to API error");
+//     return {
+//       predicted_scores: [
+//         inputScores[0] + 2, // Simple fallback: slightly increase scores
+//         inputScores[1] + 3,
+//         Math.max(inputScores[0], inputScores[1]) + 5
+//       ]
+//     };
+//   }
+// }
   
 
 module.exports = {
