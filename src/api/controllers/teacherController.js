@@ -2,8 +2,8 @@ const StudentResponse = require('../models/studentResponseSchema');
 const User = require('../models/userModel');
 
 // local prediction testing
-function generateLocalPredictions(inputScores) {
-  console.log("🎯 Generating local predictions for scores:", inputScores);
+function generateLocalPredictions(inputScores, numPredictions = 3) {
+  console.log("🎯 Generating local predictions for scores:", inputScores, "with numPredictions =", numPredictions);
   
   if (inputScores.length < 2) {
     throw new Error('Need at least 2 scores for prediction');
@@ -20,10 +20,10 @@ function generateLocalPredictions(inputScores) {
   // Calculate improvement rate
   const improvementRate = trend;
   
-  // Generate 3 future predictions with realistic constraints
+  // Generate numPredictions future predictions with realistic constraints
   const predictions = [];
   
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < numPredictions; i++) {
     // Base prediction on last score + trend, but moderate the trend over time
     const trendDecay = Math.pow(0.85, i); // Trend effect decreases over time
     const basePredict = lastScore + (improvementRate * trendDecay);
@@ -50,7 +50,7 @@ function generateLocalPredictions(inputScores) {
   }
 
   const confidence = calculateConfidence(inputScores, trend);
-  const avgFutureScore = predictions.reduce((a, b) => a + b, 0) / predictions.length;
+  const avgFutureScore = predictions.length > 0 ? (predictions.reduce((a, b) => a + b, 0) / predictions.length) : 0;
 
   console.log("✅ Generated predictions:", predictions, "with confidence:", confidence);
 
@@ -64,9 +64,10 @@ function generateLocalPredictions(inputScores) {
       average_performance: Math.round(averageScore * 100) / 100
     },
     method: 'local_trend_analysis',
-    warning: avgFutureScore < 70 // Flag students who might need help
+    warning: avgFutureScore < 60 // Flag students who might need help
   };
 }
+
 
 function calculateConfidence(scores, trend) {
   // Higher confidence for more consistent performance
@@ -599,9 +600,16 @@ const getQuizPredictions = async (req, res) => {
     allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
 
     // Limit to max 5 quizzes
-    if (allQuizzes.length > 6) {
-      allQuizzes = allQuizzes.slice(-6);
+    if (allQuizzes.length > 5) {
+      allQuizzes = allQuizzes.slice(-5);
     }
+
+    const totalQuizzesExpected = 5; // Hard cap total quizzes (completed + predicted)
+    const completedCount = allQuizzes.length;
+    const predictionsNeeded = Math.max(0, totalQuizzesExpected - completedCount);
+
+    console.log(`🛠 Predictions needed: ${predictionsNeeded} (out of ${totalQuizzesExpected} total)`);
+
 
     console.log("\n=== FINAL QUIZ SUMMARY ===");
     console.log("Total quizzes found:", allQuizzes.length);
@@ -628,7 +636,7 @@ const getQuizPredictions = async (req, res) => {
 
     console.log("🚀 Generating LOCAL predictions...");
     const predictionStart = Date.now();
-    const predictions = generateLocalPredictions(inputScores);
+    const predictions = generateLocalPredictions(inputScores, predictionsNeeded);
     console.log(`✅ Local prediction took ${Date.now() - predictionStart} ms`);
     console.log("Prediction results:", predictions);
 
@@ -648,7 +656,7 @@ const getQuizPredictions = async (req, res) => {
           type: 'Completed',
           score: Math.round(quiz.score),
         })),
-        ...predictions.predicted_scores.map((score, index) => ({
+        ...predictions.predicted_scores.slice(0, predictionsNeeded).map((score, index) => ({
           quiz: `Quiz ${allQuizzes.length + index + 1}`,
           type: 'Predicted',
           score: Math.round(score),
