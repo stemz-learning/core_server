@@ -1,6 +1,94 @@
 const StudentResponse = require('../models/studentResponseSchema');
 const User = require('../models/userModel');
 
+// local prediction testing
+function generateLocalPredictions(inputScores) {
+  console.log("🎯 Generating local predictions for scores:", inputScores);
+  
+  if (inputScores.length < 2) {
+    throw new Error('Need at least 2 scores for prediction');
+  }
+
+  // Calculate trend and performance metrics
+  const lastScore = inputScores[inputScores.length - 1];
+  const secondLastScore = inputScores[inputScores.length - 2];
+  const trend = lastScore - secondLastScore;
+  const averageScore = inputScores.reduce((a, b) => a + b, 0) / inputScores.length;
+  
+  console.log(`📊 Analysis: Last=${lastScore}, Previous=${secondLastScore}, Trend=${trend}, Average=${averageScore}`);
+  
+  // Calculate improvement rate
+  const improvementRate = trend;
+  
+  // Generate 3 future predictions with realistic constraints
+  const predictions = [];
+  
+  for (let i = 0; i < 3; i++) {
+    // Base prediction on last score + trend, but moderate the trend over time
+    const trendDecay = Math.pow(0.85, i); // Trend effect decreases over time
+    const basePredict = lastScore + (improvementRate * trendDecay);
+    
+    let prediction = basePredict;
+    
+    // Add small realistic variance (-2 to +2 points)
+    prediction += (Math.random() * 4 - 2);
+    
+    // Ensure predictions stay within realistic bounds
+    prediction = Math.max(0, Math.min(100, prediction));
+    
+    // Don't allow huge jumps between consecutive predictions (max 10 point change)
+    if (i > 0) {
+      const maxChange = 8;
+      const prevPrediction = predictions[i - 1];
+      prediction = Math.max(
+        prevPrediction - maxChange, 
+        Math.min(prevPrediction + maxChange, prediction)
+      );
+    }
+    
+    predictions.push(Math.round(prediction * 100) / 100);
+  }
+
+  const confidence = calculateConfidence(inputScores, trend);
+  const avgFutureScore = predictions.reduce((a, b) => a + b, 0) / predictions.length;
+
+  console.log("✅ Generated predictions:", predictions, "with confidence:", confidence);
+
+  return {
+    predicted_scores: predictions,
+    average_future_score: Math.round(avgFutureScore * 100) / 100,
+    confidence: confidence,
+    trend_analysis: {
+      trend_direction: trend > 1 ? 'improving' : trend < -1 ? 'declining' : 'stable',
+      improvement_rate: Math.round(improvementRate * 100) / 100,
+      average_performance: Math.round(averageScore * 100) / 100
+    },
+    method: 'local_trend_analysis',
+    warning: avgFutureScore < 70 // Flag students who might need help
+  };
+}
+
+function calculateConfidence(scores, trend) {
+  // Higher confidence for more consistent performance
+  const variance = calculateVariance(scores);
+  const consistency = Math.max(0, 100 - variance * 2);
+  
+  // Moderate confidence for extreme trends (very high or very low changes)
+  const trendStability = Math.max(30, 100 - Math.abs(trend) * 3);
+  
+  // More data points = higher confidence
+  const dataConfidence = Math.min(100, scores.length * 20);
+  
+  const finalConfidence = (consistency + trendStability + dataConfidence) / 3;
+  return Math.round(finalConfidence);
+}
+
+function calculateVariance(scores) {
+  const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+  const squaredDiffs = scores.map(score => Math.pow(score - mean, 2));
+  return squaredDiffs.reduce((a, b) => a + b, 0) / scores.length;
+}
+
 // Get all students' BPQ responses for a course
 const getStudentBPQResponses = async (req, res) => {
   try {
@@ -395,7 +483,7 @@ const getStudentCourseScores = async (req, res) => {
     }
   };
 
-// // get the quiz predictions
+// get the quiz predictions
 // const getQuizPredictions = async (req, res) => {
 //   try {
 //     console.log("=== Quiz Predictions Debug Start ===");
@@ -677,10 +765,20 @@ const getStudentCourseScores = async (req, res) => {
 //     });
 //   }
 // };
-
+  
+// REPLACE your entire getQuizPredictions function with this:
 const getQuizPredictions = async (req, res) => {
+  // Add CORS headers immediately
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   try {
-    console.log("=== Quiz Predictions Debug Start ===");
+    console.log("=== LOCAL Quiz Predictions Start ===");
     const { studentId } = req.params;
     console.log("StudentId:", studentId);
 
@@ -691,76 +789,44 @@ const getQuizPredictions = async (req, res) => {
       });
     }
 
-    // Set a reasonable timeout for the entire function
-    const functionTimeout = setTimeout(() => {
-      if (!res.headersSent) {
-        return res.status(408).json({
-          success: false,
-          message: 'Request timeout - processing took too long'
-        });
-      }
-    }, 100000); // 25 seconds total timeout
-
-    const TEST_DUMMY_RESPONSE = false;
-
-    if (TEST_DUMMY_RESPONSE) {
-      clearTimeout(functionTimeout);
-      return res.status(200).json({
-        success: true,
-        studentId,
-        studentName: "Dummy Student",
-        inputScores: [85, 90],
-        predictions: { predicted_scores: [92, 95, 98] },
-        completedQuizzes: 2,
-        totalQuizzesExpected: 5,
-        chartData: [
-          { quiz: 'Quiz 1', type: 'Completed', score: 85 },
-          { quiz: 'Quiz 2', type: 'Completed', score: 90 },
-          { quiz: 'Quiz 3', type: 'Predicted', score: 92 },
-          { quiz: 'Quiz 4', type: 'Predicted', score: 95 },
-          { quiz: 'Quiz 5', type: 'Predicted', score: 98 },
-        ],
-      });
-    }
-
-    // Optimize DB query with specific fields and timeout
-    console.log("Starting optimized DB query...");
+    console.log("Starting DB query...");
     const dbStart = Date.now();
     
-    const studentResponses = await Promise.race([
-      StudentResponse.find({ studentId })
-        .populate('studentId', 'name email')
-        .select('courseId responses studentId updatedAt') // Only select needed fields
-        .lean(),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database query timeout')), 5000)
-      )
-    ]);
+    // Fetch all student responses (keep your existing DB logic)
+    const studentResponses = await StudentResponse.find({ studentId })
+      .populate('studentId', 'name email')
+      .lean();
 
     console.log(`DB query took ${Date.now() - dbStart} ms`);
     console.log("Found student responses:", studentResponses?.length || 0);
 
     if (!studentResponses || studentResponses.length === 0) {
-      clearTimeout(functionTimeout);
+      console.log("No student responses found");
       return res.status(404).json({
         success: false,
         message: 'No response data found for this student'
       });
     }
 
-    // Process quiz data (keeping your existing logic)
+    // Extract all quiz scores (keep your existing quiz processing logic)
     const allQuizzes = [];
     console.log("Processing responses...");
     
     studentResponses.forEach((courseResponse, index) => {
       console.log(`Course ${index + 1} - CourseId:`, courseResponse.courseId);
-      
+      console.log(`Course ${index + 1} - Responses:`, courseResponse.responses?.length || 0);
+
       if (!courseResponse.responses || courseResponse.responses.length === 0) {
+        console.log(`Course ${index + 1} - No responses found`);
         return;
       }
 
       const courseQuizzes = courseResponse.responses
-        .filter(response => response.quiz && Array.isArray(response.quiz) && response.quiz.length > 0)
+        .filter(response => {
+          const hasQuiz = response.quiz && Array.isArray(response.quiz) && response.quiz.length > 0;
+          console.log(`  Response lessonId: ${response.lessonId}, has quiz: ${hasQuiz}, quiz length: ${response.quiz?.length || 0}`);
+          return hasQuiz;
+        })
         .map(response => {
           try {
             const correctAnswers = response.quiz.filter(answer =>
@@ -768,6 +834,8 @@ const getQuizPredictions = async (req, res) => {
             ).length;
             const totalQuestions = response.quiz.length;
             const score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+
+            console.log(`  Quiz: ${correctAnswers}/${totalQuestions} = ${score.toFixed(2)}%`);
 
             return {
               courseId: courseResponse.courseId,
@@ -778,75 +846,89 @@ const getQuizPredictions = async (req, res) => {
               correctAnswers
             };
           } catch (error) {
-            console.log(`Error processing quiz for lesson ${response.lessonId}:`, error.message);
+            console.log(`  Error processing quiz for lesson ${response.lessonId}:`, error.message);
             return null;
           }
         })
         .filter(quiz => quiz !== null);
 
+      console.log(`Course ${index + 1} - Valid quizzes found:`, courseQuizzes.length);
       allQuizzes.push(...courseQuizzes);
     });
 
     console.log("Total quizzes found:", allQuizzes.length);
     allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
 
+    console.log("Sorted quizzes:", allQuizzes.map(q => ({
+      lessonId: q.lessonId,
+      score: q.score,
+      completedAt: q.completedAt
+    })));
+
     if (allQuizzes.length < 2) {
-      clearTimeout(functionTimeout);
+      console.log("Not enough quizzes for prediction");
       return res.status(400).json({
         success: false,
-        message: 'Student needs to complete at least 2 quizzes for predictions',
-        completedQuizzes: allQuizzes.length
+        message: 'Student needs to complete at least 2 quizzes across all courses for predictions',
+        completedQuizzes: allQuizzes.length,
+        requiredQuizzes: 2,
+        availableQuizzes: allQuizzes.map(q => ({
+          lessonId: q.lessonId,
+          score: q.score
+        }))
       });
     }
 
-    const inputScores = allQuizzes.slice(0, 2).map(quiz => quiz.score);
+    // Use all available scores for better prediction (not just first 2)
+    const inputScores = allQuizzes.map(quiz => quiz.score);
     console.log("Input scores for prediction:", inputScores);
 
-    // Improved Gradio API call with better error handling
-    const predictions = await callGradioAPI(inputScores);
+    // 🎯 USE LOCAL PREDICTIONS INSTEAD OF GRADIO API
+    console.log("🚀 Generating LOCAL predictions...");
+    const predictionStart = Date.now();
     
-    clearTimeout(functionTimeout);
+    const predictions = generateLocalPredictions(inputScores);
     
+    console.log(`✅ Local prediction took ${Date.now() - predictionStart} ms`);
+    console.log("Prediction results:", predictions);
+
     const studentInfo = studentResponses[0].studentId;
+
     const responseData = {
       success: true,
       studentId: studentInfo._id,
       studentName: studentInfo.name,
       inputScores,
-      predictions,
+      predictions: predictions, // This now contains our local predictions
       completedQuizzes: allQuizzes.length,
       totalQuizzesExpected: 5,
       chartData: [
-        { quiz: 'Quiz 1', type: 'Completed', score: Math.round(inputScores[0]) },
-        { quiz: 'Quiz 2', type: 'Completed', score: Math.round(inputScores[1]) },
+        // Add completed quizzes
+        ...allQuizzes.map((quiz, index) => ({
+          quiz: `Quiz ${index + 1}`,
+          type: 'Completed',
+          score: Math.round(quiz.score),
+        })),
+        // Add predicted quizzes
         ...predictions.predicted_scores.map((score, index) => ({
-          quiz: `Quiz ${index + 3}`,
+          quiz: `Quiz ${allQuizzes.length + index + 1}`,
           type: 'Predicted',
           score: Math.round(score),
         })),
       ],
+      // Add extra info for the frontend
+      predictionMethod: 'Local Trend Analysis',
+      confidence: predictions.confidence,
+      trendAnalysis: predictions.trend_analysis
     };
 
-    console.log("=== Quiz Predictions Debug End ===");
+    console.log("=== LOCAL Quiz Predictions End ===");
     return res.status(200).json(responseData);
 
   } catch (error) {
     console.error('=== ERROR in getQuizPredictions ===');
-    console.error('Error:', error.message);
-
-    // Clear timeout if still active
-    if (functionTimeout) clearTimeout(functionTimeout);
-
-    // Don't send response if headers already sent
-    if (res.headersSent) return;
-
-    if (error.message.includes('timeout') || error.message.includes('ECONNRESET')) {
-      return res.status(408).json({
-        success: false,
-        message: 'Request timeout',
-        error: 'Service temporarily unavailable'
-      });
-    }
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
 
     return res.status(500).json({
       success: false,
@@ -855,94 +937,6 @@ const getQuizPredictions = async (req, res) => {
     });
   }
 };
-
-// Separate function for Gradio API calls
-async function callGradioAPI(inputScores) {
-  const GRADIO_API_URL = 'https://sri-chandrasekaran-flask-nlp-api.hf.space';
-  const scoresString = inputScores.join(',');
-  
-  try {
-    console.log("Calling Gradio API with improved timeout handling...");
-
-    // Step 1: POST request with shorter timeout
-    const postResponse = await Promise.race([
-      fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (compatible; Quiz-Predictor/1.0)'
-        },
-        body: JSON.stringify({ data: [scoresString] }),
-      }),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('POST request timeout')), 8000)
-      )
-    ]);
-
-    if (!postResponse.ok) {
-      throw new Error(`Gradio API POST failed: ${postResponse.status}`);
-    }
-
-    const postData = await postResponse.json();
-    if (!postData.event_id) {
-      throw new Error('No event_id received from Gradio API');
-    }
-
-    // Step 2: GET request with retry logic but shorter overall timeout
-    const eventId = postData.event_id;
-    let attempts = 0;
-    const maxAttempts = 3; // Reduced attempts
-
-    while (attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Wait 1.5 seconds
-
-      const getResponse = await Promise.race([
-        fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future/${eventId}`),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('GET timeout')), 6000)
-        )
-      ]);
-
-      if (getResponse.ok) {
-        const rawText = await getResponse.text();
-        const dataLines = rawText.split('\n').filter(line => line.startsWith('data: '));
-        
-        if (dataLines.length > 0) {
-          const lastDataLine = dataLines[dataLines.length - 1];
-          const jsonStr = lastDataLine.replace(/^data: /, '').trim();
-          
-          try {
-            const resultData = JSON.parse(jsonStr);
-            if (resultData.data && resultData.data[0] && resultData.data[0].predicted_scores) {
-              return resultData.data[0];
-            }
-          } catch (parseError) {
-            console.error("JSON parse error:", parseError);
-          }
-        }
-      }
-
-      attempts++;
-      console.log(`Gradio attempt ${attempts} failed, retrying...`);
-    }
-
-    throw new Error('Failed to get predictions after maximum attempts');
-
-  } catch (error) {
-    console.error('Gradio API Error:', error.message);
-    
-    // Return fallback predictions in case of API failure
-    console.log("Returning fallback predictions due to API error");
-    return {
-      predicted_scores: [
-        inputScores[0] + 2, // Simple fallback: slightly increase scores
-        inputScores[1] + 3,
-        Math.max(inputScores[0], inputScores[1]) + 5
-      ]
-    };
-  }
-}
-  
 
 module.exports = {
   getStudentBPQResponses,
