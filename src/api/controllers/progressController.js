@@ -288,9 +288,8 @@ class ProgressController {
         //     }
         // }
 
-        if (Array.isArray(foundCourse.lessons)) {
-            availableAssignments.lessons = foundCourse.lessons.map(l => l.lessonId.toString());
-        }
+        availableAssignments.lessons = (foundCourse.lessons || []).map(lesson => lesson.lessonId);
+
 
         // Check which worksheets are available (ws_1, ws_2, etc.)
         // for (let i = 1; i <= 5; i++) {
@@ -298,14 +297,15 @@ class ProgressController {
         //         availableAssignments.worksheets.push(i.toString());
         //     }
         // }
-        if (Array.isArray(foundCourse.worksheets)) {
-            availableAssignments.worksheets = foundCourse.worksheets.map(w => w.worksheetId.toString());
-        }
+        availableAssignments.worksheets = (foundCourse.worksheets || []).map(ws => ws.wsId); 
+
 
         // Check if quiz is available
-        if (foundCourse.quiz === true) {
-            availableAssignments.quiz = true;
-        }
+        // if (foundCourse.quiz === true) {
+        //     availableAssignments.quiz = true;
+        // }
+        availableAssignments.quiz = foundCourse.quiz === true;
+
 
         // Get student responses from StudentResponses instead of Progress
         const studentResponses = await StudentResponses.findOne({
