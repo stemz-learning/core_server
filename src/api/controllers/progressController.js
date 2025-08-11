@@ -145,7 +145,7 @@ class ProgressController {
             const availableAssignments = {
                 lessons: [],
                 worksheets: [],
-                quiz: []
+                quizzes: []
             };
     
             // Check which lessons are available (lesson_1, lesson_2, etc.)
@@ -183,7 +183,7 @@ class ProgressController {
             const totalAssignments = {
                 lessons: availableAssignments.lessons.length,
                 worksheets: availableAssignments.worksheets.length,
-                quizzes: availableAssignments.quizzes
+                quizzes: availableAssignments.quizzes.length
             };
     
             // Check each progress record
