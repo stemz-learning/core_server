@@ -133,12 +133,20 @@ class ProgressController {
             }
     
             const foundCourse = course || courseByCourseName;
+
+            if (!foundCourse) {
+                return res.status(404).json({ message: 'Course not found' });
+            }
+            
+            const dbCourseName = foundCourse.name || foundCourse.courseName;
     
             // Get all progress records for this user and course
-            const userProgress = await Progress.find({ 
-                user_id, 
-                course_name 
-            });
+            // const userProgress = await Progress.find({ 
+            //     user_id, 
+            //     course_name 
+            // });
+
+            const userProgress = await Progress.find({ user_id, course_name: dbCourseName });
     
             // Determine available assignments from course data
             const availableAssignments = {
