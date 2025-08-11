@@ -402,15 +402,25 @@ const getStudentCourseScores = async (req, res) => {
       const { studentId } = req.params;
       console.log("StudentId:", studentId);
   
+      // Validate studentId
+      if (!studentId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Student ID is required'
+        });
+      }
+  
       // Get ALL student responses across ALL courses
       const studentResponses = await StudentResponse.find({ studentId })
-        .populate('studentId', 'name email');
+        .populate('studentId', 'name email')
+        .lean(); // Add lean for better performance
   
       console.log("Found student responses:", studentResponses?.length || 0);
   
       if (!studentResponses || studentResponses.length === 0) {
         console.log("No student responses found");
         return res.status(404).json({ 
+          success: false,
           message: 'No response data found for this student' 
         });
       }
@@ -423,27 +433,41 @@ const getStudentCourseScores = async (req, res) => {
         console.log(`Course ${index + 1} - CourseId:`, courseResponse.courseId);
         console.log(`Course ${index + 1} - Responses:`, courseResponse.responses?.length || 0);
         
+        if (!courseResponse.responses || courseResponse.responses.length === 0) {
+          console.log(`Course ${index + 1} - No responses found`);
+          return;
+        }
+        
         const courseQuizzes = courseResponse.responses
           .filter(response => {
-            const hasQuiz = response.quiz && response.quiz.length > 0;
-            console.log(`  Response has quiz: ${hasQuiz}, quiz length: ${response.quiz?.length || 0}`);
+            const hasQuiz = response.quiz && Array.isArray(response.quiz) && response.quiz.length > 0;
+            console.log(`  Response lessonId: ${response.lessonId}, has quiz: ${hasQuiz}, quiz length: ${response.quiz?.length || 0}`);
             return hasQuiz;
           })
           .map(response => {
-            const correctAnswers = response.quiz.filter(answer => 
-              answer.isCorrect || answer.correct
-            ).length;
-            const score = (correctAnswers / response.quiz.length) * 100;
-            
-            console.log(`  Quiz: ${correctAnswers}/${response.quiz.length} = ${score}%`);
-            
-            return {
-              courseId: courseResponse.courseId,
-              lessonId: response.lessonId,
-              score: score,
-              completedAt: response.completedAt || courseResponse.updatedAt
-            };
-          });
+            try {
+              const correctAnswers = response.quiz.filter(answer => 
+                answer.isCorrect === true || answer.correct === true
+              ).length;
+              const totalQuestions = response.quiz.length;
+              const score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+              
+              console.log(`  Quiz: ${correctAnswers}/${totalQuestions} = ${score.toFixed(2)}%`);
+              
+              return {
+                courseId: courseResponse.courseId,
+                lessonId: response.lessonId,
+                score: Math.round(score * 100) / 100, // Round to 2 decimal places
+                completedAt: response.completedAt || courseResponse.updatedAt || new Date(),
+                totalQuestions,
+                correctAnswers
+              };
+            } catch (error) {
+              console.log(`  Error processing quiz for lesson ${response.lessonId}:`, error.message);
+              return null;
+            }
+          })
+          .filter(quiz => quiz !== null); // Remove any failed quiz processing
         
         console.log(`Course ${index + 1} - Valid quizzes found:`, courseQuizzes.length);
         allQuizzes.push(...courseQuizzes);
@@ -454,12 +478,24 @@ const getStudentCourseScores = async (req, res) => {
       // Sort all quizzes chronologically
       allQuizzes.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
   
+      // Log sorted quizzes for debugging
+      console.log("Sorted quizzes:", allQuizzes.map(q => ({ 
+        lessonId: q.lessonId, 
+        score: q.score, 
+        completedAt: q.completedAt 
+      })));
+  
       if (allQuizzes.length < 2) {
         console.log("Not enough quizzes for prediction");
         return res.status(400).json({
+          success: false,
           message: 'Student needs to complete at least 2 quizzes across all courses for predictions',
           completedQuizzes: allQuizzes.length,
-          requiredQuizzes: 2
+          requiredQuizzes: 2,
+          availableQuizzes: allQuizzes.map(q => ({ 
+            lessonId: q.lessonId, 
+            score: q.score 
+          }))
         });
       }
   
@@ -470,89 +506,139 @@ const getStudentCourseScores = async (req, res) => {
       const scoresString = inputScores.join(',');
       console.log("Scores string:", scoresString);
   
-      // Call Gradio API (same as before)
+      // Call Gradio API with timeout and better error handling
       const GRADIO_API_URL = 'https://sri-chandrasekaran-flask-nlp-api.hf.space';
       console.log("Calling Gradio API...");
       
-      // Step 1: POST request to get EVENT_ID
-      const postResponse = await fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: [scoresString] })
-      });
+      // Step 1: POST request to get EVENT_ID with timeout
+      const postResponse = await Promise.race([
+        fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: [scoresString] })
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Request timeout')), 10000)
+        )
+      ]);
   
       console.log("Gradio POST response status:", postResponse.status);
   
       if (!postResponse.ok) {
         const errorText = await postResponse.text();
         console.log("Gradio POST error:", errorText);
-        throw new Error(`Gradio API error: ${postResponse.status} - ${errorText}`);
+        throw new Error(`Gradio API POST error: ${postResponse.status} - ${errorText}`);
       }
   
       const postData = await postResponse.json();
       console.log("Gradio POST data:", postData);
+      
+      if (!postData.event_id) {
+        throw new Error('No event_id received from Gradio API');
+      }
+      
       const eventId = postData.event_id;
   
-      // Step 2: GET request to retrieve results
+      // Step 2: GET request to retrieve results with retry logic
       console.log("Getting results with event ID:", eventId);
-      const getResponse = await fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future/${eventId}`);
+      let getResponse;
+      let attempts = 0;
+      const maxAttempts = 5;
       
-      console.log("Gradio GET response status:", getResponse.status);
-  
-      if (!getResponse.ok) {
-        const errorText = await getResponse.text();
-        console.log("Gradio GET error:", errorText);
-        throw new Error(`Gradio API error: ${getResponse.status} - ${errorText}`);
+      while (attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second between attempts
+        
+        getResponse = await Promise.race([
+          fetch(`${GRADIO_API_URL}/gradio_api/call/predict_future/${eventId}`),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('GET request timeout')), 10000)
+          )
+        ]);
+        
+        console.log(`Gradio GET attempt ${attempts + 1}, response status:`, getResponse.status);
+        
+        if (getResponse.ok) {
+          const resultData = await getResponse.json();
+          console.log("Gradio result data:", resultData);
+          
+          if (resultData.data && resultData.data[0]) {
+            const predictionData = resultData.data[0];
+            
+            // Validate prediction data structure
+            if (!predictionData.predicted_scores || !Array.isArray(predictionData.predicted_scores)) {
+              throw new Error('Invalid prediction data structure received');
+            }
+            
+            // Get student info from first response
+            const studentInfo = studentResponses[0].studentId;
+            
+            console.log("Prediction successful, formatting response...");
+            
+            // Format response with generic quiz labels
+            const responseData = {
+              success: true,
+              studentId: studentInfo._id,
+              studentName: studentInfo.name,
+              inputScores,
+              predictions: predictionData,
+              completedQuizzes: allQuizzes.length,
+              totalQuizzesExpected: 5,
+              chartData: [
+                { quiz: 'Quiz 1', type: 'Completed', score: Math.round(inputScores[0]) },
+                { quiz: 'Quiz 2', type: 'Completed', score: Math.round(inputScores[1]) },
+                ...predictionData.predicted_scores.map((score, index) => ({
+                  quiz: `Quiz ${index + 3}`,
+                  type: 'Predicted',
+                  score: Math.round(score)
+                }))
+              ]
+            };
+            
+            console.log("=== Quiz Predictions Debug End ===");
+            return res.status(200).json(responseData);
+          }
+        }
+        
+        attempts++;
+        console.log(`Attempt ${attempts} failed, retrying...`);
       }
-  
-      const resultData = await getResponse.json();
-      console.log("Gradio result data:", resultData);
-      const predictionData = resultData.data[0];
-  
-      // Get student info from first response
-      const studentInfo = studentResponses[0].studentId;
-  
-      console.log("Prediction successful, formatting response...");
-  
-      // Format response with generic quiz labels
-      const responseData = {
-        success: true,
-        studentId: studentInfo._id,
-        studentName: studentInfo.name,
-        inputScores,
-        predictions: predictionData,
-        completedQuizzes: allQuizzes.length,
-        totalQuizzesExpected: 5,
-        chartData: [
-          { quiz: 'Quiz 1', type: 'Completed', score: Math.round(inputScores[0]) },
-          { quiz: 'Quiz 2', type: 'Completed', score: Math.round(inputScores[1]) },
-          ...predictionData.predicted_scores.map((score, index) => ({
-            quiz: `Quiz ${index + 3}`,
-            type: 'Predicted',
-            score: Math.round(score)
-          }))
-        ]
-      };
-  
-      console.log("=== Quiz Predictions Debug End ===");
-      return res.status(200).json(responseData);
+      
+      throw new Error('Failed to get results after maximum attempts');
   
     } catch (error) {
       console.error('=== ERROR in getQuizPredictions ===');
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
       
-      // Handle Gradio API connection errors gracefully
+      // Handle different types of errors gracefully
+      if (error.message.includes('timeout')) {
+        return res.status(408).json({
+          success: false,
+          message: 'Prediction service request timeout',
+          error: 'The prediction service is taking too long to respond'
+        });
+      }
+      
       if (error.message.includes('Gradio API') || error.code === 'ECONNREFUSED') {
         return res.status(503).json({
+          success: false,
           message: 'Prediction service temporarily unavailable',
           error: 'Please ensure the Gradio service is running'
         });
       }
+      
+      if (error.message.includes('No event_id') || error.message.includes('Invalid prediction data')) {
+        return res.status(502).json({
+          success: false,
+          message: 'Invalid response from prediction service',
+          error: error.message
+        });
+      }
   
       return res.status(500).json({
+        success: false,
         message: 'Failed to get quiz predictions',
         error: error.message
       });
