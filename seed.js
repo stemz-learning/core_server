@@ -20,7 +20,11 @@ const seedCoursesLessons = async () => {
         ws_3: true,
         ws_4: false,
         ws_5: false,
-        quiz: true,
+        quiz_1: false,
+        quiz_2: false,
+        quiz_3: false,
+        quiz_4: true,
+        quiz_5: false
       },
       {
         name: 'Basics of Coding 1',
@@ -35,7 +39,11 @@ const seedCoursesLessons = async () => {
         ws_3: false,
         ws_4: false,
         ws_5: false,
-        quiz: true,
+        quiz_1: false,
+        quiz_2: false,
+        quiz_3: false,
+        quiz_4: true,
+        quiz_5: false
       },
       {
         name: 'Biochemistry',
@@ -50,7 +58,11 @@ const seedCoursesLessons = async () => {
         ws_3: false,
         ws_4: false,
         ws_5: false,
-        quiz: true,
+        quiz_1: false,
+        quiz_2: true,
+        quiz_3: false,
+        quiz_4: false,
+        quiz_5: false
       },
       {
         name: 'Chemistry',
@@ -65,7 +77,11 @@ const seedCoursesLessons = async () => {
         ws_3: false,
         ws_4: false,
         ws_5: false,
-        quiz: true,
+        quiz_1: false,
+        quiz_2: false,
+        quiz_3: false,
+        quiz_4: true,
+        quiz_5: false
       },
       {
         name: 'Circuits',
@@ -80,7 +96,11 @@ const seedCoursesLessons = async () => {
         ws_3: false,
         ws_4: false,
         ws_5: false,
-        quiz: true,
+        quiz_1: false,
+        quiz_2: false,
+        quiz_3: true,
+        quiz_4: false,
+        quiz_5: false
       },
       {
         name: 'Environmental Science',
@@ -95,7 +115,11 @@ const seedCoursesLessons = async () => {
         ws_3: false,
         ws_4: false,
         ws_5: false,
-        quiz: true,
+        quiz_1: false,
+        quiz_2: false,
+        quiz_3: false,
+        quiz_4: true,
+        quiz_5: false
       },
       {
         name: 'Psychology',
@@ -110,7 +134,11 @@ const seedCoursesLessons = async () => {
         ws_3: false,
         ws_4: false,
         ws_5: false,
-        quiz: true,
+        quiz_1: false,
+        quiz_2: false,
+        quiz_3: false,
+        quiz_4: true,
+        quiz_5: false
       },
       {
         name: 'Statistics',
@@ -125,7 +153,11 @@ const seedCoursesLessons = async () => {
         ws_3: true,
         ws_4: true,
         ws_5: false,
-        quiz: true,
+        quiz_1: false,
+        quiz_2: false,
+        quiz_3: false,
+        quiz_4: false,
+        quiz_5: true
       },
       {
         name: 'Zoology',
@@ -140,7 +172,11 @@ const seedCoursesLessons = async () => {
         ws_3: false,
         ws_4: true,
         ws_5: false,
-        quiz: false,
+        quiz_1: false,
+        quiz_2: false,
+        quiz_3: false,
+        quiz_4: false,
+        quiz_5: true
       },
       
     ];
