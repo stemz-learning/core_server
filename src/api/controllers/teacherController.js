@@ -410,7 +410,7 @@ const getQuizPredictions = async (req, res) => {
       });
     }
 
-    const TEST_DUMMY_RESPONSE = true;  // << Set true to skip heavy logic & return dummy immediately
+    const TEST_DUMMY_RESPONSE = false;  // << Set true to skip heavy logic & return dummy immediately
 
     if (TEST_DUMMY_RESPONSE) {
       console.log("Sending dummy response for quick testing...");
