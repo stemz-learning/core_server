@@ -183,7 +183,7 @@ static async createPhysicalClassroom(req, res) {
       gradeLevel,
       academicYear,
       classroomNumber,
-      maxStudents: maxStudents || 30,
+      maxStudents: maxStudents || 50,
       studentIds: studentIds // EXPLICITLY set studentIds field
     });
 
