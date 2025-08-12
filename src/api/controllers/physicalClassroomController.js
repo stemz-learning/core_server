@@ -70,74 +70,7 @@ class PhysicalClassroomController {
     }
   }
 
-  // // Create a new physical classroom
-  // static async createPhysicalClassroom(req, res) {
-  //   try {
-      
-      
-  //     const {
-  //       name,
-  //       description,
-  //       teacherId,
-  //       schoolName,
-  //       gradeLevel,
-  //       academicYear,
-  //       classroomNumber,
-  //       maxStudents,
-  //       // studentIds
-  //       students
-  //     } = req.body;
-  //     console.log("Creating physical classroom with data:", req.body);
-  //     // Validate teacher exists
-  //     if (teacherId) {
-  //       const teacher = await User.findById(teacherId);
-  //       if (!teacher) {
-  //         return res.status(400).json({ message: "Invalid teacher ID" });
-  //       }
-  //     }
-
-  //     const studentIds = (students || []).map(student => {
-  //       if (typeof student === 'string') {
-  //         return student;
-  //       }
-  //       return student.id || student._id || student;
-  //     }).filter(id => id);
-
-  //     console.log("Students received:", students);
-  //     console.log("Student IDs extracted:", studentIds);
-
-  //     const newClassroom = new PhysicalClassroom({
-  //       name,
-  //       description,
-  //       teacherId,
-  //       schoolName,
-  //       gradeLevel,
-  //       academicYear,
-  //       classroomNumber,
-  //       maxStudents: maxStudents || 30,
-  //       studentIds
-  //     });
-
-  //     await newClassroom.save();
-      
-  //     // Populate the response
-  //     await newClassroom.populate('teacherId', 'name email');
-  //     await newClassroom.populate('studentIds', 'name email');
-      
-  //     res.status(201).json({
-  //       message: "Physical classroom created successfully",
-  //       classroom: newClassroom
-  //     });
-  //   } catch (error) {
-  //     console.error('Error creating physical classroom:', error);
-  //     res.status(400).json({ 
-  //       message: "Failed to create physical classroom", 
-  //       error: error.message 
-  //     });
-  //   }
-  // }
-
-  // In your physicalClassroomController.js - createPhysicalClassroom method:
+  //  creating a classroom
 static async createPhysicalClassroom(req, res) {
   try {
     console.log("=== CREATE CLASSROOM DEBUG ===");
