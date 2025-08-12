@@ -22,7 +22,7 @@ router.get('/all-teacher-notifications', NotificationController.getAllTeacherNot
 router.post('/email/invite', NotificationController.sendClassroomInvite);
 
 // Invitation acceptance routes
-router.get('/accept-invite', NotificationController.serveAcceptInvitePage);
+router.get('/accept-invite/:classroomId/:userId', NotificationController.serveAcceptInvitePage);
 router.post('/accept-invite', NotificationController.acceptClassroomInvite);
 
 

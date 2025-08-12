@@ -717,7 +717,7 @@ static async teacherDismissNotification(req, res) {
       // Render the HTML template
       const htmlContent = await NotificationController.renderTemplate('invite.html', {
         classroom_name: classroomName,
-        accept_invite_url: `${acceptInviteUrl}?userId=${userId}&classroomName=${encodeURIComponent(classroomName)}&classroomId=${classroomId}`,
+        accept_invite_url: `${acceptInviteUrl}/accept-invite/${classroomId}/${userId}`,
         userId: userId
       });
 
@@ -774,6 +774,7 @@ static async teacherDismissNotification(req, res) {
   // Serve the invitation acceptance page
   static async serveAcceptInvitePage(req, res) {
     try {
+      const { classroomId, userId } = req.params;
       const html = await fs.readFile(
         path.join(__dirname, '..', 'templates', 'accept-invite.html'), 
         'utf-8'
