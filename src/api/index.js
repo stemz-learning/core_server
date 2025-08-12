@@ -19,6 +19,7 @@ const quizQuestionRoutes = require('./routes/quizQuestionRoutes');
 const teachers = require('./routes/teacherRoutes');
 const portalCourseRoutes = require('./routes/portalCourseRoutes');
 const progressRoutes = require('./routes/progressRoutes');
+const classroomAnalyticsRoutes = require('./routes/classroomAnalyticsRoutes');
 
 const router = express.Router();
 
@@ -53,6 +54,7 @@ router.use('/assignments', assignmentRoutes);
 router.use('/progress', progressRoutes);
 
 router.use('/responses', studentResponseRoutes);
+router.use('/analytics', classroomAnalyticsRoutes);
 
 
 // 404 Not Found middleware
