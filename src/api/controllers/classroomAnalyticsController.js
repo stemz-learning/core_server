@@ -18,7 +18,7 @@ const getClassroomCourseRecentActivity = async (req, res) => {
     console.log("   - Limit:", limit);
 
     // First, get the classroom and its enrolled students
-    const classroom = await PhysicalClassroom.findById(classroomId).populate('students', '_id');
+    const classroom = await PhysicalClassroom.findById(classroomId).populate('studentIds', '_id');
     
     if (!classroom) {
       return res.status(404).json({
@@ -27,10 +27,10 @@ const getClassroomCourseRecentActivity = async (req, res) => {
       });
     }
 
-    console.log(`📚 Found classroom with ${classroom.students.length} students`);
+    console.log(`📚 Found classroom with ${classroom.studentIds.length} students`);
 
     // Get the student IDs from this classroom
-    const classroomStudentIds = classroom.students.map(student => student._id);
+    const classroomStudentIds = classroom.studentIds.map(student => student._id);
 
     // Find student responses for this course, but ONLY for students in this classroom
     const studentResponses = await StudentResponse.find({ 
@@ -179,7 +179,7 @@ const getClassroomCourseAnalytics = async (req, res) => {
     console.log("   - Course:", courseId);
 
     // Get the classroom and its students
-    const classroom = await PhysicalClassroom.findById(classroomId).populate('students', '_id name email');
+    const classroom = await PhysicalClassroom.findById(classroomId).populate('studentIds', '_id name email');
     
     if (!classroom) {
       return res.status(404).json({
@@ -188,10 +188,10 @@ const getClassroomCourseAnalytics = async (req, res) => {
       });
     }
 
-    console.log(`📚 Found classroom: ${classroom.name} with ${classroom.students.length} students`);
+    console.log(`📚 Found classroom: ${classroom.name} with ${classroom.studentIds.length} students`);
 
     // Get student IDs from this classroom
-    const classroomStudentIds = classroom.students.map(student => student._id);
+    const classroomStudentIds = classroom.studentIds.map(student => student._id);
 
     // Find student responses for this course, but ONLY for students in this classroom
     const studentResponses = await StudentResponse.find({ 
@@ -209,7 +209,7 @@ const getClassroomCourseAnalytics = async (req, res) => {
         success: true,
         courseId,
         classroomId,
-        totalStudents: classroom.students.length,
+        totalStudents: classroom.studentIds.length,
         studentsWithResponses: 0,
         analytics: {
           overall: {
@@ -228,14 +228,14 @@ const getClassroomCourseAnalytics = async (req, res) => {
       });
     }
 
-    const analytics = calculateCourseAnalytics(studentResponses, classroom.students.length);
+    const analytics = calculateCourseAnalytics(studentResponses, classroom.studentIds.length);
 
     return res.status(200).json({
       success: true,
       courseId,
       classroomId,
       classroomName: classroom.name,
-      totalStudents: classroom.students.length,
+      totalStudents: classroom.studentIds.length,
       studentsWithResponses: studentResponses.length,
       analytics: analytics
     });
