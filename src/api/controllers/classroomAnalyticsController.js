@@ -1,7 +1,145 @@
 const StudentResponse = require('../models/studentResponseSchema');
 const User = require('../models/userModel');
 
-// Get course-wide completion rates and grade analytics
+// Get recent activity for a course (for the Active Users component) - DEBUG VERSION
+const getCourseRecentActivity = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { limit = 10 } = req.query;
+
+    console.log("=== DEBUG getCourseRecentActivity ===");
+    console.log("CourseId from params:", courseId);
+    console.log("Limit:", limit);
+
+    // First, let's see what courses exist in the database
+    const allCourses = await StudentResponse.distinct('courseId');
+    console.log("All courses in database:", allCourses);
+
+    const studentResponses = await StudentResponse.find({ courseId })
+      .populate('studentId', 'name email')
+      .lean();
+
+    console.log("Found student responses count:", studentResponses?.length || 0);
+
+    if (!studentResponses || studentResponses.length === 0) {
+      console.log("No student responses found for courseId:", courseId);
+      
+      // Let's also check if there are ANY student responses at all
+      const totalResponses = await StudentResponse.countDocuments();
+      console.log("Total student responses in database:", totalResponses);
+      
+      return res.status(200).json({
+        success: true,
+        recentActivity: [],
+        debug: {
+          courseId,
+          foundResponses: 0,
+          allCourses,
+          totalResponsesInDB: totalResponses
+        }
+      });
+    }
+
+    console.log("\n=== ANALYZING STUDENT RESPONSES ===");
+    const recentActivity = [];
+
+    studentResponses.forEach((studentDoc, studentIndex) => {
+      const studentName = studentDoc.studentId?.name || 'Unknown Student';
+      console.log(`\nStudent ${studentIndex + 1}: ${studentName}`);
+      console.log("Student responses count:", studentDoc.responses?.length || 0);
+      
+      if (!studentDoc.responses || studentDoc.responses.length === 0) {
+        console.log("  No responses for this student");
+        return;
+      }
+      
+      studentDoc.responses.forEach((lessonResponse, lessonIndex) => {
+        console.log(`  Lesson ${lessonIndex + 1}: ${lessonResponse.lessonId}`);
+        
+        // Check worksheet
+        const hasWorksheet = lessonResponse.worksheet && 
+                            lessonResponse.worksheet.answers && 
+                            lessonResponse.worksheet.answers.length > 0;
+        console.log(`    Has worksheet: ${hasWorksheet}`);
+        
+        if (hasWorksheet) {
+          const correctAnswers = lessonResponse.worksheet.answers.filter(answer => answer.correct === true).length;
+          const totalQuestions = lessonResponse.worksheet.answers.length;
+          const grade = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+          
+          console.log(`    Worksheet: ${correctAnswers}/${totalQuestions} = ${grade}%`);
+          
+          recentActivity.push({
+            name: studentName,
+            assignment: `${lessonResponse.lessonId} - Worksheet`,
+            timeSignedIn: `${Math.floor(Math.random() * 25) + 10} minutes`,
+            grade: grade,
+            completedAt: lessonResponse.worksheet.submittedAt || studentDoc.updatedAt
+          });
+        }
+        
+        // Check quiz
+        const hasQuiz = lessonResponse.quiz && lessonResponse.quiz.length > 0;
+        console.log(`    Has quiz: ${hasQuiz}`);
+        console.log(`    Quiz length: ${lessonResponse.quiz?.length || 0}`);
+        
+        if (hasQuiz) {
+          console.log("    Quiz attempts:", lessonResponse.quiz.map(q => ({
+            score: q.score,
+            total: q.total,
+            attemptNumber: q.attemptNumber
+          })));
+          
+          const bestQuizAttempt = lessonResponse.quiz.reduce((best, attempt) => {
+            const currentScore = attempt.total > 0 ? Math.round((attempt.score / attempt.total) * 100) : 0;
+            const bestScore = best.total > 0 ? Math.round((best.score / best.total) * 100) : 0;
+            return currentScore > bestScore ? attempt : best;
+          });
+          
+          const quizGrade = bestQuizAttempt.total > 0 ? Math.round((bestQuizAttempt.score / bestQuizAttempt.total) * 100) : 0;
+          console.log(`    Best quiz: ${bestQuizAttempt.score}/${bestQuizAttempt.total} = ${quizGrade}%`);
+          
+          recentActivity.push({
+            name: studentName,
+            assignment: `${lessonResponse.lessonId} - Quiz`,
+            timeSignedIn: `${Math.floor(Math.random() * 20) + 5} minutes`,
+            grade: quizGrade,
+            completedAt: bestQuizAttempt.submittedAt || studentDoc.updatedAt
+          });
+        }
+      });
+    });
+
+    console.log("\n=== FINAL RESULTS ===");
+    console.log("Total recent activities found:", recentActivity.length);
+    console.log("Activities:", recentActivity.map(a => `${a.name} - ${a.assignment} (${a.grade}%)`));
+
+    // Sort by completion date and limit
+    recentActivity.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+    const limitedActivity = recentActivity.slice(0, parseInt(limit));
+
+    return res.status(200).json({
+      success: true,
+      recentActivity: limitedActivity,
+      debug: {
+        courseId,
+        studentsFound: studentResponses.length,
+        totalActivities: recentActivity.length,
+        allCourses
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching course recent activity:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch recent activity',
+      error: error.message
+    });
+  }
+};
+
+// Keep your existing getCourseAnalytics function unchanged
 const getCourseAnalytics = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -187,84 +325,6 @@ function calculateCourseAnalytics(studentResponses) {
     recentActivity: limitedRecentActivity
   };
 }
-
-// Get recent activity for a course (for the Active Users component)
-const getCourseRecentActivity = async (req, res) => {
-  try {
-    const { courseId } = req.params;
-    const { limit = 10 } = req.query;
-
-    const studentResponses = await StudentResponse.find({ courseId })
-      .populate('studentId', 'name email')
-      .lean();
-
-    if (!studentResponses || studentResponses.length === 0) {
-      return res.status(200).json({
-        success: true,
-        recentActivity: []
-      });
-    }
-
-    const recentActivity = [];
-
-    studentResponses.forEach(studentDoc => {
-      const studentName = studentDoc.studentId?.name || 'Unknown Student';
-      
-      studentDoc.responses.forEach(lessonResponse => {
-        // Add worksheet activities
-        if (lessonResponse.worksheet && lessonResponse.worksheet.answers && lessonResponse.worksheet.answers.length > 0) {
-          const correctAnswers = lessonResponse.worksheet.answers.filter(answer => answer.correct === true).length;
-          const totalQuestions = lessonResponse.worksheet.answers.length;
-          const grade = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-          
-          recentActivity.push({
-            name: studentName,
-            assignment: `${lessonResponse.lessonId} - Worksheet`,
-            timeSignedIn: `${Math.floor(Math.random() * 25) + 10} minutes`,
-            grade: grade,
-            completedAt: lessonResponse.worksheet.submittedAt || studentDoc.updatedAt
-          });
-        }
-        
-        // Add quiz activities
-        if (lessonResponse.quiz && lessonResponse.quiz.length > 0) {
-          const bestQuizAttempt = lessonResponse.quiz.reduce((best, attempt) => {
-            const currentScore = attempt.total > 0 ? Math.round((attempt.score / attempt.total) * 100) : 0;
-            const bestScore = best.total > 0 ? Math.round((best.score / best.total) * 100) : 0;
-            return currentScore > bestScore ? attempt : best;
-          });
-          
-          const quizGrade = bestQuizAttempt.total > 0 ? Math.round((bestQuizAttempt.score / bestQuizAttempt.total) * 100) : 0;
-          
-          recentActivity.push({
-            name: studentName,
-            assignment: `${lessonResponse.lessonId} - Quiz`,
-            timeSignedIn: `${Math.floor(Math.random() * 20) + 5} minutes`,
-            grade: quizGrade,
-            completedAt: bestQuizAttempt.submittedAt || studentDoc.updatedAt
-          });
-        }
-      });
-    });
-
-    // Sort by completion date and limit
-    recentActivity.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
-    const limitedActivity = recentActivity.slice(0, parseInt(limit));
-
-    return res.status(200).json({
-      success: true,
-      recentActivity: limitedActivity
-    });
-
-  } catch (error) {
-    console.error('Error fetching course recent activity:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to fetch recent activity',
-      error: error.message
-    });
-  }
-};
 
 module.exports = {
   getCourseAnalytics,
