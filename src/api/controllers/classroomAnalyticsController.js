@@ -741,6 +741,46 @@ function calculateCourseAnalytics(studentResponses) {
   // Sort recent activity by completion date and limit to 10
   recentActivity.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
   const limitedRecentActivity = recentActivity.slice(0, 10);
+
+  console.log("\n🧮 DETAILED ANALYTICS VERIFICATION");
+console.log("=" .repeat(60));
+
+// Log each lesson's data
+Object.keys(lessonAnalytics).forEach(lessonId => {
+  const lesson = lessonAnalytics[lessonId];
+  console.log(`\n📖 LESSON: ${lessonId}`);
+  console.log(`   Students who attempted: ${lesson.studentsAttempted || 'Not tracked'}`);
+  console.log(`   Worksheet completions: ${lesson.worksheetCompletions}`);
+  console.log(`   Quiz completions: ${lesson.quizCompletions}`);
+  console.log(`   Worksheet grades: [${lesson.worksheetGrades.join(', ')}]`);
+  console.log(`   Quiz grades: [${lesson.quizGrades.join(', ')}]`);
+  console.log(`   Avg worksheet grade: ${lesson.averageWorksheetGrade}%`);
+  console.log(`   Avg quiz grade: ${lesson.averageQuizGrade}%`);
+  console.log(`   Worksheet completion rate: ${lesson.worksheetCompletionRate}%`);
+  console.log(`   Quiz completion rate: ${lesson.quizCompletionRate}%`);
+});
+
+console.log(`\n📊 OVERALL CALCULATIONS:`);
+console.log(`Total students in course: ${totalStudents}`);
+console.log(`Total lessons found: ${Object.keys(lessonAnalytics).length}`);
+console.log(`All worksheet grades collected: [${allWorksheetGrades.join(', ')}]`);
+console.log(`All quiz grades collected: [${allQuizGrades.join(', ')}]`);
+console.log(`Total worksheet completions: ${overallAnalytics.worksheetCompletions}`);
+console.log(`Total quiz completions: ${overallAnalytics.quizCompletions}`);
+console.log(`Total possible worksheets: ${totalStudents} students × ${overallAnalytics.totalLessons} lessons = ${totalPossibleWorksheets}`);
+console.log(`Total possible quizzes: ${totalStudents} students × ${overallAnalytics.totalLessons} lessons = ${totalPossibleQuizzes}`);
+
+console.log(`\n🎯 FINAL RATES:`);
+console.log(`Worksheet completion rate: ${overallAnalytics.worksheetCompletions}/${totalPossibleWorksheets} = ${overallAnalytics.overallWorksheetCompletionRate}%`);
+console.log(`Quiz completion rate: ${overallAnalytics.quizCompletions}/${totalPossibleQuizzes} = ${overallAnalytics.overallQuizCompletionRate}%`);
+console.log(`Average worksheet grade: ${allWorksheetGrades.length > 0 ? Math.round(allWorksheetGrades.reduce((sum, grade) => sum + grade, 0) / allWorksheetGrades.length) : 0}%`);
+console.log(`Average quiz grade: ${allQuizGrades.length > 0 ? Math.round(allQuizGrades.reduce((sum, grade) => sum + grade, 0) / allQuizGrades.length) : 0}%`);
+
+console.log(`\n📋 RECENT ACTIVITY SAMPLE:`);
+console.log(`Total activities: ${recentActivity.length}`);
+recentActivity.slice(0, 5).forEach((activity, index) => {
+  console.log(`   ${index + 1}. ${activity.studentName} - ${activity.lessonId} ${activity.activityType} - ${activity.grade}%`);
+});
   
   return {
     overall: overallAnalytics,
