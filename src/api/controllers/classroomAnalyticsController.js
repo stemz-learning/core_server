@@ -399,6 +399,28 @@ const getCourseRecentActivity = async (req, res) => {
 
     console.log("👥 Found student responses count:", studentResponses?.length || 0);
 
+    // 🔍 ADD THE DEBUG CODE HERE - RIGHT AFTER THE ABOVE LINE
+  console.log("\n🔍 DEBUGGING UNKNOWN STUDENTS");
+  console.log("=" .repeat(50));
+
+  studentResponses.forEach((studentDoc, index) => {
+    console.log(`\nStudent Document ${index + 1}:`);
+    console.log("  Raw studentId field:", studentDoc.studentId);
+    console.log("  studentId type:", typeof studentDoc.studentId);
+    console.log("  studentId is null?", studentDoc.studentId === null);
+    console.log("  studentId is undefined?", studentDoc.studentId === undefined);
+    
+    if (studentDoc.studentId) {
+      console.log("  studentId._id:", studentDoc.studentId._id);
+      console.log("  studentId.name:", studentDoc.studentId.name);
+      console.log("  studentId.email:", studentDoc.studentId.email);
+    }
+    
+    console.log("  Document _id:", studentDoc._id);
+    console.log("  Course ID:", studentDoc.courseId);
+  });
+  // 🔍 END DEBUG CODE
+
     if (!studentResponses || studentResponses.length === 0) {
       return res.status(200).json({
         success: true,
@@ -412,10 +434,32 @@ const getCourseRecentActivity = async (req, res) => {
       });
     }
 
-    const recentActivity = [];
 
-    studentResponses.forEach((studentDoc) => {
-      const studentName = studentDoc.studentId?.name || 'Unknown Student';
+    // 🛡️ FILTER OUT UNKNOWN STUDENTS
+const validStudentResponses = studentResponses.filter(doc => {
+  const hasValidStudent = doc.studentId && doc.studentId.name;
+  if (!hasValidStudent) {
+    console.log("⚠️ Skipping document with missing student info:", {
+      docId: doc._id,
+      studentIdField: doc.studentId,
+      courseId: doc.courseId
+    });
+  }
+  return hasValidStudent;
+});
+
+console.log(`✅ Filtered from ${studentResponses.length} to ${validStudentResponses.length} valid student responses`);
+
+const recentActivity = [];
+
+// Now use validStudentResponses instead of studentResponses
+validStudentResponses.forEach((studentDoc) => {
+  const studentName = studentDoc.studentId.name; // No need for fallback now
+  
+  if (!studentDoc.responses || studentDoc.responses.length === 0) {
+    console.log("   ⚠️ No responses for this student");
+    return;
+  }
       
       if (!studentDoc.responses || studentDoc.responses.length === 0) {
         return;
