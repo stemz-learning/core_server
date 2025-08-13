@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getCourseAnalytics, getCourseRecentActivity } = require('../controllers/classroomAnalyticsController');
+const { getClassroomCourseAnalytics, getClassroomCourseRecentActivity } = require('../controllers/classroomAnalyticsController');
 
 // comprehensive analytics for a course (completion rates, grades, etc.)
 router.get('/classrooms/:classroomId/courses/:courseId/analytics', getClassroomCourseAnalytics)
