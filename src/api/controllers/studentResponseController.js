@@ -117,6 +117,18 @@ const submitQuizAttempt = async (req, res) => {
       return res.status(500).json({ message: 'Failed to submit quiz', error: error.message });
     }
   };
+
+  const getStudentResponsesByStudentId = async (req, res) => {
+    try {
+        const studentResponse = await StudentResponse
+            .findOne({ studentId: req.params.studentId })
+            .sort({ updatedAt: -1 });
+        
+        res.json(studentResponse);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch' });
+    }
+};
   
 
 
@@ -124,5 +136,6 @@ module.exports = {
     getStudentResponses,
     addOrUpdateBPQResponse,
     submitWorksheet,
-    submitQuizAttempt
+    submitQuizAttempt,
+    getStudentResponsesByStudentId
   };
