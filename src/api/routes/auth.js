@@ -71,7 +71,16 @@ router.post('/login', async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ error: "User not found" });
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        // Handle both hashed and plain text passwords for backward compatibility
+        let isPasswordValid = false;
+        if (user.password.startsWith('$2')) {
+            // Password is hashed (bcrypt hashes start with $2)
+            isPasswordValid = await bcrypt.compare(password, user.password);
+        } else {
+            // Password is plain text (legacy data)
+            isPasswordValid = password === user.password;
+        }
+        
         if (!isPasswordValid) return res.status(401).json({ error: "Invalid credentials" });
 
         const token = jwt.sign(

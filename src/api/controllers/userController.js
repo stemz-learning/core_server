@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const bcrypt = require('bcryptjs');
 
 class UserController {
   // Get all users
@@ -40,7 +41,14 @@ class UserController {
   // Create a new user
   static async createUser(req, res) {
     try {
-      const newUser = new User(req.body);
+      const userData = { ...req.body };
+      
+      // Hash password if provided
+      if (userData.password) {
+        userData.password = await bcrypt.hash(userData.password, 10);
+      }
+      
+      const newUser = new User(userData);
       await newUser.save();
       res.status(201).json(newUser);
     } catch (error) {
