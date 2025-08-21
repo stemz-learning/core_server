@@ -67,8 +67,11 @@ router.post('/signup', async (req, res) => {
 // Login Route
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
+    console.log("Body received for login:", req.body);
+    console.log("Login attempt with email:", email);
     try {
         const user = await User.findOne({ email });
+        console.log("User found:", user);
         if (!user) return res.status(404).json({ error: "User not found" });
 
         // Handle both hashed and plain text passwords for backward compatibility
