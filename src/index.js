@@ -1,28 +1,24 @@
 const express = require('express');
 const { notFound, errorHandler } = require('./middlewares'); // Adjust the path if needed
 const cors = require('cors');
-const api = require('./api');
 const connectDB = require('./api/mongodb');
 
 const app = express();
 
-// CORS options
-const corsOptions = {
-  origin: ['http://localhost:3001', 'https://teachers.stemzlearning.org'], // Allow requests from your frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
-  credentials: true, // Allow cookies to be sent
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
-
-// Use CORS middleware
-app.use(cors(corsOptions));
-
 // Middleware for parsing JSON bodies
 app.use(express.json());
 
+// CORS options
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow requests from your frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific methods
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Allow cookies to be sent
+}));
+
 // Define your routes here
-// app.use('/api', yourRoutes); // Make sure to include your API routes
-app.use('/api', api);
+const apiRouter = require('./api'); // or however you mount src/api
+app.use('/api', apiRouter);
 
 // Handle 404 errors
 app.use(notFound);
