@@ -247,6 +247,58 @@ const submitQuizAttempt = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch' });
     }
 };
+
+
+// record a partial quiz answer (lifecycle events)
+const savePartialQuizAnswer = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const { courseId, lessonId } = req.params;
+    const { questionId, selectedAnswer, eventType, cursorPos } = req.body;
+
+    // Find the student's record
+    let record = await StudentResponse.findOne({ studentId, courseId });
+    if (!record) {
+      record = new StudentResponse({ studentId, courseId, responses: [] });
+    }
+
+    // Find the lesson
+    let lesson = record.responses.find(r => r.lessonId === lessonId);
+    if (!lesson) {
+      lesson = { lessonId, quiz: [], bpqResponses: [], worksheet: {} };
+      record.responses.push(lesson);
+    }
+
+    // Find the quiz answer object
+    let answer = lesson.quiz.find(a => a.questionId === questionId);
+
+    if (!answer) {
+      // If it doesn't exist yet, create it
+      answer = { questionId, selectedAnswer, correct: false, events: [] };
+      lesson.quiz.push(answer);
+    } else {
+      // Update the current selected answer
+      answer.selectedAnswer = selectedAnswer;
+    }
+
+    // Push the lifecycle event
+    answer.events.push({
+      timestamp: new Date(),
+      eventType,
+      value: selectedAnswer,
+      cursorPos: cursorPos || null
+    });
+
+    record.updatedAt = new Date();
+    await record.save();
+
+    return res.status(200).json({ success: true, message: "Partial quiz answer recorded" });
+  } catch (error) {
+    console.error("Error saving partial quiz answer:", error);
+    return res.status(500).json({ message: "Failed to save partial quiz answer", error: error.message });
+  }
+};
+
   
 
 
@@ -256,5 +308,6 @@ module.exports = {
     submitWorksheet,
     submitQuizAttempt,
     getStudentResponsesByStudentId,
-    addBPQEvent
+    addBPQEvent,
+    savePartialQuizAnswer
   };
