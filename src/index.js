@@ -8,7 +8,7 @@ const app = express();
 
 // CORS options
 const corsOptions = {
-  origin: ['http://localhost:3001', 'https://teachers.stemzlearning.org'], // Allow requests from your frontend
+  origin: ['http://localhost:3001', 'https://teachers.stemzlearning.org', 'http://teachers.stemzlearning.org'], // Allow requests from your frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
   credentials: true, // Allow cookies to be sent
   allowedHeaders: ['Content-Type', 'Authorization']
