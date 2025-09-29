@@ -2,6 +2,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+constbpqEventSchema = new Schema({
+  timestamp: { type: Date, default: Date.now },
+  eventType: { type: String, enum: ['start_typing', 'text_change', 'submit'], required: true },
+  value: { type: String, required: true },
+  cursorPos: { type: Number }
+})
+
 const bpqResponseSchema = new Schema({
   questionId: String,
   initialAnswer: String,
@@ -14,6 +21,7 @@ const bpqResponseSchema = new Schema({
     "Curiosity": { type: Number, min: 0, max: 20 },
     "Problem Solving": { type: Number, min: 0, max: 20 }
   },
+  events: [bpqEventSchema],
   timestamp: { type: Date, default: Date.now }
 });
 
@@ -24,10 +32,17 @@ const worksheetAnswerSchema = new Schema({
   correct: Boolean
 });
 
+const quizEventSchema = new Schema({
+  timestamp: { type: Date, default: Date.now },
+  eventType: { type: String, enum: ['select', 'deselect', 'submit'], required: true },
+  value: { type: String, required: true }
+})
+
 const quizAnswerSchema = new Schema({
   questionId: String,
   selectedAnswer: String,
-  correct: Boolean
+  correct: Boolean,
+  events: [quizEventSchema]
 });
 
 const quizAttemptSchema = new Schema({
