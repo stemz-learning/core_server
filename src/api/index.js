@@ -20,6 +20,8 @@ const teachers = require('./routes/teacherRoutes');
 const portalCourseRoutes = require('./routes/portalCourseRoutes');
 const progressRoutes = require('./routes/progressRoutes');
 const classroomAnalyticsRoutes = require('./routes/classroomAnalyticsRoutes');
+const studyGroupRoutes = require('./routes/studyGroupRoutes');
+const groupMessageRoutes = require('./routes/groupMessageRoutes');
 
 const router = express.Router();
 
@@ -52,6 +54,8 @@ router.use('/portalCourses', portalCourseRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/assignments', assignmentRoutes);
 router.use('/progress', progressRoutes);
+router.use('/studygroups', studyGroupRoutes);
+router.use('/group-messages', groupMessageRoutes);
 
 router.use('/responses', studentResponseRoutes);
 router.use('/analytics', classroomAnalyticsRoutes);
