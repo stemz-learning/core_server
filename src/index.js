@@ -1,10 +1,13 @@
 const express = require('express');
-const { notFound, errorHandler } = require('./middlewares'); // Adjust the path if needed
+const http = require('http');
+const { Server } = require('socket.io');
+const { notFound, errorHandler } = require('./middlewares');
 const cors = require('cors');
 const api = require('./api');
 const connectDB = require('./api/mongodb');
 
 const app = express();
+const server = http.createServer(app);
 
 // CORS options
 const corsOptions = {
@@ -14,29 +17,33 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
-// Use CORS middleware
+// Initialize Socket.IO with CORS
+const io = new Server(server, {
+  cors: corsOptions
+});
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+  
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+// Rest of your middleware and routes...
 app.use(cors(corsOptions));
-
-// Middleware for parsing JSON bodies
 app.use(express.json());
-
-// Define your routes here
-// app.use('/api', yourRoutes); // Make sure to include your API routes
 app.use('/api', api);
-
-// Handle 404 errors
 app.use(notFound);
-
-// Error handler middleware
 app.use(errorHandler);
 
 const port = process.env.PORT || 3000;
 
-// Connect to MongoDB before starting the server
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(port, () => {
+    server.listen(port, () => {  // Use server instead of app
       console.log(`Listening: http://localhost:${port}`);
     });
   } catch (error) {
