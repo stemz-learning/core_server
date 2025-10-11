@@ -20,7 +20,8 @@ const teachers = require('./routes/teacherRoutes');
 const portalCourseRoutes = require('./routes/portalCourseRoutes');
 const progressRoutes = require('./routes/progressRoutes');
 const classroomAnalyticsRoutes = require('./routes/classroomAnalyticsRoutes');
-const chatbotRoutes = require('./routes/chatbotRoutes');
+const studyGroupRoutes = require('./routes/studyGroupRoutes');
+const groupMessageRoutes = require('./routes/groupMessageRoutes');
 
 const router = express.Router();
 
@@ -53,10 +54,11 @@ router.use('/portalCourses', portalCourseRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/assignments', assignmentRoutes);
 router.use('/progress', progressRoutes);
+router.use('/studygroups', studyGroupRoutes);
+router.use('/group-messages', groupMessageRoutes);
 
 router.use('/responses', studentResponseRoutes);
 router.use('/analytics', classroomAnalyticsRoutes);
-router.use('/chatbot', chatbotRoutes);
 
 
 // 404 Not Found middleware
@@ -69,21 +71,7 @@ router.use((req, res) => {
       '/api/classrooms',
       '/api/physical-classrooms',
       '/api/notifications',
-      '/api/assignments',
-      '/api/courses',
-      '/api/worksheets',
-      '/api/auth',  
-      '/api/points',
-      '/api/grades',
-      '/api/bpqquestions',
-      '/api/quizquestions',
-      '/api/studentresponses',
-      '/api/teachers',
-      '/api/portalCourses',
-      '/api/progress',
-      '/api/responses',
-      '/api/analytics',
-      '/api/chatbot'
+      '/api/assignments'
     ]
   });
 });
