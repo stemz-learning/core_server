@@ -44,7 +44,8 @@ const chatbotReply = async (req, res) => {
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userMessage }
-        ]
+        ],
+        max_tokens: 150 // Reduced to enforce 2-3 sentences
       },
       {
         headers: {
@@ -112,7 +113,7 @@ async function askHandler(req, res, next) {
     const resp = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages,
-      max_tokens: 500,
+      max_tokens: 150, // Reduced to enforce 2-3 sentences
       temperature: 0.7
     });
 
