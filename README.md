@@ -1,9 +1,9 @@
 
 # STEMz Core Server API
 
-[![CI](https://github.com/xiangyshi/stemz-core-server/workflows/CI/badge.svg)](https://github.com/xiangyshi/stemz-core-server/actions)
-[![Test Coverage](https://img.shields.io/badge/coverage-40%25-orange)](https://github.com/xiangyshi/stemz-core-server)
-[![Tests](https://img.shields.io/badge/tests-125%20passing-brightgreen)](https://github.com/xiangyshi/stemz-core-server)
+[![CI](https://github.com/stemz-learning/core_server/workflows/CI/badge.svg)](https://github.com/xiangyshi/)
+[![Test Coverage](https://img.shields.io/badge/coverage-40%25-orange)](https://github.com/xiangyshi/)
+[![Tests](https://img.shields.io/badge/tests-125%20passing-brightgreen)](https://github.com/xiangyshi/)
 
 Welcome to the STEMz Core Server API! This API provides a robust backend for managing users and classrooms in the STEMz application. 
 
