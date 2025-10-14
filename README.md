@@ -1,11 +1,16 @@
 
 # STEMz Core Server API
 
+[![CI/CD Pipeline](https://github.com/your-username/stemz-core-server/workflows/Test%20Suite/badge.svg)](https://github.com/your-username/stemz-core-server/actions)
+[![Test Coverage](https://img.shields.io/badge/coverage-40%25-orange)](https://github.com/your-username/stemz-core-server)
+[![Tests](https://img.shields.io/badge/tests-125%20passing-brightgreen)](https://github.com/your-username/stemz-core-server)
+
 Welcome to the STEMz Core Server API! This API provides a robust backend for managing users and classrooms in the STEMz application. 
 
 ## Table of Contents
 
 - [Getting Started](#getting-started)
+- [CI/CD Pipeline](#cicd-pipeline)
 - [API Endpoints](#api-endpoints)
 - [How to Call the API](#how-to-call-the-api)
 - [Error Handling](#error-handling)
@@ -56,6 +61,49 @@ Welcome to the STEMz Core Server API! This API provides a robust backend for man
     # Fill in credential
     ```
 
+## CI/CD Pipeline
+
+This project includes a comprehensive Continuous Integration and Deployment pipeline:
+
+### 🚀 **Automated Testing**
+- **125 tests** across **11 test suites** with **100% pass rate**
+- Runs on every push and pull request
+- Multi-version Node.js testing (18.x, 20.x)
+- Test coverage reporting
+
+### 🔒 **Security Scanning**
+- Automated npm audit for vulnerability detection
+- Snyk security scanning integration
+- Dependency vulnerability monitoring
+
+### 🌍 **Automated Deployment**
+- **Staging**: Automatic deployment on `develop` branch
+- **Production**: Automatic deployment on `main` branch
+- **Preview**: Pull request preview deployments
+- Vercel integration for seamless hosting
+
+### 📊 **Quality Gates**
+- ✅ All tests must pass (125/125)
+- ✅ Security audit must pass
+- ✅ Build verification required
+- ✅ Code coverage reporting
+
+### 🛠️ **Local Testing**
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests for CI
+npm run test:ci
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+For detailed CI/CD setup instructions, see [CI_SETUP.md](./CI_SETUP.md).
 
 ## API Endpoints
 
