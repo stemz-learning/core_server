@@ -1,5 +1,5 @@
-const Worksheet = require('../models/worksheetModel');
-const Classroom = require('../models/classroomModel');
+const Worksheet = require('../models/Worksheet');
+const Classroom = require('../models/Classroom');
 
 class WorksheetController {
   // Get all worksheets by courseId
@@ -92,7 +92,7 @@ class WorksheetController {
       const updatedProgress = await Worksheet.findOneAndUpdate(
         { userEmail: req.body.userEmail, worksheetId: req.body.worksheetId },
         req.body,
-        { new: true }
+        { new: true },
       );
       if (!updatedProgress) {
         return res.status(404).json({ message: 'Progress not found' });
@@ -105,4 +105,3 @@ class WorksheetController {
 }
 
 module.exports = WorksheetController;
-

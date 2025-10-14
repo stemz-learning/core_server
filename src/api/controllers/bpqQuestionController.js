@@ -1,8 +1,10 @@
-const BpqQuestion = require('../models/bpqQuestionSchema');
+const BpqQuestion = require('../models/BpqQuestion');
 
 async function getBpqQuestions(req, res) {
   try {
-    console.log("Query", req.query);
+    if (process.env.NODE_ENV !== 'test') {
+      console.log('Query', req.query);
+    }
     const { course_id, grade, lesson_id } = req.query;
 
     if (!course_id || !grade || !lesson_id) {

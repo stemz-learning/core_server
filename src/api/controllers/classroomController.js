@@ -1,9 +1,8 @@
 // src/controllers/classroomController.js
-const Classroom = require("../models/classroomModel");
 const mongoose = require('mongoose');
-const User = require("../models/userModel");
-const Course = require("../models/courseModel");
-
+const Classroom = require('../models/Classroom');
+const User = require('../models/User');
+const Course = require('../models/Course');
 
 class ClassroomController {
   // Get all classrooms
@@ -12,7 +11,7 @@ class ClassroomController {
       const classrooms = await Classroom.find();
       res.status(200).json(classrooms);
     } catch (error) {
-      res.status(500).json({ message: "Failed to retrieve classrooms" });
+      res.status(500).json({ message: 'Failed to retrieve classrooms' });
     }
   }
 
@@ -22,34 +21,34 @@ class ClassroomController {
       const classrooms = await Classroom.find()
         .populate({
           path: 'student_user_ids',
-          select: 'name email'
+          select: 'name email',
         })
         .populate({
           path: 'teacher_user_id',
-          select: 'name email'
+          select: 'name email',
         });
 
-      const simplifiedClassrooms = classrooms.map(classroom => ({
+      const simplifiedClassrooms = classrooms.map((classroom) => ({
         name: classroom.name,
         description: classroom.description,
         schedule: classroom.schedule,
         recommendedGradeLevel: classroom.recommendedGradeLevel,
-        students: classroom.student_user_ids.map(student => ({
+        students: classroom.student_user_ids.map((student) => ({
           name: student.name,
-          email: student.email
+          email: student.email,
         })),
         teacher: classroom.teacher_user_id ? {
           name: classroom.teacher_user_id.name,
-          email: classroom.teacher_user_id.email
-        } : null
+          email: classroom.teacher_user_id.email,
+        } : null,
       }));
 
       res.status(200).json(simplifiedClassrooms);
     } catch (error) {
       console.error('Error getting classrooms with student details:', error);
       res.status(500).json({
-        message: "Failed to retrieve classrooms with student details",
-        error: error.message
+        message: 'Failed to retrieve classrooms with student details',
+        error: error.message,
       });
     }
   }
@@ -59,16 +58,16 @@ class ClassroomController {
     try {
       // Validate if the provided ID is a valid MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ message: "Invalid classroom ID format" });
+        return res.status(400).json({ message: 'Invalid classroom ID format' });
       }
-      
+
       const classroom = await Classroom.findById(req.params.id);
       if (!classroom) {
-        return res.status(404).json({ message: "Classroom not found" });
+        return res.status(404).json({ message: 'Classroom not found' });
       }
       res.status(200).json(classroom);
     } catch (error) {
-      res.status(500).json({ message: "Failed to retrieve classroom" });
+      res.status(500).json({ message: 'Failed to retrieve classroom' });
     }
   }
 
@@ -79,7 +78,7 @@ class ClassroomController {
       await newClassroom.save();
       res.status(201).json(newClassroom);
     } catch (error) {
-      res.status(400).json({ message: "Failed to create classroom", error });
+      res.status(400).json({ message: 'Failed to create classroom', error });
     }
   }
 
@@ -88,20 +87,20 @@ class ClassroomController {
     try {
       // Validate if the provided ID is a valid MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ message: "Invalid classroom ID format" });
+        return res.status(400).json({ message: 'Invalid classroom ID format' });
       }
-      
+
       const updatedClassroom = await Classroom.findByIdAndUpdate(
         req.params.id,
         req.body,
-        { new: true }
+        { new: true },
       );
       if (!updatedClassroom) {
-        return res.status(404).json({ message: "Classroom not found" });
+        return res.status(404).json({ message: 'Classroom not found' });
       }
       res.status(200).json(updatedClassroom);
     } catch (error) {
-      res.status(500).json({ message: "Failed to update classroom" });
+      res.status(500).json({ message: 'Failed to update classroom' });
     }
   }
 
@@ -110,48 +109,50 @@ class ClassroomController {
     try {
       // Validate if the provided ID is a valid MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ message: "Invalid classroom ID format" });
+        return res.status(400).json({ message: 'Invalid classroom ID format' });
       }
-      
+
       const deletedClassroom = await Classroom.findByIdAndDelete(req.params.id);
       if (!deletedClassroom) {
-        return res.status(404).json({ message: "Classroom not found" });
+        return res.status(404).json({ message: 'Classroom not found' });
       }
-      res.status(200).json({ message: "Classroom deleted" });
+      res.status(200).json({ message: 'Classroom deleted' });
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete classroom" });
+      res.status(500).json({ message: 'Failed to delete classroom' });
     }
   }
 
   static async enrollInClassroom(req, res) {
     try {
       const { id: classroomId } = req.params;
-      const userId = req.body.id;
-      console.log("User ID:", userId);
+      const userId = req.user.id; // Use authenticated user ID
+      if (process.env.NODE_ENV !== 'test') {
+        console.log('User ID:', userId);
+      }
       // Validate if the provided ID is a valid MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(classroomId)) {
-        return res.status(400).json({ message: "Invalid classroom ID format" });
+        return res.status(400).json({ message: 'Invalid classroom ID format' });
       }
 
       const classroom = await Classroom.findById(classroomId);
       if (!classroom) {
-        return res.status(404).json({ message: "Classroom not found" });
+        return res.status(404).json({ message: 'Classroom not found' });
       }
 
       if (classroom.student_user_ids.includes(userId)) {
-        return res.status(400).json({ message: "User already enrolled in this classroom" });
+        return res.status(400).json({ message: 'User already enrolled in this classroom' });
       }
 
       classroom.student_user_ids.push(userId);
       await classroom.save();
 
       res.status(200).json({
-        message: "Successfully enrolled in classroom",
+        message: 'Successfully enrolled in classroom',
         classroom,
       });
     } catch (error) {
       res.status(500).json({
-        message: "Failed to enroll in classroom",
+        message: 'Failed to enroll in classroom',
         error: error.message,
       });
     }
@@ -165,35 +166,33 @@ class ClassroomController {
 
       // Validate if the provided ID is a valid MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(classroomId)) {
-        return res.status(400).json({ message: "Invalid classroom ID format" });
+        return res.status(400).json({ message: 'Invalid classroom ID format' });
       }
 
       const classroom = await Classroom.findById(classroomId);
       if (!classroom) {
-        return res.status(404).json({ message: "Classroom not found" });
+        return res.status(404).json({ message: 'Classroom not found' });
       }
 
       const userIdStr = userId.toString();
-      const studentIds = classroom.student_user_ids.map(id => id.toString());
+      const studentIds = classroom.student_user_ids.map((id) => id.toString());
 
       if (!studentIds.includes(userIdStr)) {
-        return res.status(400).json({ message: "User not enrolled in this classroom" });
+        return res.status(400).json({ message: 'User not enrolled in this classroom' });
       }
 
-      classroom.student_user_ids = classroom.student_user_ids.filter(id =>
-        id.toString() !== userIdStr
-      );
+      classroom.student_user_ids = classroom.student_user_ids.filter((id) => id.toString() !== userIdStr);
 
       await classroom.save();
 
       res.status(200).json({
-        message: "Successfully unenrolled from classroom",
-        classroom
+        message: 'Successfully unenrolled from classroom',
+        classroom,
       });
     } catch (error) {
       res.status(500).json({
-        message: "Failed to unenroll from classroom",
-        error: error.message
+        message: 'Failed to unenroll from classroom',
+        error: error.message,
       });
     }
   }
@@ -202,23 +201,19 @@ class ClassroomController {
     try {
       const userId = req.user.id;
       const classrooms = await Classroom.find();
-      const enrolled = classrooms.filter(classroom =>
-        classroom.student_user_ids.includes(userId)
-      );
+      const enrolled = classrooms.filter((classroom) => classroom.student_user_ids.includes(userId));
 
-      const teaching = classrooms.filter(classroom =>
-        classroom.teacher_user_id === userId
-      );
+      const teaching = classrooms.filter((classroom) => classroom.teacher_user_id === userId);
 
       res.status(200).json({
-        enrolled: enrolled,
-        teaching: teaching
+        enrolled,
+        teaching,
       });
     } catch (error) {
       console.error('Error:', error);
       res.status(500).json({
         message: 'Failed to retrieve user classrooms',
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -226,16 +221,16 @@ class ClassroomController {
   static async getClassroomUsers(req, res) {
     try {
       const classroomId = req.params.id;
-      
+
       // Validate if the provided ID is a valid MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(classroomId)) {
-        return res.status(400).json({ message: "Invalid classroom ID format" });
+        return res.status(400).json({ message: 'Invalid classroom ID format' });
       }
-      
+
       const classroom = await Classroom.findById(classroomId);
 
       if (!classroom) {
-        return res.status(404).json({ message: "Classroom not found" });
+        return res.status(404).json({ message: 'Classroom not found' });
       }
 
       const enrolledUsers = classroom.student_user_ids;
@@ -253,13 +248,13 @@ class ClassroomController {
             name: user.name,
             email: user.email,
           };
-        })
+        }),
       );
 
       const teacher = await User.findById(teacherUserId);
       if (!teacher) {
         console.error(`Teacher with ID ${teacherUserId} not found`);
-        return res.status(404).json({ message: "Teacher not found" });
+        return res.status(404).json({ message: 'Teacher not found' });
       }
       const teacherInfo = {
         id: teacher._id,
@@ -274,25 +269,25 @@ class ClassroomController {
         teacher: teacherInfo,
       });
     } catch (error) {
-      console.error("Error in getClassroomUsers:", error);
-      res.status(500).json({ message: "Failed to retrieve classroom users", error: error.message });
+      console.error('Error in getClassroomUsers:', error);
+      res.status(500).json({ message: 'Failed to retrieve classroom users', error: error.message });
     }
   }
 
   static async getClassroomCourses(req, res) {
     try {
       const classroomId = req.params.id;
-      
+
       // Validate if the provided ID is a valid MongoDB ObjectId
       if (!mongoose.Types.ObjectId.isValid(classroomId)) {
-        return res.status(400).json({ message: "Invalid classroom ID format" });
+        return res.status(400).json({ message: 'Invalid classroom ID format' });
       }
-      
+
       const classroom = await Classroom.findById(classroomId);
       if (!classroom) {
-        return res.status(404).json({ message: "Classroom not found" });
+        return res.status(404).json({ message: 'Classroom not found' });
       }
-      const course_ids = classroom.course_ids;
+      const { course_ids } = classroom;
 
       const courses = await Promise.all(
         course_ids.map(async (courseId) => {
@@ -306,12 +301,12 @@ class ClassroomController {
             name: course.name,
             description: course.description,
           };
-        })
+        }),
       );
 
-      res.status(200).json(courses.filter(course => course !== null));
+      res.status(200).json(courses.filter((course) => course !== null));
     } catch (error) {
-      res.status(500).json({ message: "Failed to retrieve classroom courses" });
+      res.status(500).json({ message: 'Failed to retrieve classroom courses' });
     }
   }
 }

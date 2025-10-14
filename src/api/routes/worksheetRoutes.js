@@ -1,7 +1,6 @@
 const express = require('express');
 const worksheetController = require('../controllers/worksheetController');
 
-
 const router = express.Router();
 
 // Route to create a new worksheet progress
@@ -12,7 +11,7 @@ router.get('/course/:courseId', worksheetController.getWorksheetsByCourseId);
 router.get('/', worksheetController.getAllWorksheets);
 
 // Route to get a single worksheet progress by email and worksheetId
-router.get('/get/email/:email/worksheetId/:worksheetId', worksheetController.getWSProgress); 
+router.get('/get/email/:email/worksheetId/:worksheetId', worksheetController.getWSProgress);
 
 // Route to update a worksheet progress by email and worksheetId
 router.put('/update', worksheetController.updateWSProgress);

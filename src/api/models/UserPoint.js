@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { createUserProgressTemplate } = require('./userPointSchema');
+const { createUserProgressTemplate } = require('./UserPointSchema');
 
 // Define the user points schema
 const userPointSchema = new mongoose.Schema({
@@ -24,7 +24,7 @@ const userPointSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Method to initialize user points
-userPointSchema.statics.initializeForUser = async function(userId) {
+userPointSchema.statics.initializeForUser = async function (userId) {
   try {
     // Check if user points already exist
     const existingPoints = await this.findOne({ userId });
@@ -46,23 +46,23 @@ userPointSchema.statics.initializeForUser = async function(userId) {
 };
 
 // Method to update points
-userPointSchema.methods.updateProgress = async function(updatedProgressData) {
-    try {
-      // Use this approach for deep updates
-      this.progressData = updatedProgressData;
-      this.totalPoints = updatedProgressData.totalPoints;
-      this.lastSynced = new Date();
-      
-      // Mark the field as modified to ensure Mongoose saves the changes
-      this.markModified('progressData');
-      
-      await this.save();
-      return this;
-    } catch (error) {
-      console.error('Error updating user progress:', error);
-      throw error;
-    }
-  };
+userPointSchema.methods.updateProgress = async function (updatedProgressData) {
+  try {
+    // Use this approach for deep updates
+    this.progressData = updatedProgressData;
+    this.totalPoints = updatedProgressData.totalPoints;
+    this.lastSynced = new Date();
+
+    // Mark the field as modified to ensure Mongoose saves the changes
+    this.markModified('progressData');
+
+    await this.save();
+    return this;
+  } catch (error) {
+    console.error('Error updating user progress:', error);
+    throw error;
+  }
+};
 
 // Create the UserPoint model
 const UserPoint = mongoose.model('UserPoint', userPointSchema);

@@ -29,5 +29,3 @@ router.delete('/:id/members', authenticateToken, StudyGroupController.removeMemb
 router.post('/:id/archive', authenticateToken, StudyGroupController.archiveStudyGroup);
 
 module.exports = router;
-
-

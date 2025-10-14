@@ -1,6 +1,6 @@
-const StudyGroup = require('../models/studyGroupModel');
-const Classroom = require('../models/classroomModel');
-const User = require('../models/userModel');
+const StudyGroup = require('../models/StudyGroup');
+const Classroom = require('../models/Classroom');
+const User = require('../models/User');
 
 class StudyGroupController {
   static async createStudyGroup(req, res) {

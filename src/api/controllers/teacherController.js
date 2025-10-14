@@ -1,5 +1,5 @@
-const StudentResponse = require('../models/studentResponseSchema');
-const User = require('../models/userModel');
+const StudentResponse = require('../models/StudentResponse');
+const User = require('../models/User');
 
 // local prediction testing
 function generateLocalPredictions(inputScores, numPredictions = 3) {

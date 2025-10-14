@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('../models/userModel');
+const User = require('../models/User');
 const router = express.Router();
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || '12345678'; // Use environment variables in production
@@ -56,7 +56,9 @@ router.post('/signup', async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err);
+        if (process.env.NODE_ENV !== 'test') {
+            console.error(err);
+        }
         if (err.code === 11000) {
             return res.status(400).json({ error: "Email already exists" });
         }
@@ -90,7 +92,9 @@ router.post('/login', async (req, res) => {
           );
         res.status(200).json({ message: "Login successful", token, user: user });
     } catch (err) {
-        console.error(err);
+        if (process.env.NODE_ENV !== 'test') {
+            console.error(err);
+        }
         res.status(500).json({ error: "Internal server error" });
     }
 });

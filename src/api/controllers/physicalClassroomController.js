@@ -1,5 +1,5 @@
-const PhysicalClassroom = require("../models/physicalClassroomModel");
-const User = require("../models/userModel");
+const PhysicalClassroom = require("../models/PhysicalClassroom");
+const User = require("../models/User");
 const mongoose = require('mongoose');
 
 class PhysicalClassroomController {

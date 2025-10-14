@@ -10,20 +10,20 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['student', 'teacher'],
-    required: true
+    required: true,
   },
 
   gradeLevel: {
     type: Number,
-    required: function () {
-     return this.role === 'student';
+    required() {
+      return this.role === 'student';
     },
     min: 1,
     max: 6,
-    default: 1
-  }
+    default: 1,
+  },
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
 // Create the User model

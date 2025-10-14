@@ -1,5 +1,5 @@
-const GroupMessage = require('../models/groupMessageModel');
-const StudyGroup = require('../models/studyGroupModel');
+const GroupMessage = require('../models/GroupMessage');
+const StudyGroup = require('../models/StudyGroup');
 
 class GroupMessageController {
   static async getMessagesByGroup(req, res) {

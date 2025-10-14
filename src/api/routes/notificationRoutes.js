@@ -12,14 +12,12 @@ router.post('/dismiss/:notificationId', authenticateToken, NotificationControlle
 router.post('/teacher-dismiss/:notificationId', authenticateToken, NotificationController.teacherDismissNotification); // new specific for teachers dismissing notifs
 router.post('/clear-all', authenticateToken, NotificationController.clearAllNotifications);
 
-
 // Teacher routes
 router.get('/classroom/:classroomId', authenticateToken, NotificationController.getClassroomNotifications);
 router.post('/announcement', authenticateToken, NotificationController.createAnnouncement);
 router.post('/assignment', authenticateToken, NotificationController.createAssignmentNotification);// ADD this line if it doesn't exist:
 router.get('/teacher-notifications', authenticateToken, NotificationController.getTeacherNotifications);
 router.get('/all-teacher-notifications', NotificationController.getAllTeacherNotifications);
-
 
 // System routes (for quiz failures, called by system)
 router.post('/quiz-failure', authenticateToken, NotificationController.createQuizFailureNotification);

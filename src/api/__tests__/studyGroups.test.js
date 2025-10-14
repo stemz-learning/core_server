@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const jwt = require('jsonwebtoken');
 const { app } = require('../../index');
-const User = require('../models/userModel');
-const Classroom = require('../models/classroomModel');
+const User = require('../models/User');
+const Classroom = require('../models/Classroom');
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || '12345678';
 
@@ -20,16 +20,22 @@ describe('Study Groups API', () => {
     const uri = mongod.getUri();
     await mongoose.connect(uri);
 
-    teacher = await User.create({ name: 'Teacher', email: 't@t.com', password: 'pass', role: 'teacher' });
+    teacher = await User.create({
+      name: 'Teacher', email: 't@t.com', password: 'pass', role: 'teacher',
+    });
     students = await User.create([
-      { name: 'S1', email: 's1@s.com', password: 'pass', role: 'student', gradeLevel: 3 },
-      { name: 'S2', email: 's2@s.com', password: 'pass', role: 'student', gradeLevel: 3 }
+      {
+        name: 'S1', email: 's1@s.com', password: 'pass', role: 'student', gradeLevel: 3,
+      },
+      {
+        name: 'S2', email: 's2@s.com', password: 'pass', role: 'student', gradeLevel: 3,
+      },
     ]);
     classroom = await Classroom.create({
       name: 'Class A',
       description: 'Desc',
       teacher_user_id: teacher._id,
-      student_user_ids: students.map(s => s._id)
+      student_user_ids: students.map((s) => s._id),
     });
 
     token = jwt.sign({ id: teacher._id, email: teacher.email, role: 'teacher' }, JWT_SECRET_KEY);
@@ -56,5 +62,3 @@ describe('Study Groups API', () => {
     expect(list.body.length).toBe(1);
   });
 });
-
-

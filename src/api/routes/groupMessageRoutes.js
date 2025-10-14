@@ -17,5 +17,3 @@ router.put('/message/:id', authenticateToken, GroupMessageController.editMessage
 router.delete('/message/:id', authenticateToken, GroupMessageController.deleteMessage);
 
 module.exports = router;
-
-

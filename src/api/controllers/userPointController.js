@@ -1,19 +1,19 @@
-const UserPoint = require('../models/userPointModel');
-const User = require('../models/userModel');
+const UserPoint = require('../models/UserPoint');
+const User = require('../models/User');
 
 // Get user's points
 const getUserPoints = async (req, res) => {
   try {
     const userId = req.user.id; // From auth middleware
-    
+
     // Find user points
     let userPoints = await UserPoint.findOne({ userId });
-    
+
     // If points don't exist, initialize them
     if (!userPoints) {
       userPoints = await UserPoint.initializeForUser(userId);
     }
-    
+
     return res.status(200).json(userPoints.progressData);
   } catch (error) {
     console.error('Error fetching user points:', error);
@@ -26,22 +26,22 @@ const updateUserPoints = async (req, res) => {
   try {
     const userId = req.user.id;
     const progressData = req.body;
-    
+
     // Find user points
     let userPoints = await UserPoint.findOne({ userId });
-    
+
     // If points don't exist, initialize them
     if (!userPoints) {
       userPoints = await UserPoint.initializeForUser(userId);
     }
-    
+
     // Update progress
     await userPoints.updateProgress(progressData);
-    
-    return res.status(200).json({ 
-      success: true, 
+
+    return res.status(200).json({
+      success: true,
       message: 'Progress updated successfully',
-      points: userPoints.totalPoints
+      points: userPoints.totalPoints,
     });
   } catch (error) {
     console.error('Error updating user points:', error);
@@ -53,42 +53,49 @@ const updateUserPoints = async (req, res) => {
 const updateActivityProgress = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { courseId, lessonId, activityType, progressData } = req.body;
-    
+    const {
+      courseId, lessonId, activityType, progressData,
+    } = req.body;
+
     if (!courseId || !lessonId || !activityType || !progressData) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
-    
+
     // Find user points
     let userPoints = await UserPoint.findOne({ userId });
-    
+
     if (!userPoints) {
       userPoints = await UserPoint.initializeForUser(userId);
     }
-    
+
     // Get current progress data
     const currentProgressData = userPoints.progressData;
-    
+
+    // Ensure the progress data has the expected structure
+    if (!currentProgressData || !currentProgressData.courses) {
+      return res.status(404).json({ message: 'User progress data not properly initialized' });
+    }
+
     // Update the specific activity
-    if (!currentProgressData.courses[courseId] ||
-        !currentProgressData.courses[courseId].lessons[lessonId] ||
-        !currentProgressData.courses[courseId].lessons[lessonId].activities[activityType]) {
+    if (!currentProgressData.courses[courseId]
+        || !currentProgressData.courses[courseId].lessons[lessonId]
+        || !currentProgressData.courses[courseId].lessons[lessonId].activities[activityType]) {
       return res.status(404).json({ message: 'Activity not found' });
     }
-    
+
     // Update activity with new progress data
     Object.assign(
       currentProgressData.courses[courseId].lessons[lessonId].activities[activityType],
-      progressData
+      progressData,
     );
-    
+
     // Save the updated progress
     await userPoints.updateProgress(currentProgressData);
-    
-    return res.status(200).json({ 
-      success: true, 
+
+    return res.status(200).json({
+      success: true,
       message: 'Activity progress updated',
-      activity: currentProgressData.courses[courseId].lessons[lessonId].activities[activityType]
+      activity: currentProgressData.courses[courseId].lessons[lessonId].activities[activityType],
     });
   } catch (error) {
     console.error('Error updating activity progress:', error);
@@ -96,23 +103,21 @@ const updateActivityProgress = async (req, res) => {
   }
 };
 
-
 // Reset user points (admin only)
 const resetUserPoints = async (req, res) => {
   try {
-    
-    const userId = req.params.userId;
-    
+    const { userId } = req.params;
+
     // Delete existing points
     await UserPoint.deleteOne({ userId });
-    
+
     // Reinitialize
     const newPoints = await UserPoint.initializeForUser(userId);
-    
-    return res.status(200).json({ 
-      success: true, 
+
+    return res.status(200).json({
+      success: true,
       message: 'User points reset successfully',
-      points: newPoints.progressData
+      points: newPoints.progressData,
     });
   } catch (error) {
     console.error('Error resetting user points:', error);
@@ -124,16 +129,16 @@ const resetUserPoints = async (req, res) => {
 const getUserTotalPoints = async (req, res) => {
   try {
     const userId = req.params.userId || req.user.id;
-    
+
     const userPoints = await UserPoint.findOne({ userId });
-    
+
     if (!userPoints) {
       return res.status(404).json({ message: 'Points not found for this user' });
     }
-    
-    return res.status(200).json({ 
+
+    return res.status(200).json({
       userId,
-      totalPoints: userPoints.totalPoints
+      totalPoints: userPoints.totalPoints,
     });
   } catch (error) {
     console.error('Error fetching user total points:', error);
@@ -146,5 +151,5 @@ module.exports = {
   updateUserPoints,
   updateActivityProgress,
   resetUserPoints,
-  getUserTotalPoints
+  getUserTotalPoints,
 };

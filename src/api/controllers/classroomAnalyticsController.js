@@ -1,6 +1,6 @@
-const StudentResponse = require('../models/studentResponseSchema');
-const User = require('../models/userModel');
-const PhysicalClassroom = require('../models/physicalClassroomModel'); // Add this import
+const StudentResponse = require('../models/StudentResponse');
+const User = require('../models/User');
+const PhysicalClassroom = require('../models/PhysicalClassroom'); // Add this import
 
 // Get recent activity for a specific classroom's course
 const getClassroomCourseRecentActivity = async (req, res) => {

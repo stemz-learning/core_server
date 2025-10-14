@@ -1,5 +1,5 @@
-const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
+const User = require('../models/User');
 
 class UserController {
   // Get all users
@@ -42,12 +42,12 @@ class UserController {
   static async createUser(req, res) {
     try {
       const userData = { ...req.body };
-      
+
       // Hash password if provided
       if (userData.password) {
         userData.password = await bcrypt.hash(userData.password, 10);
       }
-      
+
       const newUser = new User(userData);
       await newUser.save();
       res.status(201).json(newUser);
@@ -74,29 +74,29 @@ class UserController {
     try {
       const { id } = req.params;
       const { gradeLevel } = req.body;
-      
+
       // Validate grade level
       if (!gradeLevel || gradeLevel < 1 || gradeLevel > 6) {
         return res.status(400).json({
           success: false,
-          message: 'Grade level must be between 1 and 6'
+          message: 'Grade level must be between 1 and 6',
         });
       }
-      
+
       // Update user
       const updatedUser = await User.findByIdAndUpdate(
         id,
         { gradeLevel: parseInt(gradeLevel) },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
-      
+
       if (!updatedUser) {
         return res.status(404).json({
           success: false,
-          message: 'User not found'
+          message: 'User not found',
         });
       }
-      
+
       res.status(200).json({
         success: true,
         message: 'Grade level updated successfully',
@@ -104,15 +104,14 @@ class UserController {
           id: updatedUser._id,
           name: updatedUser.name,
           email: updatedUser.email,
-          gradeLevel: updatedUser.gradeLevel
-        }
+          gradeLevel: updatedUser.gradeLevel,
+        },
       });
-      
     } catch (error) {
       console.error('Error updating user grade:', error);
       res.status(500).json({
         success: false,
-        message: 'Internal server error'
+        message: 'Internal server error',
       });
     }
   }

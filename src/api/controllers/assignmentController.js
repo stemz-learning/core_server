@@ -1,6 +1,6 @@
-const Assignment = require("../models/assignmentModel");
-const PhysicalClassroom = require("../models/physicalClassroomModel");
-const Notification = require("../models/notificationModel");
+const Assignment = require("../models/Assignment");
+const PhysicalClassroom = require("../models/PhysicalClassroom");
+const Notification = require("../models/Notification");
 
 class AssignmentController {
   // Get assignments for a specific physical classroom
@@ -33,7 +33,9 @@ class AssignmentController {
 
       res.status(200).json(assignments);
     } catch (error) {
-      console.error("Error fetching classroom assignments:", error);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error("Error fetching classroom assignments:", error);
+      }
       res.status(500).json({
         message: "Failed to fetch classroom assignments",
         error: error.message,
@@ -64,7 +66,9 @@ class AssignmentController {
 
       res.status(200).json(assignments);
     } catch (error) {
-      console.error("Error fetching student assignments:", error);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error("Error fetching student assignments:", error);
+      }
       res.status(500).json({
         message: "Failed to fetch assignments",
         error: error.message,
@@ -101,7 +105,9 @@ class AssignmentController {
 
       res.status(200).json(assignments);
     } catch (error) {
-      console.error("Error fetching course assignments:", error);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error("Error fetching course assignments:", error);
+      }
       res.status(500).json({
         message: "Failed to fetch course assignments",
         error: error.message,
@@ -169,7 +175,9 @@ class AssignmentController {
           physicalClassroomId
         );
       } catch (notifError) {
-        console.error("Error creating assignment notifications:", notifError);
+        if (process.env.NODE_ENV !== 'test') {
+          console.error("Error creating assignment notifications:", notifError);
+        }
         // Continue even if notifications fail
       }
 
@@ -184,7 +192,9 @@ class AssignmentController {
         assignment,
       });
     } catch (error) {
-      console.error("Error creating assignment:", error);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error("Error creating assignment:", error);
+      }
       res.status(500).json({
         message: "Failed to create assignment",
         error: error.message,
@@ -231,7 +241,9 @@ class AssignmentController {
         assignment: updatedAssignment,
       });
     } catch (error) {
-      console.error("Error updating assignment:", error);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error("Error updating assignment:", error);
+      }
       res.status(500).json({
         message: "Failed to update assignment",
         error: error.message,
@@ -270,7 +282,9 @@ class AssignmentController {
         message: "Assignment deleted successfully",
       });
     } catch (error) {
-      console.error("Error deleting assignment:", error);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error("Error deleting assignment:", error);
+      }
       res.status(500).json({
         message: "Failed to delete assignment",
         error: error.message,
@@ -292,7 +306,9 @@ class AssignmentController {
 
       res.status(200).json(assignments);
     } catch (error) {
-      console.error("Error fetching teacher assignments:", error);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error("Error fetching teacher assignments:", error);
+      }
       res.status(500).json({
         message: "Failed to fetch teacher assignments",
         error: error.message,
@@ -326,7 +342,9 @@ class AssignmentController {
 
       res.status(200).json(assignment);
     } catch (error) {
-      console.error("Error fetching assignment:", error);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error("Error fetching assignment:", error);
+      }
       res.status(500).json({
         message: "Failed to fetch assignment",
         error: error.message,
@@ -360,7 +378,9 @@ class AssignmentController {
 
       res.status(200).json(assignments);
     } catch (error) {
-      console.error("Error fetching upcoming assignments:", error);
+      if (process.env.NODE_ENV !== 'test') {
+        console.error("Error fetching upcoming assignments:", error);
+      }
       res.status(500).json({
         message: "Failed to fetch upcoming assignments",
         error: error.message,
@@ -368,52 +388,6 @@ class AssignmentController {
     }
   }
 
-  // Add this method to your assignmentController.js
-
-  static async createAssignment(req, res) {
-    try {
-      const {
-        physicalClassroomId,
-        title,
-        description,
-        course,
-        lesson,
-        activityType,
-        activityTitle,
-        dueDate,
-      } = req.body;
-
-      // Create assignment
-      const assignment = new Assignment({
-        physicalClassroomId,
-        teacherId: req.user.id,
-        title,
-        description,
-        course,
-        lesson: lesson || "lesson1",
-        activityType,
-        activityTitle,
-        dueDate,
-        priority: "medium",
-      });
-
-      await assignment.save();
-
-      // Auto-create notifications for all students
-      await Notification.createAssignmentNotifications(
-        assignment,
-        physicalClassroomId
-      );
-
-      res.status(201).json({
-        message: "Assignment created and students notified",
-        assignment,
-      });
-    } catch (error) {
-      console.error("Error creating assignment:", error);
-      res.status(500).json({ message: "Failed to create assignment" });
-    }
-  }
 }
 
 module.exports = AssignmentController;
