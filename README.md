@@ -1,7 +1,7 @@
 
 # STEMz Core Server API
 
-[![CI/CD Pipeline](https://github.com/your-username/stemz-core-server/workflows/Test%20Suite/badge.svg)](https://github.com/your-username/stemz-core-server/actions)
+[![CI](https://github.com/your-username/stemz-core-server/workflows/CI/badge.svg)](https://github.com/your-username/stemz-core-server/actions)
 [![Test Coverage](https://img.shields.io/badge/coverage-40%25-orange)](https://github.com/your-username/stemz-core-server)
 [![Tests](https://img.shields.io/badge/tests-125%20passing-brightgreen)](https://github.com/your-username/stemz-core-server)
 
@@ -61,32 +61,31 @@ Welcome to the STEMz Core Server API! This API provides a robust backend for man
     # Fill in credential
     ```
 
-## CI/CD Pipeline
+## CI Pipeline
 
-This project includes a comprehensive Continuous Integration and Deployment pipeline:
+This project includes a streamlined Continuous Integration pipeline:
 
 ### 🚀 **Automated Testing**
 - **125 tests** across **11 test suites** with **100% pass rate**
 - Runs on every push and pull request
-- Multi-version Node.js testing (18.x, 20.x)
+- Node.js 20.x environment
 - Test coverage reporting
 
 ### 🔒 **Security Scanning**
 - Automated npm audit for vulnerability detection
-- Snyk security scanning integration
+- Moderate+ severity threshold
 - Dependency vulnerability monitoring
 
-### 🌍 **Automated Deployment**
-- **Staging**: Automatic deployment on `develop` branch
-- **Production**: Automatic deployment on `main` branch
-- **Preview**: Pull request preview deployments
-- Vercel integration for seamless hosting
+### 🌍 **Deployment**
+- **Vercel Integration**: Automatic deployment via GitHub
+- **Staging**: `develop` branch → Vercel preview
+- **Production**: `main` branch → Vercel production
+- **Preview**: Pull requests → Vercel preview URLs
 
 ### 📊 **Quality Gates**
 - ✅ All tests must pass (125/125)
 - ✅ Security audit must pass
-- ✅ Build verification required
-- ✅ Code coverage reporting
+- ✅ PR comments with test results
 
 ### 🛠️ **Local Testing**
 ```bash
