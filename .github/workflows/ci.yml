@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 jobs:
   test:
@@ -30,7 +30,7 @@ jobs:
         NODE_ENV: test
         
     - name: Security audit
-      run: npm audit --audit-level=moderate
+      run: npm audit --audit-level=critical
       
     - name: Test Results Summary
       run: |

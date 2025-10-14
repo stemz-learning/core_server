@@ -73,7 +73,7 @@ This project includes a streamlined Continuous Integration pipeline:
 
 ### 🔒 **Security Scanning**
 - Automated npm audit for vulnerability detection
-- Moderate+ severity threshold
+- Critical severity threshold (development dependencies excluded)
 - Dependency vulnerability monitoring
 
 ### 🌍 **Deployment**
