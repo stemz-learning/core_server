@@ -7,7 +7,11 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "lint": "eslint --fix src",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:verbose": "jest --verbose"
   },
   "keywords": [],
   "author": "CJ R. <cj@null.computer> (https://w3cj.now.sh)",
@@ -32,7 +36,6 @@
     "nodemailer": "^7.0.5",
     "pg": "^8.16.0",
     "socket.io": "^4.8.1",
-    "socketio": "^1.0.0",
     "vercel": "^44.4.1"
   },
   "devDependencies": {

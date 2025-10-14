@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { createUserProgressTemplate } = require('./UserPointSchema');
+const { createUserProgressTemplate } = require('./UserPointSchema.js');
 
 // Define the user points schema
 const userPointSchema = new mongoose.Schema({
