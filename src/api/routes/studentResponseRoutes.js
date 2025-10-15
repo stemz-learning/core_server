@@ -8,6 +8,8 @@ const {
   submitWorksheet,
   submitQuizAttempt,
   getStudentResponsesByStudentId,
+  addBPQEvent,
+  savePartialQuizAnswer
 } = require('../controllers/studentResponseController');
 
 const { authenticateToken } = require('../controllers/authController');
@@ -18,5 +20,7 @@ router.post('/:courseId/lesson/:lessonId/bpq', authenticateToken, addOrUpdateBPQ
 router.post('/:courseId/lesson/:lessonId/worksheet', authenticateToken, submitWorksheet);
 router.post('/:courseId/lesson/:lessonId/quiz', authenticateToken, submitQuizAttempt);
 router.get('/student/:studentId', getStudentResponsesByStudentId);
+router.post('/:courseId/:lessonId/bpqEvent', addBPQEvent);
+router.post("/:courseId/lesson/:lessonId/quiz/partial", savePartialQuizAnswer);
 
 module.exports = router;

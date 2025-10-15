@@ -58,6 +58,47 @@ const addOrUpdateBPQResponse = async (req, res) => {
   }
 };
 
+const addBPQEvent = async (req, res) => {
+  try {
+    const { courseId, lessonId } = req.params;
+    const studentId = req.user.id;
+    const { questionId, eventType, value, cursorPos } = req.body;
+
+    let record = await StudentResponse.findOne({ studentId, courseId });
+    if (!record) {
+      record = new StudentResponse({ studentId, courseId, responses: [] });
+    }
+
+    let lesson = record.responses.find(r => r.lessonId === lessonId);
+    if (!lesson) {
+      lesson = { lessonId, bpqResponses: [], quiz: [], worksheet: {} };
+      record.responses.push(lesson);
+    }
+
+    let response = lesson.bpqResponses.find(r => r.questionId === questionId);
+    if (!response) {
+      response = { questionId, initialAnswer: value, finalAnswer: "", events: [] };
+      lesson.bpqResponses.push(response);
+    }
+
+    // Push the lifecycle event
+    response.events.push({ eventType, value, cursorPos, timestamp: new Date() });
+
+    // On submit, also update finalAnswer
+    if (eventType === "submit") {
+      response.finalAnswer = value;
+    }
+
+    record.updatedAt = new Date();
+    await record.save();
+
+    return res.status(200).json({ success: true, message: "Event recorded" });
+  } catch (error) {
+    console.error("Error saving BPQ event:", error);
+    return res.status(500).json({ message: "Failed to save BPQ event", error: error.message });
+  }
+};
+
 // submitting worksheet
 const submitWorksheet = async (req, res) => {
   try {
@@ -95,26 +136,28 @@ const submitQuizAttempt = async (req, res) => {
   try {
     const studentId = req.user.id;
     const { courseId, lessonId } = req.params;
-    const newAttempt = req.body; // includes attemptNumber, answers[], score, total
+    const newAttempt = req.body; // { attemptNumber, answers[], score, total }
 
     let record = await StudentResponse.findOne({ studentId, courseId });
-    if (!record) {
-      record = new StudentResponse({ studentId, courseId, responses: [] });
+    if (!record) record = new StudentResponse({ studentId, courseId, responses: [] });
+
+    let lesson = record.responses.find(r => r.lessonId === lessonId);
+    if (!lesson) {
+      lesson = { lessonId, quiz: [], bpqResponses: [], worksheet: {} };
+      record.responses.push(lesson);
     }
 
-    let lesson = record.responses.find((r) => r.lessonId === lessonId);
-    if (!lesson) {
-      lesson = {
-        lessonId, quiz: [newAttempt], bpqResponses: [], worksheet: {},
-      };
-      record.responses.push(lesson);
-    } else {
-      lesson.quiz.push(newAttempt);
-    }
+    // Ensure each answer has its own lifecycle (events array)
+    newAttempt.answers = newAttempt.answers.map(a => ({
+      ...a,
+      events: a.events || []   // don’t merge across attempts, keep events local
+    }));
+
+    // Push the entire attempt (independent lifecycle)
+    lesson.quiz.push(newAttempt);
 
     record.updatedAt = new Date();
     await record.save();
-
     return res.status(200).json({ success: true, message: 'Quiz attempt recorded' });
   } catch (error) {
     console.error('Error submitting quiz:', error);
@@ -134,10 +177,61 @@ const getStudentResponsesByStudentId = async (req, res) => {
   }
 };
 
+const savePartialQuizAnswer = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const { courseId, lessonId } = req.params;
+    const { questionId, selectedAnswer, eventType, cursorPos } = req.body;
+
+    // Find the student's record
+    let record = await StudentResponse.findOne({ studentId, courseId });
+    if (!record) {
+      record = new StudentResponse({ studentId, courseId, responses: [] });
+    }
+
+    // Find the lesson
+    let lesson = record.responses.find(r => r.lessonId === lessonId);
+    if (!lesson) {
+      lesson = { lessonId, quiz: [], bpqResponses: [], worksheet: {} };
+      record.responses.push(lesson);
+    }
+
+    // Find the quiz answer object
+    let answer = lesson.quiz.find(a => a.questionId === questionId);
+
+    if (!answer) {
+      // If it doesn't exist yet, create it
+      answer = { questionId, selectedAnswer, correct: false, events: [] };
+      lesson.quiz.push(answer);
+    } else {
+      // Update the current selected answer
+      answer.selectedAnswer = selectedAnswer;
+    }
+
+    // Push the lifecycle event
+    answer.events.push({
+      timestamp: new Date(),
+      eventType,
+      value: selectedAnswer,
+      cursorPos: cursorPos || null
+    });
+
+    record.updatedAt = new Date();
+    await record.save();
+
+    return res.status(200).json({ success: true, message: "Partial quiz answer recorded" });
+  } catch (error) {
+    console.error("Error saving partial quiz answer:", error);
+    return res.status(500).json({ message: "Failed to save partial quiz answer", error: error.message });
+  }
+};
+
 module.exports = {
   getStudentResponses,
   addOrUpdateBPQResponse,
   submitWorksheet,
   submitQuizAttempt,
   getStudentResponsesByStudentId,
+  addBPQEvent,
+  savePartialQuizAnswer
 };
