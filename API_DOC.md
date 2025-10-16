@@ -4,7 +4,7 @@
 
 The STEMz Teacher Platform API provides comprehensive backend services for managing educational content, users, classrooms, assignments, and collaborative learning features.
 
-**Base URL**: `https://your-domain.com/api`
+**Base URL**: `https://core-server-nine.vercel.app/api`
 
 ## Authentication
 
