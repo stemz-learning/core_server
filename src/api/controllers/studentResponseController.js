@@ -202,33 +202,46 @@ const savePartialQuizAnswer = async (req, res) => {
       record.responses.push(lesson);
     }
 
-    // Find or create the partial quiz attempt (attemptNumber = 1)
-    let attempt = lesson.quiz.find(a => a.attemptNumber === 1);
-    if (!attempt) {
-      attempt = { attemptNumber: 1, answers: [] };
-      lesson.quiz.push(attempt);
+    // Get the latest partial attempt or create a new one
+    let latestAttempt = lesson.quiz[lesson.quiz.length - 1];
+    if (!latestAttempt || latestAttempt.submittedAt) {
+      // No ongoing attempt or previous attempt already submitted
+      latestAttempt = {
+        attemptNumber: lesson.quiz.length + 1,
+        answers: [],
+        score: null,
+        total: null,
+        submittedAt: null, // will be set on final submission
+      };
+      lesson.quiz.push(latestAttempt);
     }
 
-    // Loop through answers and add/update in the attempt
+    // Loop through answers and add/update in the latest attempt
     for (const ans of answers) {
-      if (!ans.questionId || !ans.selectedAnswer) {
+      if (!ans.questionId || ans.selectedAnswer == null) {
         console.warn("Skipping invalid answer:", ans);
         continue;
       }
 
-      let answer = attempt.answers.find(a => a.questionId === ans.questionId);
-      if (!answer) {
-        answer = { questionId: ans.questionId, selectedAnswer: ans.selectedAnswer, correct: false, events: [] };
-        attempt.answers.push(answer);
+      let answerObj = latestAttempt.answers.find(a => a.questionId === ans.questionId);
+      if (!answerObj) {
+        answerObj = {
+          questionId: ans.questionId,
+          selectedAnswer: ans.selectedAnswer,
+          correct: false,
+          events: [],
+        };
+        latestAttempt.answers.push(answerObj);
       } else {
-        answer.selectedAnswer = ans.selectedAnswer;
+        answerObj.selectedAnswer = ans.selectedAnswer;
       }
 
-      answer.events.push({
+      // Add partial-save event
+      answerObj.events.push({
         timestamp: new Date(),
         eventType: "partial-save",
         value: ans.selectedAnswer,
-        cursorPos: ans.cursorPos || null
+        cursorPos: ans.cursorPos || null,
       });
     }
 
@@ -236,18 +249,19 @@ const savePartialQuizAnswer = async (req, res) => {
 
     try {
       await record.save();
-      console.log("Partial quiz answers saved successfully");
+      console.log("✅ Partial quiz answers saved successfully");
     } catch (saveErr) {
-      console.error("SAVE ERROR:", saveErr);
+      console.error("❌ SAVE ERROR:", saveErr);
       throw saveErr;
     }
 
     return res.status(200).json({ success: true, message: "Partial quiz answers recorded" });
   } catch (error) {
-    console.error("Error saving partial quiz answer:", error);
+    console.error("❌ Error saving partial quiz answer:", error);
     return res.status(500).json({ message: "Failed to save partial quiz answer", error: error.message });
   }
 };
+
 
 
 
