@@ -21,6 +21,6 @@ router.post('/:courseId/lesson/:lessonId/worksheet', authenticateToken, submitWo
 router.post('/:courseId/lesson/:lessonId/quiz', authenticateToken, submitQuizAttempt);
 router.get('/student/:studentId', getStudentResponsesByStudentId);
 router.post('/:courseId/:lessonId/bpqEvent', addBPQEvent);
-router.post("/:courseId/lesson/:lessonId/quiz/partial", savePartialQuizAnswer);
+router.post("/:courseId/lesson/:lessonId/quiz/partial", authenticateToken, savePartialQuizAnswer);
 
 module.exports = router;
