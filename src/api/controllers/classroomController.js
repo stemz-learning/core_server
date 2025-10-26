@@ -200,10 +200,13 @@ class ClassroomController {
   static async getUserClassrooms(req, res) {
     try {
       const userId = req.user.id;
-      const classrooms = await Classroom.find();
-      const enrolled = classrooms.filter((classroom) => classroom.student_user_ids.includes(userId));
 
-      const teaching = classrooms.filter((classroom) => classroom.teacher_user_id === userId);
+      const classrooms = await Classroom.find();
+      const enrolled = classrooms.filter((classroom) => 
+        classroom.student_user_ids.some((id) => id.toString() === userId)
+      );
+
+      const teaching = classrooms.filter((classroom) => classroom.teacher_user_id.toString() === userId);
 
       res.status(200).json({
         enrolled,
