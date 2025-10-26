@@ -177,81 +177,49 @@ const getStudentResponsesByStudentId = async (req, res) => {
   }
 };
 
-// const savePartialQuizAnswer = async (req, res) => {
-//   try {
-//     const studentId = req.user.id;
-//     const { courseId, lessonId } = req.params;
-//     const { questionId, selectedAnswer, eventType, cursorPos } = req.body;
-
-//     // Find the student's record
-//     let record = await StudentResponse.findOne({ studentId, courseId });
-//     if (!record) {
-//       record = new StudentResponse({ studentId, courseId, responses: [] });
-//     }
-
-//     // Find the lesson
-//     let lesson = record.responses.find(r => r.lessonId === lessonId);
-//     if (!lesson) {
-//       lesson = { lessonId, quiz: [], bpqResponses: [], worksheet: {} };
-//       record.responses.push(lesson);
-//     }
-
-//     // Find the quiz answer object
-//     let answer = lesson.quiz.find(a => a.questionId === questionId);
-
-//     if (!answer) {
-//       // If it doesn't exist yet, create it
-//       answer = { questionId, selectedAnswer, correct: false, events: [] };
-//       lesson.quiz.push(answer);
-//     } else {
-//       // Update the current selected answer
-//       answer.selectedAnswer = selectedAnswer;
-//     }
-
-//     // Push the lifecycle event
-//     answer.events.push({
-//       timestamp: new Date(),
-//       eventType,
-//       value: selectedAnswer,
-//       cursorPos: cursorPos || null
-//     });
-
-//     record.updatedAt = new Date();
-//     await record.save();
-
-//     return res.status(200).json({ success: true, message: "Partial quiz answer recorded" });
-//   } catch (error) {
-//     console.error("Error saving partial quiz answer:", error);
-//     return res.status(500).json({ message: "Failed to save partial quiz answer", error: error.message });
-//   }
-// };
-
 const savePartialQuizAnswer = async (req, res) => {
   try {
+    console.log("REQ.USER:", req.user);
     const studentId = req.user.id;
     const { courseId, lessonId } = req.params;
-    const { answers, attemptNumber } = req.body;
+    const { answers } = req.body;
+    console.log("ANSWERS RECEIVED:", answers);
 
     if (!answers || !Array.isArray(answers)) {
       return res.status(400).json({ message: "Answers array is required" });
     }
 
+    // Find or create the student's record
     let record = await StudentResponse.findOne({ studentId, courseId });
     if (!record) {
       record = new StudentResponse({ studentId, courseId, responses: [] });
     }
 
+    // Find or create the lesson entry
     let lesson = record.responses.find(r => r.lessonId === lessonId);
     if (!lesson) {
       lesson = { lessonId, quiz: [], bpqResponses: [], worksheet: {} };
       record.responses.push(lesson);
     }
 
+    // Find or create the partial quiz attempt (attemptNumber = 1)
+    let attempt = lesson.quiz.find(a => a.attemptNumber === 1);
+    if (!attempt) {
+      attempt = { attemptNumber: 1, answers: [] };
+      lesson.quiz.push(attempt);
+    }
+
+    // Loop through answers and add/update in the attempt
     for (const ans of answers) {
-      let answer = lesson.quiz.find(a => a.questionId === ans.questionId);
+      if (!ans.questionId || !ans.selectedAnswer) {
+        console.warn("Skipping invalid answer:", ans);
+        continue;
+      }
+
+      let answer = attempt.answers.find(a => a.questionId === ans.questionId);
       if (!answer) {
         answer = { questionId: ans.questionId, selectedAnswer: ans.selectedAnswer, correct: false, events: [] };
-        lesson.quiz.push(answer);
+        attempt.answers.push(answer);
       } else {
         answer.selectedAnswer = ans.selectedAnswer;
       }
@@ -265,7 +233,14 @@ const savePartialQuizAnswer = async (req, res) => {
     }
 
     record.updatedAt = new Date();
-    await record.save();
+
+    try {
+      await record.save();
+      console.log("Partial quiz answers saved successfully");
+    } catch (saveErr) {
+      console.error("SAVE ERROR:", saveErr);
+      throw saveErr;
+    }
 
     return res.status(200).json({ success: true, message: "Partial quiz answers recorded" });
   } catch (error) {
@@ -273,6 +248,8 @@ const savePartialQuizAnswer = async (req, res) => {
     return res.status(500).json({ message: "Failed to save partial quiz answer", error: error.message });
   }
 };
+
+
 
 
 module.exports = {
