@@ -177,180 +177,88 @@ const getStudentResponsesByStudentId = async (req, res) => {
   }
 };
 
-// const savePartialQuizAnswer = async (req, res) => {
-//   try {
-//     console.log("REQ.USER:", req.user);
-//     const studentId = req.user.id;
-//     const { courseId, lessonId } = req.params;
-//     const { answers } = req.body;
-//     console.log("ANSWERS RECEIVED:", answers);
-
-//     if (!answers || !Array.isArray(answers)) {
-//       return res.status(400).json({ message: "Answers array is required" });
-//     }
-
-//     // Find or create the student's record
-//     let record = await StudentResponse.findOne({ studentId, courseId });
-//     if (!record) {
-//       record = new StudentResponse({ studentId, courseId, responses: [] });
-//     }
-
-//     // Find or create the lesson entry
-//     let lesson = record.responses.find(r => r.lessonId === lessonId);
-//     if (!lesson) {
-//       lesson = { lessonId, quiz: [], bpqResponses: [], worksheet: {} };
-//       record.responses.push(lesson);
-//     }
-
-//     // Get the latest partial attempt or create a new one
-//     let latestAttempt = lesson.quiz[lesson.quiz.length - 1];
-//     if (!latestAttempt || latestAttempt.submittedAt) {
-//       // No ongoing attempt or previous attempt already submitted
-//       latestAttempt = {
-//         attemptNumber: lesson.quiz.length + 1,
-//         answers: [],
-//         score: null,
-//         total: null,
-//         submittedAt: null, // will be set on final submission
-//       };
-//       lesson.quiz.push(latestAttempt);
-//     }
-
-//     // Loop through answers and add/update in the latest attempt
-//     for (const ans of answers) {
-//       if (!ans.questionId || ans.selectedAnswer == null) {
-//         console.warn("Skipping invalid answer:", ans);
-//         continue;
-//       }
-
-//       let answerObj = latestAttempt.answers.find(a => a.questionId === ans.questionId);
-//       if (!answerObj) {
-//         answerObj = {
-//           questionId: ans.questionId,
-//           selectedAnswer: ans.selectedAnswer,
-//           correct: false,
-//           events: [],
-//         };
-//         latestAttempt.answers.push(answerObj);
-//       } else {
-//         answerObj.selectedAnswer = ans.selectedAnswer;
-//       }
-
-//       // Add partial-save event
-//       answerObj.events.push({
-//         timestamp: new Date(),
-//         eventType: "partial-save",
-//         value: ans.selectedAnswer,
-//         cursorPos: ans.cursorPos || null,
-//       });
-//     }
-
-//     record.updatedAt = new Date();
-
-//     try {
-//       await record.save();
-//       console.log("✅ Partial quiz answers saved successfully");
-//     } catch (saveErr) {
-//       console.error("❌ SAVE ERROR:", saveErr);
-//       throw saveErr;
-//     }
-
-//     return res.status(200).json({ success: true, message: "Partial quiz answers recorded" });
-//   } catch (error) {
-//     console.error("❌ Error saving partial quiz answer:", error);
-//     return res.status(500).json({ message: "Failed to save partial quiz answer", error: error.message });
-//   }
-// };
-
 const savePartialQuizAnswer = async (req, res) => {
-  console.log("📩 Incoming partial quiz request...");
-  console.log("BODY:", req.body);
-  console.log("PARAMS:", req.params);
-  console.log("USER:", req.user);
-
   try {
-    // --- Validate user ---
-    if (!req.user || !req.user.id) {
-      console.error("❌ Missing req.user or req.user.id");
-      return res.status(401).json({ message: "User not authenticated" });
-    }
-
+    console.log("REQ.USER:", req.user);
     const studentId = req.user.id;
     const { courseId, lessonId } = req.params;
     const { answers } = req.body;
+    console.log("ANSWERS RECEIVED:", answers);
 
-    // --- Validate input ---
     if (!answers || !Array.isArray(answers)) {
-      console.error("❌ Invalid 'answers' payload:", answers);
       return res.status(400).json({ message: "Answers array is required" });
     }
 
-    console.log("✅ ANSWERS RECEIVED:", answers);
-
-    // --- Fetch or create student record ---
+    // Find or create the student's record
     let record = await StudentResponse.findOne({ studentId, courseId });
     if (!record) {
-      console.log("🆕 Creating new StudentResponse record...");
       record = new StudentResponse({ studentId, courseId, responses: [] });
     }
 
-    // --- Find or create lesson ---
+    // Find or create the lesson entry
     let lesson = record.responses.find(r => r.lessonId === lessonId);
     if (!lesson) {
-      console.log("🆕 Creating new lesson entry...");
       lesson = { lessonId, quiz: [], bpqResponses: [], worksheet: {} };
       record.responses.push(lesson);
     }
 
-    // --- Find or create quiz attempt ---
-    let attempt = lesson.quiz.find(a => a.attemptNumber === 1);
-    if (!attempt) {
-      console.log("🆕 Creating new quiz attempt...");
-      attempt = { attemptNumber: 1, answers: [] };
-      lesson.quiz.push(attempt);
+    // Get the latest partial attempt or create a new one
+    let latestAttempt = lesson.quiz[lesson.quiz.length - 1];
+    if (!latestAttempt || latestAttempt.submittedAt) {
+      // No ongoing attempt or previous attempt already submitted
+      latestAttempt = {
+        attemptNumber: lesson.quiz.length + 1,
+        answers: [],
+        score: null,
+        total: null,
+        submittedAt: null, // will be set on final submission
+      };
+      lesson.quiz.push(latestAttempt);
     }
 
-    // --- Update answers ---
+    // Loop through answers and add/update in the latest attempt
     for (const ans of answers) {
-      if (!ans.questionId || !ans.selectedAnswer) {
-        console.warn("⚠️ Skipping invalid answer:", ans);
+      if (!ans.questionId || ans.selectedAnswer == null) {
+        console.warn("Skipping invalid answer:", ans);
         continue;
       }
 
-      let answer = attempt.answers.find(a => a.questionId === ans.questionId);
-      if (!answer) {
-        answer = {
+      let answerObj = latestAttempt.answers.find(a => a.questionId === ans.questionId);
+      if (!answerObj) {
+        answerObj = {
           questionId: ans.questionId,
           selectedAnswer: ans.selectedAnswer,
           correct: false,
-          events: []
+          events: [],
         };
-        attempt.answers.push(answer);
+        latestAttempt.answers.push(answerObj);
       } else {
-        answer.selectedAnswer = ans.selectedAnswer;
+        answerObj.selectedAnswer = ans.selectedAnswer;
       }
 
-      answer.events.push({
+      // Add partial-save event
+      answerObj.events.push({
         timestamp: new Date(),
         eventType: "partial-save",
         value: ans.selectedAnswer,
-        cursorPos: ans.cursorPos || null
+        cursorPos: ans.cursorPos || null,
       });
     }
 
     record.updatedAt = new Date();
 
-    await record.save();
-    console.log("✅ Partial quiz answers saved successfully");
+    try {
+      await record.save();
+      console.log("✅ Partial quiz answers saved successfully");
+    } catch (saveErr) {
+      console.error("❌ SAVE ERROR:", saveErr);
+      throw saveErr;
+    }
 
     return res.status(200).json({ success: true, message: "Partial quiz answers recorded" });
   } catch (error) {
-    console.error("💥 ERROR in savePartialQuizAnswer:", error);
-    return res.status(500).json({
-      message: "Failed to save partial quiz answer",
-      error: error.message,
-      stack: error.stack
-    });
+    console.error("❌ Error saving partial quiz answer:", error);
+    return res.status(500).json({ message: "Failed to save partial quiz answer", error: error.message });
   }
 };
 
