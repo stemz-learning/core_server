@@ -37,7 +37,7 @@ const worksheetAnswerSchema = new Schema({
 const quizEventSchema = new Schema({
   timestamp: { type: Date, default: Date.now },
   eventType: { type: String, enum: ['select', 'deselect', 'submit', 'partial-save'], required: true },
-  value: { type: String, required: true }
+  value: { type: String, required: true },
   cursorPos: { type: Number }
 })
 
