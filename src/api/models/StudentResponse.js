@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 
 const bpqEventSchema = new Schema({
   timestamp: { type: Date, default: Date.now },
-  eventType: { type: String, enum: ['start_typing', 'text_change', 'submit'], required: true },
+  eventType: { type: String, enum: ['start_typing', 'text_change', 'submit', 'autosave'], required: true },
   value: { type: String, required: true },
   cursorPos: { type: Number }
 })
