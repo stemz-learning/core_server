@@ -1,8 +1,8 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const { notFound, errorHandler } = require('./middlewares');
 const cors = require('cors');
+const { notFound, errorHandler } = require('./middlewares');
 const api = require('./api');
 const connectDB = require('./api/mongodb');
 
@@ -14,18 +14,18 @@ const corsOptions = {
   origin: '*', // Allow requests from your frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
   credentials: true, // Allow cookies to be sent
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 // Initialize Socket.IO with CORS
 const io = new Server(server, {
-  cors: corsOptions
+  cors: corsOptions,
 });
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
-  
+
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
@@ -43,7 +43,7 @@ const port = process.env.PORT || 3000;
 const startServer = async () => {
   try {
     await connectDB();
-    server.listen(port, () => {  // Use server instead of app
+    server.listen(port, () => { // Use server instead of app
       console.log(`Listening: http://localhost:${port}`);
     });
   } catch (error) {

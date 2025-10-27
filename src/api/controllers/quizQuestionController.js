@@ -1,4 +1,4 @@
-const QuizQuestion = require('../models/quizQuestionSchema');
+const QuizQuestion = require('../models/QuizQuestion');
 
 async function getQuizQuestions(req, res) {
   try {
@@ -8,12 +8,16 @@ async function getQuizQuestions(req, res) {
       return res.status(400).json({ error: 'Missing required query parameters.' });
     }
 
-    console.log(`Searching for course: ${course_id}, grade: ${grade}`);  // Debugging log
+    if (process.env.NODE_ENV !== 'test') {
+      console.log(`Searching for course: ${course_id}, grade: ${grade}`); // Debugging log
+    }
 
     // Normalize the grade to upper case (this will handle "K" vs "k")
     const gradeStr = grade.toUpperCase();
 
-    console.log(`Searching for grade range: ${gradeStr}`); // Debugging log
+    if (process.env.NODE_ENV !== 'test') {
+      console.log(`Searching for grade range: ${gradeStr}`); // Debugging log
+    }
 
     // Use $elemMatch to check for gradeStr in the gradeRange array
     const questions = await QuizQuestion.find({
@@ -21,7 +25,9 @@ async function getQuizQuestions(req, res) {
       gradeRange: { $elemMatch: { $eq: gradeStr } },
     });
 
-    console.log(`Found questions: ${questions.length}`); // Debugging log
+    if (process.env.NODE_ENV !== 'test') {
+      console.log(`Found questions: ${questions.length}`); // Debugging log
+    }
 
     res.json({ questions });
   } catch (error) {

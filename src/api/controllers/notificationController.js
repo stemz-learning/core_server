@@ -1,7 +1,7 @@
-const Notification = require("../models/notificationModel");
-const Assignment = require("../models/assignmentModel");
-const PhysicalClassroom = require("../models/physicalClassroomModel");
-const User = require("../models/userModel");
+const Notification = require("../models/Notification");
+const Assignment = require("../models/Assignment");
+const PhysicalClassroom = require("../models/PhysicalClassroom");
+const User = require("../models/User");
 const nodemailer = require("nodemailer");
 
 class NotificationController {
@@ -559,7 +559,7 @@ static async teacherDismissNotification(req, res) {
   // Method 1: Get teacher notifications (quiz failures)
   static async getTeacherNotifications(req, res) {
     try {
-      const PhysicalClassroom = require("../models/physicalClassroomModel");
+      const PhysicalClassroom = require("../models/PhysicalClassroom");
 
       // Find classrooms teacher teaches
       const classrooms = await PhysicalClassroom.find({

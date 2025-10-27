@@ -7,10 +7,10 @@ const groupMessageSchema = new mongoose.Schema({
   attachments: [{
     url: { type: String, required: true },
     type: { type: String, enum: ['image', 'file', 'link'], default: 'file' },
-    name: { type: String }
+    name: { type: String },
   }],
   editedAt: { type: Date, default: null },
-  deletedAt: { type: Date, default: null }
+  deletedAt: { type: Date, default: null },
 }, { timestamps: true });
 
 // Indexes to support retrieval by group and chronological order
@@ -20,5 +20,3 @@ groupMessageSchema.index({ senderUserId: 1, createdAt: -1 });
 const GroupMessage = mongoose.model('GroupMessage', groupMessageSchema);
 
 module.exports = GroupMessage;
-
-

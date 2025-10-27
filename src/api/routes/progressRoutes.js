@@ -1,5 +1,6 @@
 const express = require('express');
 const ProgressController = require('../controllers/progressController');
+
 const router = express.Router();
 
 // ========================================
@@ -62,4 +63,4 @@ router.delete('/:id', ProgressController.deleteProgress);
 // Delete all progress for a user
 router.delete('/user/:user_id', ProgressController.deleteUserProgress);
 
-module.exports = router; 
+module.exports = router;
