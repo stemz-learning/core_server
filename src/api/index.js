@@ -43,7 +43,7 @@ router.use('/points', userPointRoutes);
 router.use('/grades', gradeRoutes);
 router.use('/bpqquestions', bpqQuestionRoutes);
 router.use('/quizquestions', quizQuestionRoutes);
-router.use('/student-responses', studentResponseRoutes);
+router.use('/studentresponses', studentResponseRoutes);
 router.use('/teachers', teachers);
 router.use('/portal-courses', portalCourseRoutes);
 
