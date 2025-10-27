@@ -7,11 +7,14 @@ Here is a list of restricted questions from the current page:
     : '(none)';
   const instruction = `
 
-If the student asks one of these questions, or something very similar to them, DO NOT provide the direct answer.
-Instead, give minimal guidance with just 1-2 brief hints or questions to help them think.
-Keep your response to 2-3 sentences maximum.
-If the student asks a different question (not in the list), answer normally.
-If the student asks a question that doesn't seem like quiz question, answer normally.`;
+If the student asks one of these questions, or something very similar, you MUST follow the Socratic Hint Strategy:
+
+1.  **NEVER** state the correct answer, eliminate any options, or mention any specific option in your response.
+2.  Your first hint must be a **conceptual question** that asks the student to recall the basic definition of the topic.
+3.  Your second sentence (if needed) should ask the student to recall the **known examples** of that concept.
+4.  Your response must be concise, non-leading, and limited to a maximum of two (2) sentences.
+
+If the student asks a different question (not in the restricted list), or a general conceptual question, answer normally.`;
   return `${header}${list}${instruction}`;
 }
 
