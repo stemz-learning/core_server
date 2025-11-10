@@ -349,7 +349,9 @@ const autosaveBPQ = async (req, res) => {
     response.finalAnswer = value;
     record.updatedAt = new Date();
 
-    record.markModified("responses");
+    const lessonIndex = record.responses.indexOf(lesson);
+    const responseIndex = lesson.bpqResponses.indexOf(response);
+    record.markModified(`responses.${lessonIndex}.bpqResponses.${responseIndex}.events`);
 
     console.log("🟦 Saving updated record...");
     await record.save();
