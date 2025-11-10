@@ -262,6 +262,49 @@ const savePartialQuizAnswer = async (req, res) => {
   }
 };
 
+const autosaveBPQ = async (req, res) => {
+  try {
+    const { courseId, lessonId } = req.params;
+    const studentId = req.user.id;
+    const { questionId, value, cursorPos } = req.body;
+
+    let record = await StudentResponse.findOne({ studentId, courseId });
+    if (!record) record = new StudentResponse({ studentId, courseId, responses: [] });
+
+    let lesson = record.responses.find(r => r.lessonId === lessonId);
+    if (!lesson) {
+      lesson = { lessonId, bpqResponses: [], quiz: [], worksheet: {} };
+      record.responses.push(lesson);
+    }
+
+    let response = lesson.bpqResponses.find(r => r.questionId === questionId);
+    if (!response) {
+      response = { questionId, initialAnswer: value, finalAnswer: "", events: [] };
+      lesson.bpqResponses.push(response);
+    }
+
+    // Push the autosave snapshot
+    response.events.push({
+      timestamp: new Date(),
+      eventType: "autosave",
+      value,
+      cursorPos: cursorPos || null,
+    });
+
+    // Optional: update current answer for display
+    response.finalAnswer = value;
+
+    record.updatedAt = new Date();
+    await record.save();
+
+    return res.status(200).json({ success: true, message: "Autosave snapshot recorded" });
+  } catch (err) {
+    console.error("Error saving autosave snapshot:", err);
+    return res.status(500).json({ message: "Failed to save autosave snapshot", error: err.message });
+  }
+};
+
+
 
 module.exports = {
   getStudentResponses,
@@ -270,5 +313,6 @@ module.exports = {
   submitQuizAttempt,
   getStudentResponsesByStudentId,
   addBPQEvent,
-  savePartialQuizAnswer
+  savePartialQuizAnswer,
+  autosaveBPQ,
 };

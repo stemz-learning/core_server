@@ -9,7 +9,8 @@ const {
   submitQuizAttempt,
   getStudentResponsesByStudentId,
   addBPQEvent,
-  savePartialQuizAnswer
+  savePartialQuizAnswer,
+  autosaveBPQ
 } = require('../controllers/studentResponseController');
 
 const { authenticateToken } = require('../controllers/authController');
@@ -22,5 +23,6 @@ router.post('/:courseId/lesson/:lessonId/quiz', authenticateToken, submitQuizAtt
 router.get('/student/:studentId', getStudentResponsesByStudentId);
 router.post('/:courseId/:lessonId/bpqEvent', addBPQEvent);
 router.post("/:courseId/lesson/:lessonId/quiz/partial", authenticateToken, savePartialQuizAnswer);
+router.post('/:courseId/lesson/:lessonId/bpq/autosave', authenticateToken, autosaveBPQ);
 
 module.exports = router;
