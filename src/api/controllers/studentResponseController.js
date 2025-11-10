@@ -334,6 +334,48 @@ const autosaveBPQ = async (req, res) => {
       return res.status(401).json({ message: "Missing student ID (auth issue)" });
     }
 
+    const newEvent = {
+      timestamp: new Date(),
+      eventType: "autosave",
+      value,
+      cursorPos: cursorPos || null,
+    };
+
+    // Try direct MongoDB update using the native driver
+    const result = await StudentResponse.collection.updateOne(
+      {
+        studentId: require('mongoose').Types.ObjectId(studentId),
+        courseId: courseId,
+        'responses.lessonId': lessonId,
+        'responses.bpqResponses.questionId': questionId
+      },
+      {
+        $push: {
+          'responses.$[lesson].bpqResponses.$[response].events': newEvent
+        },
+        $set: {
+          'responses.$[lesson].bpqResponses.$[response].finalAnswer': value,
+          updatedAt: new Date()
+        }
+      },
+      {
+        arrayFilters: [
+          { 'lesson.lessonId': lessonId },
+          { 'response.questionId': questionId }
+        ]
+      }
+    );
+
+    if (result.matchedCount > 0 && result.modifiedCount > 0) {
+      return res.status(200).json({ 
+        success: true, 
+        message: "Autosave snapshot recorded",
+        matched: result.matchedCount,
+        modified: result.modifiedCount
+      });
+    }
+
+    // If no match, need to create the structure first
     let record = await StudentResponse.findOne({ studentId, courseId });
     if (!record) {
       record = new StudentResponse({ studentId, courseId, responses: [] });
@@ -353,29 +395,21 @@ const autosaveBPQ = async (req, res) => {
         finalAnswer: value,
         feedback: '',
         scores: {},
-        events: [{
-          timestamp: new Date(),
-          eventType: "autosave",
-          value,
-          cursorPos: cursorPos || null,
-        }],
-        timestamp: new Date(), // ← Explicitly set this instead of relying on default
+        events: [newEvent],
+        timestamp: new Date(),
       };
       lesson.bpqResponses.push(bpqResponse);
-    } else {
-      bpqResponse.finalAnswer = value;
-      bpqResponse.events.push({
-        timestamp: new Date(),
-        eventType: "autosave",
-        value,
-        cursorPos: cursorPos || null,
-      });
     }
 
     record.updatedAt = new Date();
-    await record.save();
+    
+    // Use native save
+    await StudentResponse.collection.replaceOne(
+      { _id: record._id },
+      record.toObject()
+    );
 
-    return res.status(200).json({ success: true, message: "Autosave snapshot recorded" });
+    return res.status(200).json({ success: true, message: "Autosave snapshot recorded (new structure)" });
   } catch (err) {
     console.error("❌ Error saving autosave snapshot:", err);
     return res.status(500).json({ message: "Failed to save autosave snapshot", error: err.message });
