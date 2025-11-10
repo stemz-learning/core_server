@@ -334,7 +334,6 @@ const autosaveBPQ = async (req, res) => {
       return res.status(401).json({ message: "Missing student ID (auth issue)" });
     }
 
-    // EXACT same pattern as savePartialQuizAnswer
     let record = await StudentResponse.findOne({ studentId, courseId });
     if (!record) {
       record = new StudentResponse({ studentId, courseId, responses: [] });
@@ -346,10 +345,8 @@ const autosaveBPQ = async (req, res) => {
       record.responses.push(lesson);
     }
 
-    // Find existing BPQ response
     let bpqResponse = lesson.bpqResponses.find(b => b.questionId === questionId);
     if (!bpqResponse) {
-      // Create new one WITH an event already in it
       bpqResponse = {
         questionId,
         initialAnswer: value,
@@ -362,10 +359,10 @@ const autosaveBPQ = async (req, res) => {
           value,
           cursorPos: cursorPos || null,
         }],
+        timestamp: new Date(), // ← Explicitly set this instead of relying on default
       };
       lesson.bpqResponses.push(bpqResponse);
     } else {
-      // Update existing
       bpqResponse.finalAnswer = value;
       bpqResponse.events.push({
         timestamp: new Date(),
