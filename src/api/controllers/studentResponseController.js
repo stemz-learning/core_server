@@ -265,25 +265,38 @@ const savePartialQuizAnswer = async (req, res) => {
 // const autosaveBPQ = async (req, res) => {
 //   try {
 //     const { courseId, lessonId } = req.params;
-//     const studentId = req.user.id;
+//     const studentId = req.user?.id;
 //     const { questionId, value, cursorPos } = req.body;
 
+//     console.log("🟩 AUTOSAVE REQUEST RECEIVED");
+//     console.log("Params:", { courseId, lessonId });
+//     console.log("Body:", { questionId, value, cursorPos });
+//     console.log("Student ID:", studentId);
+
+//     if (!studentId) {
+//       return res.status(401).json({ message: "Missing student ID (auth issue)" });
+//     }
+
 //     let record = await StudentResponse.findOne({ studentId, courseId });
+//     console.log("Existing record:", record ? "FOUND" : "NOT FOUND");
+
 //     if (!record) record = new StudentResponse({ studentId, courseId, responses: [] });
 
 //     let lesson = record.responses.find(r => r.lessonId === lessonId);
 //     if (!lesson) {
 //       lesson = { lessonId, bpqResponses: [], quiz: [], worksheet: {} };
 //       record.responses.push(lesson);
+//       console.log("🟨 Created new lesson:", lessonId);
 //     }
 
 //     let response = lesson.bpqResponses.find(r => r.questionId === questionId);
 //     if (!response) {
 //       response = { questionId, initialAnswer: value, finalAnswer: "", events: [] };
 //       lesson.bpqResponses.push(response);
+//       console.log("🟨 Created new BPQ response for:", questionId);
 //     }
 
-//     // Push the autosave snapshot
+//     // Push snapshot
 //     response.events.push({
 //       timestamp: new Date(),
 //       eventType: "autosave",
@@ -291,16 +304,23 @@ const savePartialQuizAnswer = async (req, res) => {
 //       cursorPos: cursorPos || null,
 //     });
 
-//     // Optional: update current answer for display
 //     response.finalAnswer = value;
-
 //     record.updatedAt = new Date();
+
+//     const lessonIndex = record.responses.indexOf(lesson);
+//     const responseIndex = lesson.bpqResponses.indexOf(response);
+//     record.markModified(`responses.${record.responses.indexOf(lesson)}.bpqResponses.${lesson.bpqResponses.indexOf(response)}.events`);
+
+//     console.log("🟦 Saving updated record...");
 //     await record.save();
+//     console.log("✅ Autosave snapshot recorded successfully");
 
 //     return res.status(200).json({ success: true, message: "Autosave snapshot recorded" });
 //   } catch (err) {
-//     console.error("Error saving autosave snapshot:", err);
-//     return res.status(500).json({ message: "Failed to save autosave snapshot", error: err.message });
+//     console.error("❌ Error saving autosave snapshot:", err);
+//     return res
+//       .status(500)
+//       .json({ message: "Failed to save autosave snapshot", error: err.message, stack: err.stack });
 //   }
 // };
 
@@ -322,23 +342,37 @@ const autosaveBPQ = async (req, res) => {
     let record = await StudentResponse.findOne({ studentId, courseId });
     console.log("Existing record:", record ? "FOUND" : "NOT FOUND");
 
-    if (!record) record = new StudentResponse({ studentId, courseId, responses: [] });
+    if (!record) {
+      record = new StudentResponse({ studentId, courseId, responses: [] });
+    }
 
-    let lesson = record.responses.find(r => r.lessonId === lessonId);
-    if (!lesson) {
-      lesson = { lessonId, bpqResponses: [], quiz: [], worksheet: {} };
-      record.responses.push(lesson);
+    // Find or create lesson
+    let lessonIndex = record.responses.findIndex(r => r.lessonId === lessonId);
+    if (lessonIndex === -1) {
+      record.responses.push({ lessonId, bpqResponses: [], quiz: [], worksheet: {} });
+      lessonIndex = record.responses.length - 1;
       console.log("🟨 Created new lesson:", lessonId);
     }
 
-    let response = lesson.bpqResponses.find(r => r.questionId === questionId);
-    if (!response) {
-      response = { questionId, initialAnswer: value, finalAnswer: "", events: [] };
-      lesson.bpqResponses.push(response);
+    const lesson = record.responses[lessonIndex];
+
+    // Find or create BPQ response
+    let responseIndex = lesson.bpqResponses.findIndex(r => r.questionId === questionId);
+    if (responseIndex === -1) {
+      lesson.bpqResponses.push({
+        questionId,
+        initialAnswer: value,
+        finalAnswer: "",
+        events: [],
+      });
+      responseIndex = lesson.bpqResponses.length - 1;
       console.log("🟨 Created new BPQ response for:", questionId);
     }
 
-    // Push snapshot
+    // Now work with the actual indexed item
+    const response = lesson.bpqResponses[responseIndex];
+
+    // Push snapshot to events
     response.events.push({
       timestamp: new Date(),
       eventType: "autosave",
@@ -349,15 +383,21 @@ const autosaveBPQ = async (req, res) => {
     response.finalAnswer = value;
     record.updatedAt = new Date();
 
-    const lessonIndex = record.responses.indexOf(lesson);
-    const responseIndex = lesson.bpqResponses.indexOf(response);
-    record.markModified(`responses.${record.responses.indexOf(lesson)}.bpqResponses.${lesson.bpqResponses.indexOf(response)}.events`);
+    // Mark the specific nested path as modified
+    record.markModified(`responses.${lessonIndex}.bpqResponses.${responseIndex}.events`);
+    record.markModified(`responses.${lessonIndex}.bpqResponses.${responseIndex}.finalAnswer`);
 
     console.log("🟦 Saving updated record...");
+    console.log(`Events array length: ${response.events.length}`);
+    
     await record.save();
     console.log("✅ Autosave snapshot recorded successfully");
 
-    return res.status(200).json({ success: true, message: "Autosave snapshot recorded" });
+    return res.status(200).json({ 
+      success: true, 
+      message: "Autosave snapshot recorded",
+      eventCount: response.events.length 
+    });
   } catch (err) {
     console.error("❌ Error saving autosave snapshot:", err);
     return res
@@ -365,7 +405,6 @@ const autosaveBPQ = async (req, res) => {
       .json({ message: "Failed to save autosave snapshot", error: err.message, stack: err.stack });
   }
 };
-
 
 
 
