@@ -325,98 +325,146 @@ const savePartialQuizAnswer = async (req, res) => {
 // };
 
 const autosaveBPQ = async (req, res) => {
-  console.log("\n\n🚨🚨🚨 ========== AUTOSAVE FUNCTION CALLED ========== 🚨🚨🚨");
-  console.log("req.params:", req.params);
-  console.log("req.body:", req.body);
-  console.log("req.user:", req.user);
-  
   try {
     const { courseId, lessonId } = req.params;
     const studentId = req.user?.id;
     const { questionId, value, cursorPos } = req.body;
 
-    console.log("🟩 AUTOSAVE REQUEST RECEIVED");
-    console.log("Params:", { courseId, lessonId });
-    console.log("Body:", { questionId, value, cursorPos });
-    console.log("Student ID:", studentId);
-
     if (!studentId) {
-      console.log("❌ NO STUDENT ID - RETURNING 401");
       return res.status(401).json({ message: "Missing student ID (auth issue)" });
     }
 
-    console.log("📍 About to find record...");
-    let record = await StudentResponse.findOne({ studentId, courseId });
-    console.log("📍 Record found?", !!record);
+    let record = await StudentResponse.findOne({ studentId, courseId }).lean();
 
     if (!record) {
-      console.log("📍 Creating NEW record");
-      record = new StudentResponse({ studentId, courseId, responses: [] });
+      // First time - create everything fresh
+      const newRecord = new StudentResponse({
+        studentId,
+        courseId,
+        responses: [{
+          lessonId,
+          bpqResponses: [{
+            questionId,
+            initialAnswer: value,
+            finalAnswer: value,
+            events: [{
+              timestamp: new Date(),
+              eventType: "autosave",
+              value,
+              cursorPos: cursorPos || null,
+            }],
+            feedback: '',
+            scores: {}
+          }],
+          quiz: [],
+          worksheet: {}
+        }]
+      });
+      await newRecord.save();
+      return res.status(200).json({ success: true, message: "Autosave snapshot recorded (new)" });
     }
 
-    console.log("📍 Looking for lesson:", lessonId);
-    let lesson = record.responses.find(r => r.lessonId === lessonId);
-    console.log("📍 Lesson found?", !!lesson);
-    
-    if (!lesson) {
-      console.log("📍 Creating NEW lesson");
-      lesson = { lessonId, bpqResponses: [], quiz: [], worksheet: {} };
-      record.responses.push(lesson);
+    // Record exists - use updateOne with $push
+    const result = await StudentResponse.updateOne(
+      {
+        studentId,
+        courseId,
+        'responses.lessonId': lessonId,
+        'responses.bpqResponses.questionId': questionId
+      },
+      {
+        $push: {
+          'responses.$[lesson].bpqResponses.$[response].events': {
+            timestamp: new Date(),
+            eventType: "autosave",
+            value,
+            cursorPos: cursorPos || null,
+          }
+        },
+        $set: {
+          'responses.$[lesson].bpqResponses.$[response].finalAnswer': value,
+          updatedAt: new Date()
+        }
+      },
+      {
+        arrayFilters: [
+          { 'lesson.lessonId': lessonId },
+          { 'response.questionId': questionId }
+        ]
+      }
+    );
+
+    if (result.matchedCount > 0) {
+      return res.status(200).json({ 
+        success: true, 
+        message: "Autosave snapshot recorded (updated)",
+        modified: result.modifiedCount
+      });
     }
 
-    console.log("📍 Looking for response:", questionId);
-    let response = lesson.bpqResponses.find(r => r.questionId === questionId);
-    console.log("📍 Response found?", !!response);
+    // Structure doesn't exist yet - need to add lesson or response
+    record = await StudentResponse.findOne({ studentId, courseId });
     
-    if (!response) {
-      console.log("📍 Creating NEW response");
-      response = { questionId, initialAnswer: value, finalAnswer: "", events: [] };
-      lesson.bpqResponses.push(response);
+    let lessonIndex = record.responses.findIndex(r => r.lessonId === lessonId);
+    
+    if (lessonIndex === -1) {
+      // Add new lesson with the response
+      await StudentResponse.updateOne(
+        { studentId, courseId },
+        {
+          $push: {
+            responses: {
+              lessonId,
+              bpqResponses: [{
+                questionId,
+                initialAnswer: value,
+                finalAnswer: value,
+                events: [{
+                  timestamp: new Date(),
+                  eventType: "autosave",
+                  value,
+                  cursorPos: cursorPos || null,
+                }],
+                feedback: '',
+                scores: {}
+              }],
+              quiz: [],
+              worksheet: {}
+            }
+          }
+        }
+      );
+    } else {
+      // Lesson exists but response doesn't - add response to lesson
+      await StudentResponse.updateOne(
+        {
+          studentId,
+          courseId,
+          'responses.lessonId': lessonId
+        },
+        {
+          $push: {
+            'responses.$.bpqResponses': {
+              questionId,
+              initialAnswer: value,
+              finalAnswer: value,
+              events: [{
+                timestamp: new Date(),
+                eventType: "autosave",
+                value,
+                cursorPos: cursorPos || null,
+              }],
+              feedback: '',
+              scores: {}
+            }
+          }
+        }
+      );
     }
 
-    console.log("📍 Current events count BEFORE push:", response.events.length);
-    
-    // Push snapshot
-    const newEvent = {
-      timestamp: new Date(),
-      eventType: "autosave",
-      value,
-      cursorPos: cursorPos || null,
-    };
-    
-    console.log("📍 Pushing event:", newEvent);
-    response.events.push(newEvent);
-    
-    console.log("📍 Events count AFTER push:", response.events.length);
-    console.log("📍 All events:", JSON.stringify(response.events, null, 2));
-
-    response.finalAnswer = value;
-    record.updatedAt = new Date();
-
-    console.log("📍 About to save...");
-    const savedRecord = await record.save();
-    console.log("📍 Save completed!");
-    console.log("📍 Saved record ID:", savedRecord._id);
-
-    console.log("📍 Verifying save by re-fetching...");
-    const verify = await StudentResponse.findOne({ studentId, courseId });
-    const verifyLesson = verify.responses.find(r => r.lessonId === lessonId);
-    const verifyResponse = verifyLesson?.bpqResponses.find(r => r.questionId === questionId);
-    
-    console.log("📍 VERIFICATION - Events in DB:", verifyResponse?.events.length);
-    console.log("📍 VERIFICATION - Events content:", JSON.stringify(verifyResponse?.events, null, 2));
-
-    console.log("✅ AUTOSAVE COMPLETE\n\n");
-
-    return res.status(200).json({ 
-      success: true, 
-      message: "Autosave snapshot recorded",
-      eventsInMemory: response.events.length,
-      eventsInDB: verifyResponse?.events.length || 0
-    });
+    return res.status(200).json({ success: true, message: "Autosave snapshot recorded (structure created)" });
   } catch (err) {
-    console.error("❌ ERROR in autosaveBPQ:", err);
-    console.error("Stack:", err.stack);
+    console.error("❌ Error saving autosave snapshot:", err);
     return res.status(500).json({ 
       message: "Failed to save autosave snapshot", 
       error: err.message
