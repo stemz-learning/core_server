@@ -10,7 +10,7 @@ class PhysicalClassroomController {
       const classrooms = await PhysicalClassroom.find({ isActive: true })
         .populate('teacherId', 'name email')
         .populate('studentIds', 'name email')
-        .sort({ createdAt: -1 });g
+        .sort({ createdAt: -1 });
       
       res.status(200).json(classrooms);
     } catch (error) {

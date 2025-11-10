@@ -5,6 +5,14 @@ const { authenticateToken } = require('../controllers/authController');
 const router = express.Router();
 
 // Create a study group
+/**
+ * Requires Payload:
+ * {
+ *   "classroomId": "classroom_id",
+ *   "name": "study_group_name",
+ *   "memberUserIds": ["user_id1", "user_id2", "user_id3"]
+ * }
+ */
 router.post('/', authenticateToken, StudyGroupController.createStudyGroup);
 
 // Get a study group by id
