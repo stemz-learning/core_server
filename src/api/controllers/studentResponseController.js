@@ -325,67 +325,98 @@ const savePartialQuizAnswer = async (req, res) => {
 // };
 
 const autosaveBPQ = async (req, res) => {
+  console.log("\n\n🚨🚨🚨 ========== AUTOSAVE FUNCTION CALLED ========== 🚨🚨🚨");
+  console.log("req.params:", req.params);
+  console.log("req.body:", req.body);
+  console.log("req.user:", req.user);
+  
   try {
     const { courseId, lessonId } = req.params;
     const studentId = req.user?.id;
     const { questionId, value, cursorPos } = req.body;
 
+    console.log("🟩 AUTOSAVE REQUEST RECEIVED");
+    console.log("Params:", { courseId, lessonId });
+    console.log("Body:", { questionId, value, cursorPos });
+    console.log("Student ID:", studentId);
+
     if (!studentId) {
+      console.log("❌ NO STUDENT ID - RETURNING 401");
       return res.status(401).json({ message: "Missing student ID (auth issue)" });
     }
 
+    console.log("📍 About to find record...");
     let record = await StudentResponse.findOne({ studentId, courseId });
+    console.log("📍 Record found?", !!record);
 
     if (!record) {
+      console.log("📍 Creating NEW record");
       record = new StudentResponse({ studentId, courseId, responses: [] });
     }
 
+    console.log("📍 Looking for lesson:", lessonId);
     let lesson = record.responses.find(r => r.lessonId === lessonId);
+    console.log("📍 Lesson found?", !!lesson);
+    
     if (!lesson) {
+      console.log("📍 Creating NEW lesson");
       lesson = { lessonId, bpqResponses: [], quiz: [], worksheet: {} };
       record.responses.push(lesson);
     }
 
+    console.log("📍 Looking for response:", questionId);
     let response = lesson.bpqResponses.find(r => r.questionId === questionId);
+    console.log("📍 Response found?", !!response);
+    
     if (!response) {
+      console.log("📍 Creating NEW response");
       response = { questionId, initialAnswer: value, finalAnswer: "", events: [] };
       lesson.bpqResponses.push(response);
     }
 
+    console.log("📍 Current events count BEFORE push:", response.events.length);
+    
     // Push snapshot
-    response.events.push({
+    const newEvent = {
       timestamp: new Date(),
       eventType: "autosave",
       value,
       cursorPos: cursorPos || null,
-    });
+    };
+    
+    console.log("📍 Pushing event:", newEvent);
+    response.events.push(newEvent);
+    
+    console.log("📍 Events count AFTER push:", response.events.length);
+    console.log("📍 All events:", JSON.stringify(response.events, null, 2));
 
     response.finalAnswer = value;
     record.updatedAt = new Date();
 
-    console.log("🔍 BEFORE SAVE - Events length:", response.events.length);
-    console.log("🔍 BEFORE SAVE - Events:", JSON.stringify(response.events, null, 2));
+    console.log("📍 About to save...");
+    const savedRecord = await record.save();
+    console.log("📍 Save completed!");
+    console.log("📍 Saved record ID:", savedRecord._id);
 
-    await record.save();
-    
-    // Verify immediately after save
+    console.log("📍 Verifying save by re-fetching...");
     const verify = await StudentResponse.findOne({ studentId, courseId });
     const verifyLesson = verify.responses.find(r => r.lessonId === lessonId);
     const verifyResponse = verifyLesson?.bpqResponses.find(r => r.questionId === questionId);
     
-    console.log("🔍 AFTER SAVE - Events in DB:", verifyResponse?.events.length);
-    console.log("🔍 AFTER SAVE - Events:", JSON.stringify(verifyResponse?.events, null, 2));
+    console.log("📍 VERIFICATION - Events in DB:", verifyResponse?.events.length);
+    console.log("📍 VERIFICATION - Events content:", JSON.stringify(verifyResponse?.events, null, 2));
+
+    console.log("✅ AUTOSAVE COMPLETE\n\n");
 
     return res.status(200).json({ 
       success: true, 
       message: "Autosave snapshot recorded",
-      debug: {
-        beforeSave: response.events.length,
-        afterSave: verifyResponse?.events.length || 0
-      }
+      eventsInMemory: response.events.length,
+      eventsInDB: verifyResponse?.events.length || 0
     });
   } catch (err) {
-    console.error("❌ Error saving autosave snapshot:", err);
+    console.error("❌ ERROR in autosaveBPQ:", err);
+    console.error("Stack:", err.stack);
     return res.status(500).json({ 
       message: "Failed to save autosave snapshot", 
       error: err.message
