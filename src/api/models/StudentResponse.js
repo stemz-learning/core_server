@@ -3,13 +3,19 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
+// const bpqEventSchema = new Schema({
+//   timestamp: { type: Date, default: Date.now },
+//   eventType: { type: String, enum: ['start_typing', 'text_change', 'submit', 'autosave'], required: true },
+//   value: { type: String, default: '' },  // Changed from required to default
+//   cursorPos: { type: Number, default: null }
+// }, { _id: true });
+
 const bpqEventSchema = new Schema({
   timestamp: { type: Date, default: Date.now },
   eventType: { type: String, enum: ['start_typing', 'text_change', 'submit', 'autosave'], required: true },
-  value: { type: String, required: true },
-  cursorPos: { type: Number }
-})
-
+  value: { type: String, required: true },  // ← Change this back
+  cursorPos: { type: Number }  // ← Remove default: null
+}, { _id: true });
 
 const bpqResponseSchema = new Schema({
   questionId: String,
@@ -24,29 +30,29 @@ const bpqResponseSchema = new Schema({
     'Problem Solving': { type: Number, min: 0, max: 20 },
   },
   events: [bpqEventSchema],
-  timestamp: { type: Date, default: Date.now },
-});
+  // timestamp: { type: Date, default: Date.now },
+}, { _id: true });
 
 const worksheetAnswerSchema = new Schema({
   questionId: String,
   type: { type: String, enum: ['multiple_choice', 'short_answer', 'match', 'drag_drop', 'fill_blank'], default: 'short_answer' },
   response: Schema.Types.Mixed,
   correct: Boolean,
-});
+}, { _id: true });
 
 const quizEventSchema = new Schema({
   timestamp: { type: Date, default: Date.now },
   eventType: { type: String, enum: ['select', 'deselect', 'submit', 'partial-save'], required: true },
   value: { type: String, required: true },
   cursorPos: { type: Number }
-})
+}, { _id: true });
 
 const quizAnswerSchema = new Schema({
   questionId: String,
   selectedAnswer: String,
   correct: Boolean,
   events: [quizEventSchema]
-});
+}, { _id: true });
 
 const quizAttemptSchema = new Schema({
   attemptNumber: Number,
@@ -54,7 +60,7 @@ const quizAttemptSchema = new Schema({
   score: Number,
   total: Number,
   submittedAt: { type: Date, default: Date.now },
-});
+}, { _id: true });
 
 const lessonResponseSchema = new Schema({
   lessonId: String,
@@ -68,7 +74,7 @@ const lessonResponseSchema = new Schema({
     feedback: String,
   },
   quiz: [quizAttemptSchema],
-});
+}, { _id: true });
 
 const studentResponseSchema = new Schema({
   studentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
