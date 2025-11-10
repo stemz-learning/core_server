@@ -349,6 +349,8 @@ const autosaveBPQ = async (req, res) => {
     response.finalAnswer = value;
     record.updatedAt = new Date();
 
+    record.markModified("responses");
+
     console.log("🟦 Saving updated record...");
     await record.save();
     console.log("✅ Autosave snapshot recorded successfully");
