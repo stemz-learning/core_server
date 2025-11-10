@@ -30,7 +30,7 @@ const bpqResponseSchema = new Schema({
     'Problem Solving': { type: Number, min: 0, max: 20 },
   },
   events: [bpqEventSchema],
-  timestamp: { type: Date, default: Date.now },
+  // timestamp: { type: Date, default: Date.now },
 }, { _id: true });
 
 const worksheetAnswerSchema = new Schema({
