@@ -22,6 +22,7 @@ const progressRoutes = require('./routes/progressRoutes');
 const classroomAnalyticsRoutes = require('./routes/classroomAnalyticsRoutes');
 const studyGroupRoutes = require('./routes/studyGroupRoutes');
 const groupMessageRoutes = require('./routes/groupMessageRoutes');
+const chatbotRoutes = require('./routes/chatbotRoutes');
 
 const router = express.Router();
 
@@ -53,6 +54,7 @@ router.use('/assignments', assignmentRoutes);
 router.use('/progress', progressRoutes);
 router.use('/studygroups', studyGroupRoutes);
 router.use('/group-messages', groupMessageRoutes);
+router.use('/chatbot', chatbotRoutes);
 
 router.use('/analytics', classroomAnalyticsRoutes);
 
@@ -79,6 +81,7 @@ router.use((req, res) => {
       '/api/progress',
       '/api/studygroups',
       '/api/group-messages',
+      '/api/chatbot',
       '/api/analytics',
     ],
   });
