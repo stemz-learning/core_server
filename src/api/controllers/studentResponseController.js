@@ -1,4 +1,5 @@
 const StudentResponse = require('../models/StudentResponse');
+const mongoose = require('mongoose');
 
 // get all student responses
 const getStudentResponses = async (req, res) => {
@@ -344,7 +345,7 @@ const autosaveBPQ = async (req, res) => {
     // Try direct MongoDB update using the native driver
     const result = await StudentResponse.collection.updateOne(
       {
-        studentId: require('mongoose').Types.ObjectId(studentId),
+        studentId: new mongoose.Types.ObjectId(studentId),
         courseId: courseId,
         'responses.lessonId': lessonId,
         'responses.bpqResponses.questionId': questionId
