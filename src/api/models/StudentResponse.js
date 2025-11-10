@@ -3,11 +3,18 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
+// const bpqEventSchema = new Schema({
+//   timestamp: { type: Date, default: Date.now },
+//   eventType: { type: String, enum: ['start_typing', 'text_change', 'submit', 'autosave'], required: true },
+//   value: { type: String, default: '' },  // Changed from required to default
+//   cursorPos: { type: Number, default: null }
+// }, { _id: true });
+
 const bpqEventSchema = new Schema({
   timestamp: { type: Date, default: Date.now },
   eventType: { type: String, enum: ['start_typing', 'text_change', 'submit', 'autosave'], required: true },
-  value: { type: String, default: '' },  // Changed from required to default
-  cursorPos: { type: Number, default: null }
+  value: { type: String, required: true },  // ← Change this back
+  cursorPos: { type: Number }  // ← Remove default: null
 }, { _id: true });
 
 const bpqResponseSchema = new Schema({

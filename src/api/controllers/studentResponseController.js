@@ -334,141 +334,43 @@ const autosaveBPQ = async (req, res) => {
       return res.status(401).json({ message: "Missing student ID (auth issue)" });
     }
 
-    let record = await StudentResponse.findOne({ studentId, courseId }).lean();
-
+    let record = await StudentResponse.findOne({ studentId, courseId });
     if (!record) {
-      // First time - create everything fresh
-      const newRecord = new StudentResponse({
-        studentId,
-        courseId,
-        responses: [{
-          lessonId,
-          bpqResponses: [{
-            questionId,
-            initialAnswer: value,
-            finalAnswer: value,
-            events: [{
-              timestamp: new Date(),
-              eventType: "autosave",
-              value,
-              cursorPos: cursorPos || null,
-            }],
-            feedback: '',
-            scores: {}
-          }],
-          quiz: [],
-          worksheet: {}
-        }]
-      });
-      await newRecord.save();
-      return res.status(200).json({ success: true, message: "Autosave snapshot recorded (new)" });
+      record = new StudentResponse({ studentId, courseId, responses: [] });
     }
 
-    // Record exists - use updateOne with $push
-    const result = await StudentResponse.updateOne(
-      {
-        studentId,
-        courseId,
-        'responses.lessonId': lessonId,
-        'responses.bpqResponses.questionId': questionId
-      },
-      {
-        $push: {
-          'responses.$[lesson].bpqResponses.$[response].events': {
-            timestamp: new Date(),
-            eventType: "autosave",
-            value,
-            cursorPos: cursorPos || null,
-          }
-        },
-        $set: {
-          'responses.$[lesson].bpqResponses.$[response].finalAnswer': value,
-          updatedAt: new Date()
-        }
-      },
-      {
-        arrayFilters: [
-          { 'lesson.lessonId': lessonId },
-          { 'response.questionId': questionId }
-        ]
-      }
-    );
-
-    if (result.matchedCount > 0) {
-      return res.status(200).json({ 
-        success: true, 
-        message: "Autosave snapshot recorded (updated)",
-        modified: result.modifiedCount
-      });
+    let lesson = record.responses.find(r => r.lessonId === lessonId);
+    if (!lesson) {
+      lesson = { lessonId, quiz: [], bpqResponses: [], worksheet: {} };
+      record.responses.push(lesson);
     }
 
-    // Structure doesn't exist yet - need to add lesson or response
-    record = await StudentResponse.findOne({ studentId, courseId });
-    
-    let lessonIndex = record.responses.findIndex(r => r.lessonId === lessonId);
-    
-    if (lessonIndex === -1) {
-      // Add new lesson with the response
-      await StudentResponse.updateOne(
-        { studentId, courseId },
-        {
-          $push: {
-            responses: {
-              lessonId,
-              bpqResponses: [{
-                questionId,
-                initialAnswer: value,
-                finalAnswer: value,
-                events: [{
-                  timestamp: new Date(),
-                  eventType: "autosave",
-                  value,
-                  cursorPos: cursorPos || null,
-                }],
-                feedback: '',
-                scores: {}
-              }],
-              quiz: [],
-              worksheet: {}
-            }
-          }
-        }
-      );
-    } else {
-      // Lesson exists but response doesn't - add response to lesson
-      await StudentResponse.updateOne(
-        {
-          studentId,
-          courseId,
-          'responses.lessonId': lessonId
-        },
-        {
-          $push: {
-            'responses.$.bpqResponses': {
-              questionId,
-              initialAnswer: value,
-              finalAnswer: value,
-              events: [{
-                timestamp: new Date(),
-                eventType: "autosave",
-                value,
-                cursorPos: cursorPos || null,
-              }],
-              feedback: '',
-              scores: {}
-            }
-          }
-        }
-      );
+    let bpqResponse = lesson.bpqResponses.find(b => b.questionId === questionId);
+    if (!bpqResponse) {
+      bpqResponse = {
+        questionId,
+        initialAnswer: value,
+        finalAnswer: value,
+        events: [],
+      };
+      lesson.bpqResponses.push(bpqResponse);
     }
 
-    return res.status(200).json({ success: true, message: "Autosave snapshot recorded (structure created)" });
+    bpqResponse.finalAnswer = value;
+    bpqResponse.events.push({
+      timestamp: new Date(),
+      eventType: "autosave",
+      value,
+      cursorPos: cursorPos || null,
+    });
+
+    record.updatedAt = new Date();
+    await record.save();
+
+    return res.status(200).json({ success: true, message: "Autosave snapshot recorded" });
   } catch (err) {
     console.error("❌ Error saving autosave snapshot:", err);
-    return res.status(500).json({ 
-      message: "Failed to save autosave snapshot", 
-      error: err.message
-    });
+    return res.status(500).json({ message: "Failed to save autosave snapshot", error: err.message });
   }
 };
 
