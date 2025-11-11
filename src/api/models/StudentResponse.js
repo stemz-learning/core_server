@@ -32,7 +32,7 @@ const bpqResponseSchema = new Schema({
   },
   events: [bpqEventSchema],
   // timestamp: { type: Date, default: Date.now },
-}, { _id: true });
+}, { _id: true, minimize: false });
 
 const worksheetAnswerSchema = new Schema({
   questionId: String,
@@ -75,13 +75,13 @@ const lessonResponseSchema = new Schema({
     feedback: String,
   },
   quiz: [quizAttemptSchema],
-}, { _id: true });
+}, { _id: true, minimize: false });
 
 const studentResponseSchema = new Schema({
   studentId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   courseId: { type: String, required: true },
   responses: [lessonResponseSchema],
   updatedAt: { type: Date, default: Date.now },
-});
+}, { minimize: false });
 
 module.exports = mongoose.model('StudentResponse', studentResponseSchema);
