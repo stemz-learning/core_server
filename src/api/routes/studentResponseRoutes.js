@@ -25,4 +25,28 @@ router.post('/:courseId/:lessonId/bpqEvent', addBPQEvent);
 router.post("/:courseId/lesson/:lessonId/quiz/partial", authenticateToken, savePartialQuizAnswer);
 router.post('/:courseId/lesson/:lessonId/bpq/autosave', authenticateToken, autosaveBPQ);
 
+// Add this test endpoint to your routes file
+router.post('/test-events', authenticateToken, async (req, res) => {
+  try {
+    const TestModel = mongoose.model('TestEvents', new mongoose.Schema({
+      data: Schema.Types.Mixed
+    }));
+
+    const testDoc = new TestModel({
+      data: {
+        questionId: "test_q1",
+        events: [
+          { timestamp: new Date(), eventType: "autosave", value: "test1" },
+          { timestamp: new Date(), eventType: "autosave", value: "test2" }
+        ]
+      }
+    });
+
+    await testDoc.save();
+    return res.json({ success: true, message: "Test saved" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
