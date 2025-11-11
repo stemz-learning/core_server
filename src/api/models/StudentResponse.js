@@ -53,7 +53,7 @@ const bpqResponseSchema = new Schema({
     Curiosity: { type: Number, min: 0, max: 20 },
     'Problem Solving': { type: Number, min: 0, max: 20 },
   },
-  events: { type: [bpqEventSchema], default: undefined }  // ← Changed to match quiz pattern
+  events: { type: [bpqEventSchema] }  // ← Changed to match quiz pattern
 }, { _id: true });
 
 const worksheetAnswerSchema = new Schema({
