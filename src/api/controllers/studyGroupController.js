@@ -1,5 +1,5 @@
 const StudyGroup = require('../models/StudyGroup');
-const Classroom = require('../models/Classroom');
+const PhysicalClassroom = require('../models/PhysicalClassroom');
 const User = require('../models/User');
 
 class StudyGroupController {
@@ -11,7 +11,7 @@ class StudyGroupController {
         return res.status(400).json({ message: 'classroomId and non-empty memberUserIds are required' });
       }
 
-      const classroom = await Classroom.findById(classroomId);
+      const classroom = await PhysicalClassroom.findById(classroomId);
       if (!classroom) {
         return res.status(404).json({ message: 'Classroom not found' });
       }
