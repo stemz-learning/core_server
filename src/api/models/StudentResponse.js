@@ -10,19 +10,42 @@ const { Schema } = mongoose;
 //   cursorPos: { type: Number, default: null }
 // }, { _id: true });
 
+// const bpqEventSchema = new Schema({
+//   timestamp: { type: Date, default: Date.now },
+//   eventType: { type: String, enum: ['start_typing', 'text_change', 'submit', 'autosave'], required: true },
+//   value: { type: String, required: true },  // ← Change this back
+//   cursorPos: { type: Number }  // ← Remove default: null
+// }, { _id: true });
+
+// const bpqResponseSchema = new Schema({
+//   questionId: String,
+//   // currentAnswer: String,
+//   initialAnswer: String,
+//   finalAnswer: String,
+//   feedback: String,
+//   scores: {
+//     Creativity: { type: Number, min: 0, max: 20 },
+//     'Critical Thinking': { type: Number, min: 0, max: 20 },
+//     Observation: { type: Number, min: 0, max: 20 },
+//     Curiosity: { type: Number, min: 0, max: 20 },
+//     'Problem Solving': { type: Number, min: 0, max: 20 },
+//   },
+//   events: [bpqEventSchema],
+//   // timestamp: { type: Date, default: Date.now },
+// }, { _id: true, minimize: false });
+
 const bpqEventSchema = new Schema({
   timestamp: { type: Date, default: Date.now },
   eventType: { type: String, enum: ['start_typing', 'text_change', 'submit', 'autosave'], required: true },
-  value: { type: String, required: true },  // ← Change this back
-  cursorPos: { type: Number }  // ← Remove default: null
+  value: { type: String, required: true },
+  cursorPos: { type: Number }
 }, { _id: true });
 
 const bpqResponseSchema = new Schema({
-  questionId: String,
-  // currentAnswer: String,
-  initialAnswer: String,
-  finalAnswer: String,
-  feedback: String,
+  questionId: { type: String },
+  initialAnswer: { type: String },
+  finalAnswer: { type: String },
+  feedback: { type: String },
   scores: {
     Creativity: { type: Number, min: 0, max: 20 },
     'Critical Thinking': { type: Number, min: 0, max: 20 },
@@ -30,9 +53,8 @@ const bpqResponseSchema = new Schema({
     Curiosity: { type: Number, min: 0, max: 20 },
     'Problem Solving': { type: Number, min: 0, max: 20 },
   },
-  events: [bpqEventSchema],
-  // timestamp: { type: Date, default: Date.now },
-}, { _id: true, minimize: false });
+  events: { type: [bpqEventSchema], default: undefined }  // ← Changed to match quiz pattern
+}, { _id: true });
 
 const worksheetAnswerSchema = new Schema({
   questionId: String,
