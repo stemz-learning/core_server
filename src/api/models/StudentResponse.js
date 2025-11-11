@@ -19,8 +19,9 @@ const bpqEventSchema = new Schema({
 
 const bpqResponseSchema = new Schema({
   questionId: String,
-  initialAnswer: String,
-  finalAnswer: String,
+  currentAnswer: String,
+  // initialAnswer: String,
+  // finalAnswer: String,
   feedback: String,
   scores: {
     Creativity: { type: Number, min: 0, max: 20 },

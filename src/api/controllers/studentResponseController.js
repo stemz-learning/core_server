@@ -335,48 +335,6 @@ const autosaveBPQ = async (req, res) => {
       return res.status(401).json({ message: "Missing student ID (auth issue)" });
     }
 
-    const newEvent = {
-      timestamp: new Date(),
-      eventType: "autosave",
-      value,
-      cursorPos: cursorPos || null,
-    };
-
-    // Try direct MongoDB update using the native driver
-    const result = await StudentResponse.collection.updateOne(
-      {
-        studentId: new mongoose.Types.ObjectId(studentId),
-        courseId: courseId,
-        'responses.lessonId': lessonId,
-        'responses.bpqResponses.questionId': questionId
-      },
-      {
-        $push: {
-          'responses.$[lesson].bpqResponses.$[response].events': newEvent
-        },
-        $set: {
-          'responses.$[lesson].bpqResponses.$[response].finalAnswer': value,
-          updatedAt: new Date()
-        }
-      },
-      {
-        arrayFilters: [
-          { 'lesson.lessonId': lessonId },
-          { 'response.questionId': questionId }
-        ]
-      }
-    );
-
-    if (result.matchedCount > 0 && result.modifiedCount > 0) {
-      return res.status(200).json({ 
-        success: true, 
-        message: "Autosave snapshot recorded",
-        matched: result.matchedCount,
-        modified: result.modifiedCount
-      });
-    }
-
-    // If no match, need to create the structure first
     let record = await StudentResponse.findOne({ studentId, courseId });
     if (!record) {
       record = new StudentResponse({ studentId, courseId, responses: [] });
@@ -392,25 +350,26 @@ const autosaveBPQ = async (req, res) => {
     if (!bpqResponse) {
       bpqResponse = {
         questionId,
-        initialAnswer: value,
-        finalAnswer: value,
+        currentAnswer: value,
         feedback: '',
         scores: {},
-        events: [newEvent],
-        timestamp: new Date(),
+        events: [],
       };
       lesson.bpqResponses.push(bpqResponse);
     }
 
-    record.updatedAt = new Date();
-    
-    // Use native save
-    await StudentResponse.collection.replaceOne(
-      { _id: record._id },
-      record.toObject()
-    );
+    bpqResponse.currentAnswer = value;
+    bpqResponse.events.push({
+      timestamp: new Date(),
+      eventType: "autosave",
+      value,
+      cursorPos: cursorPos || null,
+    });
 
-    return res.status(200).json({ success: true, message: "Autosave snapshot recorded (new structure)" });
+    record.updatedAt = new Date();
+    await record.save();
+
+    return res.status(200).json({ success: true, message: "Autosave snapshot recorded" });
   } catch (err) {
     console.error("❌ Error saving autosave snapshot:", err);
     return res.status(500).json({ message: "Failed to save autosave snapshot", error: err.message });
