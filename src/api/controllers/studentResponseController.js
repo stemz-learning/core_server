@@ -344,7 +344,7 @@ const autosaveBPQ = async (req, res) => {
       cursorPos: cursorPos || null,
     };
 
-    // Try to push to existing response using raw MongoDB
+    // Try to push to existing response
     const result = await StudentResponse.collection.updateOne(
       {
         studentId: new mongoose.Types.ObjectId(studentId),
@@ -368,53 +368,67 @@ const autosaveBPQ = async (req, res) => {
     );
 
     if (result.matchedCount > 0) {
-      return res.status(200).json({ 
-        success: true, 
-        message: "Event pushed",
-        matched: result.matchedCount,
-        modified: result.modifiedCount
-      });
+      return res.status(200).json({ success: true, message: "Event added" });
     }
 
-    // If no match, need to create structure
+    // Need to create structure - make sure record exists first
     let record = await StudentResponse.findOne({ studentId, courseId });
     if (!record) {
       record = new StudentResponse({ studentId, courseId, responses: [] });
+      await record.save(); // ← SAVE IT FIRST
     }
 
-    let lesson = record.responses.find(r => r.lessonId === lessonId);
-    if (!lesson) {
-      record.responses.push({ 
-        lessonId, 
-        quiz: [], 
-        bpqResponses: [], 
-        worksheet: {} 
-      });
-      lesson = record.responses[record.responses.length - 1];
-    }
-
-    // Add new BPQ response with event using raw collection insert
-    await StudentResponse.collection.updateOne(
-      { _id: record._id, 'responses.lessonId': lessonId },
-      {
-        $push: {
-          'responses.$.bpqResponses': {
-            _id: new mongoose.Types.ObjectId(),
-            questionId: questionId,
-            initialAnswer: value,
-            finalAnswer: value,
-            feedback: '',
-            scores: {},
-            events: [newEvent]
+    // Check if lesson exists
+    const lessonExists = record.responses.some(r => r.lessonId === lessonId);
+    
+    if (!lessonExists) {
+      // Add lesson using raw MongoDB
+      await StudentResponse.collection.updateOne(
+        { _id: record._id },
+        {
+          $push: {
+            responses: {
+              _id: new mongoose.Types.ObjectId(),
+              lessonId: lessonId,
+              bpqResponses: [{
+                _id: new mongoose.Types.ObjectId(),
+                questionId: questionId,
+                initialAnswer: value,
+                finalAnswer: value,
+                feedback: '',
+                scores: {},
+                events: [newEvent]
+              }],
+              quiz: [],
+              worksheet: {}
+            }
           }
         }
-      }
-    );
+      );
+    } else {
+      // Lesson exists, add BPQ response
+      await StudentResponse.collection.updateOne(
+        { _id: record._id, 'responses.lessonId': lessonId },
+        {
+          $push: {
+            'responses.$.bpqResponses': {
+              _id: new mongoose.Types.ObjectId(),
+              questionId: questionId,
+              initialAnswer: value,
+              finalAnswer: value,
+              feedback: '',
+              scores: {},
+              events: [newEvent]
+            }
+          }
+        }
+      );
+    }
 
-    return res.status(200).json({ success: true, message: "New response created with event" });
+    return res.status(200).json({ success: true, message: "Structure created with first event" });
   } catch (err) {
     console.error("❌ Error:", err);
-    return res.status(500).json({ message: "Failed", error: err.message });
+    return res.status(500).json({ message: "Failed", error: err.message, stack: err.stack });
   }
 };
 
