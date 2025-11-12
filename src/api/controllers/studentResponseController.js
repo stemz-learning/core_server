@@ -21,6 +21,44 @@ const getStudentResponses = async (req, res) => {
 };
 
 // adding a bpq response
+// const addOrUpdateBPQResponse = async (req, res) => {
+//   try {
+//     const studentId = req.user.id;
+//     const { courseId, lessonId } = req.params;
+//     const newBPQ = req.body;
+
+//     let record = await StudentResponse.findOne({ studentId, courseId });
+
+//     if (!record) {
+//       record = new StudentResponse({ studentId, courseId, responses: [] });
+//     }
+
+//     let lesson = record.responses.find((r) => r.lessonId === lessonId);
+
+//     if (!lesson) {
+//       lesson = {
+//         lessonId, bpqResponses: [newBPQ], quiz: [], worksheet: {},
+//       };
+//       record.responses.push(lesson);
+//     } else {
+//       // Overwrite if the same questionId exists
+//       const existingIndex = lesson.bpqResponses.findIndex((r) => r.questionId === newBPQ.questionId);
+//       if (existingIndex !== -1) {
+//         lesson.bpqResponses[existingIndex] = newBPQ;
+//       } else {
+//         lesson.bpqResponses.push(newBPQ);
+//       }
+//     }
+
+//     record.updatedAt = new Date();
+//     await record.save();
+//     return res.status(200).json({ success: true, message: 'BPQ response saved' });
+//   } catch (error) {
+//     console.error('Error saving BPQ response:', error);
+//     return res.status(500).json({ message: 'Failed to save BPQ response', error: error.message });
+//   }
+// };
+
 const addOrUpdateBPQResponse = async (req, res) => {
   try {
     const studentId = req.user.id;
@@ -28,23 +66,30 @@ const addOrUpdateBPQResponse = async (req, res) => {
     const newBPQ = req.body;
 
     let record = await StudentResponse.findOne({ studentId, courseId });
-
     if (!record) {
       record = new StudentResponse({ studentId, courseId, responses: [] });
     }
 
     let lesson = record.responses.find((r) => r.lessonId === lessonId);
-
     if (!lesson) {
       lesson = {
-        lessonId, bpqResponses: [newBPQ], quiz: [], worksheet: {},
+        lessonId,
+        bpqResponses: [newBPQ],
+        quiz: [],
+        worksheet: {},
       };
       record.responses.push(lesson);
     } else {
-      // Overwrite if the same questionId exists
-      const existingIndex = lesson.bpqResponses.findIndex((r) => r.questionId === newBPQ.questionId);
+      const existingIndex = lesson.bpqResponses.findIndex(
+        (r) => r.questionId === newBPQ.questionId
+      );
+
       if (existingIndex !== -1) {
-        lesson.bpqResponses[existingIndex] = newBPQ;
+        // ✅ Merge fields safely instead of overwriting
+        lesson.bpqResponses[existingIndex] = {
+          ...lesson.bpqResponses[existingIndex]._doc, // keep old fields
+          ...newBPQ, // apply new updates
+        };
       } else {
         lesson.bpqResponses.push(newBPQ);
       }
@@ -52,12 +97,15 @@ const addOrUpdateBPQResponse = async (req, res) => {
 
     record.updatedAt = new Date();
     await record.save();
-    return res.status(200).json({ success: true, message: 'BPQ response saved' });
+    return res.status(200).json({ success: true, message: "BPQ response saved" });
   } catch (error) {
-    console.error('Error saving BPQ response:', error);
-    return res.status(500).json({ message: 'Failed to save BPQ response', error: error.message });
+    console.error("Error saving BPQ response:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to save BPQ response", error: error.message });
   }
 };
+
 
 const addBPQEvent = async (req, res) => {
   try {
