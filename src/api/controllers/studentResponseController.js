@@ -351,7 +351,7 @@ const autosaveBPQ = async (req, res) => {
             _id: new mongoose.Types.ObjectId(),
             timestamp: new Date(),
             eventType: "autosave",
-            value: value,
+            value: "hardcoded",
             cursorPos: cursorPos || null,
           }
         },
