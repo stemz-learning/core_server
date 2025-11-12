@@ -342,31 +342,46 @@ const autosaveBPQ = async (req, res) => {
 
     let lesson = record.responses.find(r => r.lessonId === lessonId);
     if (!lesson) {
-      lesson = { lessonId, quiz: [], bpqResponses: [], worksheet: {} };
-      record.responses.push(lesson);
+      record.responses.push({ 
+        lessonId, 
+        quiz: [], 
+        bpqResponses: [], 
+        worksheet: {} 
+      });
+      lesson = record.responses[record.responses.length - 1];
     }
 
     let bpqResponse = lesson.bpqResponses.find(b => b.questionId === questionId);
-    if (!bpqResponse) {
-      bpqResponse = {
-        questionId,
-        currentAnswer: value,
-        feedback: '',
-        scores: {},
-        events: [],
-      };
-      lesson.bpqResponses.push(bpqResponse);
-    }
-
-    bpqResponse.currentAnswer = value;
-    bpqResponse.events.push({
+    
+    const newEvent = {
       timestamp: new Date(),
       eventType: "autosave",
-      value,
+      value: value,
       cursorPos: cursorPos || null,
-    });
+    };
 
-    record.updatedAt = new Date();
+    if (!bpqResponse) {
+      // Create as plain object, not relying on schema defaults
+      lesson.bpqResponses.push({
+        questionId: questionId,
+        initialAnswer: value,
+        finalAnswer: value,
+        feedback: '',
+        scores: {},
+        events: [newEvent]  // Put event directly in array
+      });
+    } else {
+      bpqResponse.finalAnswer = value;
+      
+      // Make sure events array exists
+      if (!bpqResponse.events) {
+        bpqResponse.events = [];
+      }
+      
+      bpqResponse.events.push(newEvent);
+    }
+
+    record.markModified('responses');
     await record.save();
 
     return res.status(200).json({ success: true, message: "Autosave snapshot recorded" });
