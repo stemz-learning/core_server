@@ -335,7 +335,7 @@ const autosaveBPQ = async (req, res) => {
       return res.status(401).json({ message: "Missing student ID (auth issue)" });
     }
 
-    const mongoose = require('mongoose');
+    const mongoose = require("mongoose");
     const newEvent = {
       _id: new mongoose.Types.ObjectId(),
       timestamp: new Date(),
@@ -344,45 +344,69 @@ const autosaveBPQ = async (req, res) => {
       cursorPos: cursorPos || null,
     };
 
-    // Try to push to existing response
+    // ✅ Ensure `events` array exists before pushing
+    await StudentResponse.collection.updateOne(
+      {
+        studentId: new mongoose.Types.ObjectId(studentId),
+        courseId: courseId,
+        "responses.lessonId": lessonId,
+        "responses.bpqResponses.questionId": questionId,
+        "responses.bpqResponses.events": { $exists: false },
+      },
+      {
+        $set: { "responses.$[lesson].bpqResponses.$[response].events": [] },
+      },
+      {
+        arrayFilters: [
+          { "lesson.lessonId": lessonId },
+          { "response.questionId": questionId },
+        ],
+      }
+    );
+
+    // Now safely push the new event
     const result = await StudentResponse.collection.updateOne(
       {
         studentId: new mongoose.Types.ObjectId(studentId),
         courseId: courseId,
-        'responses.lessonId': lessonId,
-        'responses.bpqResponses.questionId': questionId
+        "responses.lessonId": lessonId,
+        "responses.bpqResponses.questionId": questionId,
       },
       {
-        $push: { 'responses.$[lesson].bpqResponses.$[response].events': newEvent },
-        $set: { 
-          'responses.$[lesson].bpqResponses.$[response].finalAnswer': value,
-          updatedAt: new Date()
-        }
+        $push: {
+          "responses.$[lesson].bpqResponses.$[response].events": newEvent,
+        },
+        $set: {
+          "responses.$[lesson].bpqResponses.$[response].finalAnswer": value,
+          updatedAt: new Date(),
+        },
       },
       {
         arrayFilters: [
-          { 'lesson.lessonId': lessonId },
-          { 'response.questionId': questionId }
-        ]
+          { "lesson.lessonId": lessonId },
+          { "response.questionId": questionId },
+        ],
       }
     );
 
     if (result.matchedCount > 0) {
-      return res.status(200).json({ success: true, message: "Event added" });
+      return res
+        .status(200)
+        .json({ success: true, message: "Event added successfully" });
     }
 
-    // Need to create structure - make sure record exists first
+    // If no match, fall back to creating record structure
     let record = await StudentResponse.findOne({ studentId, courseId });
     if (!record) {
       record = new StudentResponse({ studentId, courseId, responses: [] });
-      await record.save(); // ← SAVE IT FIRST
+      await record.save();
     }
 
-    // Check if lesson exists
-    const lessonExists = record.responses.some(r => r.lessonId === lessonId);
-    
+    const lessonExists = record.responses.some(
+      (r) => r.lessonId === lessonId
+    );
+
     if (!lessonExists) {
-      // Add lesson using raw MongoDB
       await StudentResponse.collection.updateOne(
         { _id: record._id },
         {
@@ -390,47 +414,53 @@ const autosaveBPQ = async (req, res) => {
             responses: {
               _id: new mongoose.Types.ObjectId(),
               lessonId: lessonId,
-              bpqResponses: [{
-                _id: new mongoose.Types.ObjectId(),
-                questionId: questionId,
-                initialAnswer: value,
-                finalAnswer: value,
-                feedback: '',
-                scores: {},
-                events: [newEvent]
-              }],
+              bpqResponses: [
+                {
+                  _id: new mongoose.Types.ObjectId(),
+                  questionId: questionId,
+                  initialAnswer: value,
+                  finalAnswer: value,
+                  feedback: "",
+                  scores: {},
+                  events: [newEvent],
+                },
+              ],
               quiz: [],
-              worksheet: {}
-            }
-          }
+              worksheet: {},
+            },
+          },
         }
       );
     } else {
-      // Lesson exists, add BPQ response
       await StudentResponse.collection.updateOne(
-        { _id: record._id, 'responses.lessonId': lessonId },
+        { _id: record._id, "responses.lessonId": lessonId },
         {
           $push: {
-            'responses.$.bpqResponses': {
+            "responses.$.bpqResponses": {
               _id: new mongoose.Types.ObjectId(),
               questionId: questionId,
               initialAnswer: value,
               finalAnswer: value,
-              feedback: '',
+              feedback: "",
               scores: {},
-              events: [newEvent]
-            }
-          }
+              events: [newEvent],
+            },
+          },
         }
       );
     }
 
-    return res.status(200).json({ success: true, message: "Structure created with first event" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Structure created with first event" });
   } catch (err) {
     console.error("❌ Error:", err);
-    return res.status(500).json({ message: "Failed", error: err.message, stack: err.stack });
+    return res
+      .status(500)
+      .json({ message: "Failed to autosave", error: err.message });
   }
 };
+
 
 module.exports = {
   getStudentResponses,
