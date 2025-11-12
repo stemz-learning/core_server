@@ -340,42 +340,20 @@ const autosaveBPQ = async (req, res) => {
       _id: new mongoose.Types.ObjectId(),
       timestamp: new Date(),
       eventType: "autosave",
-      value: value,
+      value,
       cursorPos: cursorPos || null,
     };
 
-    // ✅ Ensure `events` array exists before pushing
-    await StudentResponse.collection.updateOne(
-      {
-        studentId: new mongoose.Types.ObjectId(studentId),
-        courseId: courseId,
-        "responses.lessonId": lessonId,
-        "responses.bpqResponses.questionId": questionId,
-        "responses.bpqResponses.events": { $exists: false },
-      },
-      {
-        $set: { "responses.$[lesson].bpqResponses.$[response].events": [] },
-      },
-      {
-        arrayFilters: [
-          { "lesson.lessonId": lessonId },
-          { "response.questionId": questionId },
-        ],
-      }
-    );
-
-    // Now safely push the new event
+    // ⚡️ Try efficient atomic update first
     const result = await StudentResponse.collection.updateOne(
       {
         studentId: new mongoose.Types.ObjectId(studentId),
-        courseId: courseId,
+        courseId,
         "responses.lessonId": lessonId,
         "responses.bpqResponses.questionId": questionId,
       },
       {
-        $push: {
-          "responses.$[lesson].bpqResponses.$[response].events": newEvent,
-        },
+        $push: { "responses.$[lesson].bpqResponses.$[response].events": newEvent },
         $set: {
           "responses.$[lesson].bpqResponses.$[response].finalAnswer": value,
           updatedAt: new Date(),
@@ -389,77 +367,56 @@ const autosaveBPQ = async (req, res) => {
       }
     );
 
-    if (result.matchedCount > 0) {
-      return res
-        .status(200)
-        .json({ success: true, message: "Event added successfully" });
+    console.log("Matched:", result.matchedCount, "Modified:", result.modifiedCount);
+
+    if (result.modifiedCount > 0) {
+      // ✅ Fast path worked
+      return res.status(200).json({ success: true, message: "Event added successfully" });
     }
 
-    // If no match, fall back to creating record structure
+    // 🧩 If not found, fallback to safe Mongoose-based creation/update
     let record = await StudentResponse.findOne({ studentId, courseId });
+
     if (!record) {
       record = new StudentResponse({ studentId, courseId, responses: [] });
-      await record.save();
     }
 
-    const lessonExists = record.responses.some(
-      (r) => r.lessonId === lessonId
-    );
+    // Ensure lesson exists
+    let lesson = record.responses.find(r => r.lessonId === lessonId);
+    if (!lesson) {
+      lesson = { lessonId, bpqResponses: [], quiz: [], worksheet: {} };
+      record.responses.push(lesson);
+    }
 
-    if (!lessonExists) {
-      await StudentResponse.collection.updateOne(
-        { _id: record._id },
-        {
-          $push: {
-            responses: {
-              _id: new mongoose.Types.ObjectId(),
-              lessonId: lessonId,
-              bpqResponses: [
-                {
-                  _id: new mongoose.Types.ObjectId(),
-                  questionId: questionId,
-                  initialAnswer: value,
-                  finalAnswer: value,
-                  feedback: "",
-                  scores: {},
-                  events: [newEvent],
-                },
-              ],
-              quiz: [],
-              worksheet: {},
-            },
-          },
-        }
-      );
+    // Ensure question exists
+    let bpq = lesson.bpqResponses.find(r => r.questionId === questionId);
+    if (!bpq) {
+      bpq = {
+        questionId,
+        initialAnswer: value,
+        finalAnswer: value,
+        feedback: "",
+        scores: {},
+        events: [newEvent],
+      };
+      lesson.bpqResponses.push(bpq);
     } else {
-      await StudentResponse.collection.updateOne(
-        { _id: record._id, "responses.lessonId": lessonId },
-        {
-          $push: {
-            "responses.$.bpqResponses": {
-              _id: new mongoose.Types.ObjectId(),
-              questionId: questionId,
-              initialAnswer: value,
-              finalAnswer: value,
-              feedback: "",
-              scores: {},
-              events: [newEvent],
-            },
-          },
-        }
-      );
+      // Just push new event and update final answer
+      bpq.events.push(newEvent);
+      bpq.finalAnswer = value;
     }
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Structure created with first event" });
+    record.markModified("responses");
+    await record.save();
+
+    return res.status(200).json({ success: true, message: "Event saved (via fallback)" });
+
   } catch (err) {
-    console.error("❌ Error:", err);
-    return res
-      .status(500)
-      .json({ message: "Failed to autosave", error: err.message });
+    console.error("❌ Error in autosaveBPQ:", err);
+    return res.status(500).json({ message: "Failed to autosave", error: err.message });
   }
 };
+
 
 
 module.exports = {
