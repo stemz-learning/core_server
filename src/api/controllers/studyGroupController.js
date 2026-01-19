@@ -22,9 +22,9 @@ class StudyGroupController {
         return res.status(400).json({ message: 'One or more user IDs are invalid' });
       }
 
-      // Ensure all members belong to the classroom (if classroom has student_user_ids)
-      if (classroom.student_user_ids && classroom.student_user_ids.length > 0) {
-        const classroomUserIds = new Set(classroom.student_user_ids.map((id) => String(id)).concat(String(classroom.teacher_user_id)));
+      // Ensure all members belong to the classroom (if classroom has studentIds)
+      if (classroom.studentIds && classroom.studentIds.length > 0) {
+        const classroomUserIds = new Set(classroom.studentIds.map((id) => String(id)).concat(String(classroom.teacherId)));
         const allInClassroom = memberUserIds.every((id) => classroomUserIds.has(String(id)));
         if (!allInClassroom) {
           return res.status(400).json({ message: 'All members must belong to the classroom' });

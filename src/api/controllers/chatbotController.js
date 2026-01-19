@@ -5,9 +5,21 @@ const restrictedQuestions = require('../restrictedQuestions/restrictedQuestions.
 const { buildRestrictedSystemPrompt } = require('../services/promptService');
 // Example using OpenAI SDK; adapt to your LLM client
 const OpenAI = require('openai');
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "12345678";
+
+// Lazy initialization of OpenAI client to avoid errors when API key is not set
+let openai = null;
+function getOpenAIClient() {
+  if (!openai) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey || apiKey === 'sk-test-dummy-key-for-testing') {
+      console.warn('⚠️  OpenAI API key not set or using test key');
+    }
+    openai = new OpenAI({ apiKey: apiKey || 'sk-test-dummy-key' });
+  }
+  return openai;
+}
 
 const chatbotReply = async (req, res) => {
   const userMessage = req.body.message;
@@ -110,7 +122,8 @@ async function askHandler(req, res, next) {
       pageQuestionsCount: Array.isArray(pageQuestions) ? pageQuestions.length : 0
     });
 
-    const resp = await openai.chat.completions.create({
+    const client = getOpenAIClient();
+    const resp = await client.chat.completions.create({
       model: 'gpt-4o-mini',
       messages,
       max_tokens: 150, // Reduced to enforce 2-3 sentences

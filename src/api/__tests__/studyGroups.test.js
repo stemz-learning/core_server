@@ -4,7 +4,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const jwt = require('jsonwebtoken');
 const { app } = require('../../index');
 const User = require('../models/User');
-const Classroom = require('../models/Classroom');
+const PhysicalClassroom = require('../models/PhysicalClassroom');
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || '12345678';
 
@@ -31,11 +31,11 @@ describe('Study Groups API', () => {
         name: 'S2', email: 's2@s.com', password: 'pass', role: 'student', gradeLevel: 3,
       },
     ]);
-    classroom = await Classroom.create({
+    classroom = await PhysicalClassroom.create({
       name: 'Class A',
       description: 'Desc',
-      teacher_user_id: teacher._id,
-      student_user_ids: students.map((s) => s._id),
+      teacherId: teacher._id,
+      studentIds: students.map((s) => s._id),
     });
 
     token = jwt.sign({ id: teacher._id, email: teacher.email, role: 'teacher' }, JWT_SECRET_KEY);
