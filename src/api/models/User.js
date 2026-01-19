@@ -5,6 +5,9 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  twoFAEnabled: { type: Boolean, default: false },
+  twoFASecret: { type: String, default: null },
+  twoFABackupCodes: { type: [String], default: [] },
 
   // New field: 'role'
   role: {
